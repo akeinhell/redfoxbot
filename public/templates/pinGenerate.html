@@ -1,0 +1,18 @@
+<div class="form-group">
+    <div class='col-md-2'></div>
+    <div class='col-md-10'>
+        <a class="btn btn-default" ng-click="getLink()">Получить ссылку</a>
+    </div>
+</div>
+
+<div class="form-group" ng-if="hash">
+    <div class='col-md-2'></div>
+    <div class='col-md-4'>
+        <a ng-href="https://telegram.me/redfoxbot?start={{hash}}" target="_blank" class="btn btn-default">Закинуть
+            в личку</a>
+    </div>
+    <div class='col-md-4'>
+        <a ng-href="https://telegram.me/redfoxbot?startgroup={{hash}}" target="_blank"
+           class="btn btn-default">Закинуть в чат</a>
+    </div>
+</div>

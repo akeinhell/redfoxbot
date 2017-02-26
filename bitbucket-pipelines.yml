@@ -1,0 +1,30 @@
+# This is a sample build configuration for PHP.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Dockerhub as your build environment
+image: epcallan/phpunit-php7
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+#          - psql --version
+#          - ls -la /etc/postgresql
+#          - echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
+#          - echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+#          - service postgresql start
+#          - export PGPASSWORD='postgress'
+#          - psql -U postgres -c "CREATE DATABASE fox"
+          - composer --version
+          - cp .env.example .env
+          - cat .env
+          - composer install
+          - php artisan key:generate
+          - vendor/bin/phpunit --version
+#          - mysql --version
+#          - php artisan migrate
+          - vendor/bin/phpunit
+          - ls -la
+          - pwd
+          - vendor/bin/codacycoverage clover coverage.xml
+          - bash <(curl -s https://codecov.io/bash)

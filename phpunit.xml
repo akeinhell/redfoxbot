@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="bootstrap/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">app/</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_DEBUG" value="true"/>
+        <!--<env name="CACHE_DRIVER" value="redis"/>-->
+        <!--<env name="SESSION_DRIVER" value="redis"/>-->
+        <!--<env name="QUEUE_DRIVER" value="redis"/>-->
+        <env name="TELEGRAM_KEY" value="...."/>
+        <env name="BOT_NAME" value="TelegramBot vTEST_EDITION / http://telegram.akeinhell.xyz"/>
+
+    </php>
+    <logging>
+        <log type="coverage-html" target="report" charset="UTF-8"
+             yui="true" highlight="true"
+             lowUpperBound="50" highLowerBound="80" />
+        <log type="coverage-clover" target="./coverage.xml"/>
+    </logging>
+</phpunit>

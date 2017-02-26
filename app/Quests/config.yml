@@ -1,0 +1,69 @@
+constant:
+  site:
+    base_url: &base_url 'https://telegram.akeinhell.xyz/'
+    settings_url: &settings_url 'https://telegram.akeinhell.xyz/settings'
+engines:
+  RedfoxAvangard:
+    login:
+      url: 'http://{domain}.redfoxkrks.ru/play/submit'
+    send:
+      url: 'http://{domain}.redfoxkrks.ru/play/submit'
+      params:
+        code: '{code}'
+      parser: 'App/Engines/RedfoxAvangard'
+    spoiler:
+      url: 'http://{domain}.redfoxkrks.ru/play/submitspoiler'
+    quest:
+      parser:
+        class: 'App/Engines/RedfoxAvangard'
+        url: 'http://{domain}.redfoxkrks.ru/play'
+    questlist:
+      parser:
+        url: 'http://{domain}.redfoxkrks.ru/play'
+        class: 'App/Engines/RedfoxAvangard'
+    auth:
+      -
+        type: 'loginpass'
+        url: 'http://{domain}.redfoxkrks.ru/user/login'
+        params:
+          email: '{login}'
+          pass: '{pass}'
+
+
+
+commands:
+  start:
+    descrtiption: &start_description 'Закидывает настройки в чат. Настройки бота производятся на странице https://telegram.akeinhell.xyz/settings'
+    short_description: *start_description
+    commands:
+      - '/start'
+  help:
+    short_description: 'Отображение справки'
+    descrtiption: 'Отображение справки'
+    commands:
+      - '/help'
+  code:
+    short_description: 'Отправка кода'
+    descrtiption: 'Отправка кода'
+    commands:
+      - '/code'
+      - '!'
+  spoiler:
+    short_description: 'Отправка спойлера'
+    descrtiption: 'Отправка спойлера'
+    commands:
+      - '/spoiler'
+      - '?'
+  quest:
+    short_description: 'Отправка спойлера'
+    descrtiption: 'Отправка спойлера'
+    commands:
+      - '/spoiler'
+      - '?'
+  select_quest:
+    short_description: 'Отправка спойлера'
+    descrtiption: 'Отправка спойлера'
+    commands:
+      - '/spoiler'
+      - '?'
+

@@ -1,0 +1,57 @@
+<?php
+namespace Deployer;
+require 'recipe/laravel.php';
+
+// Configuration
+
+set('repository', 'git@bitbucket.org:akeinhell/telegram.git');
+
+add('shared_files', [
+    '.env',
+]);
+
+// Laravel shared dirs
+set('shared_dirs', [
+    'storage',
+    'node_modules',
+    'bower_components'
+]);
+// add('shared_dirs', [
+//     'storage/cookies',
+//     'storage/chats',
+//     'storage/images',
+// ]);
+
+add('writable_dirs', [
+    'storage',
+]);
+
+// Servers
+
+server('production', '54.88.33.46')
+    ->user('ubuntu')
+    ->identityFile()
+    ->set('keep_releases', 5)
+    ->set('deploy_path', '/var/www/telegram');
+
+task('npm', function () {
+    run('cd ' . get('release_path'). ' && yarn install');
+    run('cd ' . get('release_path'). ' && npm run build');
+});
+
+desc('Update version');
+task('env', function(){
+    run('cd ' . get('release_path'). ' && php artisan deploy:env');
+});
+
+// Tasks
+
+desc('Restart PHP-FPM service');
+task('php-fpm:restart', function () {
+    // The user must have rights for restart service
+    // /etc/sudoers: username ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
+    run('sudo systemctl restart php7.0-fpm.service');
+});
+after('deploy:vendors', 'npm');
+after('npm', 'env');
+after('deploy:symlink', 'php-fpm:restart');

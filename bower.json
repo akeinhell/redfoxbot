@@ -1,0 +1,30 @@
+{
+  "name": "telegram",
+  "description": "",
+  "main": "",
+  "authors": [
+    "akeinhell <akeinhell@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.5",
+    "bootstrap": "^3.3.6",
+    "font-awesome": "*",
+    "bootstrap-sass": "^3.3.4",
+    "skel": "^3.0.0",
+    "bootstrap-less": "^3.3.4",
+    "angular-bootstrap": "^1.3.2",
+    "angular-animate": "^1.5.0",
+    "angular-loading-bar": "^0.9.0",
+    "html5shiv": "^3.7.3"
+  },
+  "devDependencies": {}
+}
