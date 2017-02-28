@@ -3,13 +3,12 @@
  * Created by PhpStorm.
  * User: akeinhell
  * Date: 11.04.16
- * Time: 13:01
+ * Time: 13:01.
  */
 
 namespace App\Games;
 
 use App\Exceptions\TelegramCommandException;
-use App\QuestLog;
 use App\Telegram\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -21,7 +20,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class Sender
 {
-    private static $instance = [];
     public $lastRequest;
     /**
      * @var Uri
@@ -31,6 +29,7 @@ class Sender
      * @var Client
      */
     public $client;
+    private static $instance = [];
     private $jar;
     private $config;
 
@@ -45,7 +44,7 @@ class Sender
     {
         $this->jar    = static::getCookieFile($this->chatId);
         $this->config = Config::get($this->chatId);
-        if (!$this->config) {
+        if (! $this->config) {
             \Log::error('Cannot load config', [$this->chatId]);
 
             return;
@@ -60,8 +59,7 @@ class Sender
         $params       = [
             'base_uri'    => $this->config->url,
             'cookies'     => $this->jar,
-            'headers'     =>
-                [
+            'headers'     => [
                     'User-Agent'       => self::getUserAgent(),
                 ],
             'debug'       => getenv('APP_DEBUG') ?: true,
@@ -78,15 +76,14 @@ class Sender
 
     /**
      * @param      $chatId
-     *
      * @param bool $errors
      *
      * @return Sender
      */
     public static function getInstance($chatId, $errors = true)
     {
-        if (!array_key_exists($chatId, self::$instance)) {
-            self::$instance[$chatId] = new Sender($chatId, $errors);
+        if (! array_key_exists($chatId, self::$instance)) {
+            self::$instance[$chatId] = new self($chatId, $errors);
         }
 
         return self::$instance[$chatId];
@@ -97,31 +94,13 @@ class Sender
         $data = array_merge($requestParams, ['form_params' => $params, 'query' => $query]);
         try {
             $response = $this->client->post($url, $data);
-        } catch
-        (\Exception $e) {
+        } catch (\Exception $e) {
             throw new TelegramCommandException('Ошибка доступа к движку');
         }
         $this->lastRequest = $response;
 
-        // FIXME костыль :-(
-        $safeHTML       = preg_match('/dozor/isu', Config::getValue($this->chatId, 'project', 'unknown')) ?
-            iconv('cp1251', 'utf8', $this->formatResponse($response)) : $this->formatResponse($response);
-        $logger         = new QuestLog();
-        $logger->html   = $safeHTML;
-        $logger->url    = Config::getValue($this->chatId, 'url') . $url;
-        $logger->engine = Config::getValue($this->chatId, 'project', 'unknown');
-        $logger->query  = json_encode($query);
-        $logger->form   = json_encode($params);
-        $logger->save();
-
         return $this->formatResponse($response);
     }
-
-    private function formatResponse(ResponseInterface $response)
-    {
-        return (string)$response->getBody();
-    }
-
 
     public function sendGet($url, $params = [])
     {
@@ -130,22 +109,13 @@ class Sender
         } catch (\Exception $e) {
             throw new TelegramCommandException('Ошибка доступа к движку');
         }
-        $logger = new QuestLog();
-        // FIXME костыль :-(
-        $safeHTML       = preg_match('/dozor/isu', Config::getValue($this->chatId, 'project', 'unknown')) ?
-            iconv('cp1251', 'utf8', $this->formatResponse($response)) : $this->formatResponse($response);
-        $logger->html   = $safeHTML;
-        $logger->engine = Config::getValue($this->chatId, 'project', 'unknown');
-        $logger->url    = Config::getValue($this->chatId, 'url') . $url;
-        $logger->query  = json_encode($params);
-        $logger->form   = json_encode([]);
-        $logger->save();
 
         return $this->formatResponse($response);
     }
 
     /**
      * @param $chatId
+     *
      * @return FileCookieJar
      */
     public static function getCookieFile($chatId)
@@ -155,4 +125,8 @@ class Sender
         return new FileCookieJar($cookieFile, true);
     }
 
+    private function formatResponse(ResponseInterface $response)
+    {
+        return (string) $response->getBody();
+    }
 }
