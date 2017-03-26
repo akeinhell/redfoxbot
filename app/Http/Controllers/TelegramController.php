@@ -361,7 +361,7 @@ class TelegramController extends Controller
     private function getCoords2($text)
     {
         $pattern = '/([\d]{1,3})°\s*([\d]{1,2})\'\s*([\d\.]+)"/isu';
-        if (preg_match_all($pattern, $text, $match)) {
+        if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
             $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
             $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
 
@@ -369,7 +369,7 @@ class TelegramController extends Controller
         }
 
         $pattern = '/([0-9]+)\s([0-9]+)\s([0-9.]+)/isu';
-        if (preg_match_all($pattern, $text, $match)) {
+        if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
             $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
             $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
 
