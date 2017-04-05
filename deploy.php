@@ -2,9 +2,8 @@
 namespace Deployer;
 require 'recipe/laravel.php';
 
-// Configuration
-
-set('repository', 'git@bitbucket.org:akeinhell/telegram.git');
+//set('branch', 'beta');
+set('repository', 'git@github.com:akeinhell/redfoxbot.git');
 
 add('shared_files', [
     '.env',
@@ -16,11 +15,6 @@ set('shared_dirs', [
     'node_modules',
     'bower_components'
 ]);
-// add('shared_dirs', [
-//     'storage/cookies',
-//     'storage/chats',
-//     'storage/images',
-// ]);
 
 add('writable_dirs', [
     'storage',
@@ -45,11 +39,8 @@ task('env', function(){
 });
 
 // Tasks
-
 desc('Restart PHP-FPM service');
 task('php-fpm:restart', function () {
-    // The user must have rights for restart service
-    // /etc/sudoers: username ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
     run('sudo systemctl restart php7.0-fpm.service');
 });
 after('deploy:vendors', 'npm');

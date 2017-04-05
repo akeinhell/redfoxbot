@@ -59,8 +59,8 @@ class VkAuthController extends Controller
     private function getToken($code)
     {
         $params = [
-            'client_id'     => getenv('VK_API_CLIENT_ID'),
-            'client_secret' => getenv('VK_API_CLIENT_SECRET'),
+            'client_id'     => env('VK_API_CLIENT_ID'),
+            'client_secret' => env('VK_API_CLIENT_SECRET'),
             'redirect_uri'  => URL::to(self::$REDIRECT_URL),
             'code'          => $code,
             //'scope'=>'email'

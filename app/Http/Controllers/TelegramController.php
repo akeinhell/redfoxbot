@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\Telegram\Update as UpdateEvent;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
 use App\Telegram\AbstractCommand;
@@ -12,7 +11,6 @@ use App\Telegram\Commands\CodeCommand;
 use App\Telegram\Commands\SpoilerCommand;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\Config;
-use Cache;
 use DOMElement;
 use Illuminate\Http\Request;
 use Log;
@@ -24,14 +22,10 @@ use TelegramBot\Api\Types\Update;
 
 class TelegramController extends Controller
 {
-    private $betaChats = [
-        94986676, // me
-    ];
 
     public function setup()
     {
         $url = \URL::to('hook');
-        dump(Bot::action()->setWebhook($url));
         dump(\Tg::setWebhook([
             'url' => \URL::to('newbot'),
         ]));
@@ -45,7 +39,7 @@ class TelegramController extends Controller
 
         $expire = 60 * 10;
 
-        Cache::put(StartCommand::CACHE_KEY_START . $token, json_encode($data), $expire);
+        \Cache::put(StartCommand::CACHE_KEY_START . $token, json_encode($data), $expire);
 
         return response()->json(['token' => $token]);
     }
@@ -58,7 +52,6 @@ class TelegramController extends Controller
         $message = $update->getMessage();
 
         if ($message) {
-            event(new UpdateEvent($message, $dataRaw));
             try {
                 return $this->parseMessage($message, $dataRaw);
             } catch (TelegramCommandException $e) {

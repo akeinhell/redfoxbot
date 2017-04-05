@@ -62,7 +62,7 @@ class Sender
             'headers'     => [
                     'User-Agent'       => self::getUserAgent(),
                 ],
-            'debug'       => getenv('APP_DEBUG') ?: true,
+            'debug'       => env('APP_DEBUG') ?: true,
             'handler'     => $stack,
             'http_errors' => $this->enableExceptions,
         ];
@@ -71,7 +71,7 @@ class Sender
 
     public static function getUserAgent()
     {
-        return getenv('BOT_VERSION') ? 'Telegram Bot v' . getenv('BOT_VERSION') : 'Telegram Bot';
+        return env('BOT_VERSION') ? 'Telegram Bot v' . env('BOT_VERSION') : 'Telegram Bot';
     }
 
     /**
