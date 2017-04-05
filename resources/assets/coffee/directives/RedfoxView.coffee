@@ -4,6 +4,7 @@ redfoxCities = [
   {domain: 'www', label: 'Красноярск'},
   {domain: 'tomsk', label: 'Томск'},
   {domain: 'kemerovo', label: 'Кемерово'},
+  {domain: 'achinsk', label: 'Ачинск'},
   {domain: 'nsk', label: 'Новосибирск'},
   {domain: 'belovo', label: 'Белово'},
   {domain: 'nvkz', label: 'Новокузнецк'},
