@@ -58,7 +58,7 @@ class Bot
     public static function action()
     {
         if (self::$instance === null) {
-            self::$instance = new BotApi(getenv('TELEGRAM_KEY'));
+            self::$instance = new BotApi(env('TELEGRAM_KEY'));
         }
 
         return self::$instance;

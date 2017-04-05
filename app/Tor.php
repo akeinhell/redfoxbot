@@ -44,10 +44,10 @@ class Tor
         );
         $params = [
             'headers' => [
-                    'User-Agent' => getenv('BOT_NAME') ?: 'TelegramBot',
+                    'User-Agent' => env('BOT_NAME') ?: 'TelegramBot',
                 ],
             'proxy'   => 'socks5://localhost:9050',
-            'debug'   => getenv('APP_DEBUG'),
+            'debug'   => env('APP_DEBUG'),
             'handler' => $stack,
         ];
         $this->client = new Client($params);
