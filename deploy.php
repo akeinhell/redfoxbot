@@ -36,6 +36,7 @@ task('npm', function () {
 desc('Update version');
 task('env', function(){
     run('cd ' . get('release_path'). ' && php artisan deploy:env');
+    run('cd ' . get('release_path'). ' && php artisan config:clear');
 });
 
 // Tasks
