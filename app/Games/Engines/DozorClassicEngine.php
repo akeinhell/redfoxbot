@@ -150,7 +150,6 @@ class DozorClassicEngine extends AbstractGameEngine
                 $crawler = $this->doAuth();
             }
 
-            $this->saveQuest($crawler->html());
             $quest = new DozorClassicQuest($crawler);
             \Cache::put($this->getKey(), $quest, Carbon::now()->addSeconds(10));
         }
