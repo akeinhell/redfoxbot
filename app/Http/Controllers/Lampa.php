@@ -28,29 +28,14 @@ class Lampa extends Controller
         $this->crawler = new Crawler();
     }
 
+    /**
+     * Получение игр на определенном домене
+     * @param $domain
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function games($domain)
     {
-        dd(        \Lampa::getAnnounceGames());
-        $url          = sprintf('http://%s.lampagame.ru', $domain);
-        $this->client = new Client(['base_uri' => $url]);
-        $this->domain = $domain;
-
-        $crawler   = $this->get($url);
-        $paginator = $crawler
-            ->filter('.pagination')
-            ->first()
-            ->filter('li a');
-        $counter = $paginator->count();
-        $games     = $paginator->count() ? [] : $this->getGames('/');
-
-        foreach ($paginator->getIterator() as $page) {
-            /** @var DOMElement $page */
-            $link  = $page->getAttribute('href');
-            $games = array_merge($games, $this->getGames($link));
-        }
-
-        // @TODO DELETE HARDCORE
-        $games = new Collection(array_merge($games, $this->getGames('/m2/games/announces/Games_page/8')));
+        $games = \Lampa::setDomain($domain)->getAnnounceGames();
 
         return response()->json($games->unique('id')->sortBy('id')->toArray());
     }
@@ -69,8 +54,8 @@ class Lampa extends Controller
             $crawler = $this->get('games/' . $gameId . '/enter', true);
             if ($crawler->filter('#login-form')->count()) {
                 $crawler = $this->post('/login', [
-                    'LoginForm[username]'   => 'akeinhell',
-                    'LoginForm[password]'   => '09111258',
+                    'LoginForm[username]'   => env('LAMPA_LOGIN'),
+                    'LoginForm[password]'   => env('LAMPA_PASS'),
                     'LoginForm[rememberMe]' => 1,
                 ]);
                 if ($crawler->filter('#login-form')->count()) {
