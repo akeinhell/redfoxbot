@@ -30,15 +30,17 @@ class Lampa extends Controller
 
     public function games($domain)
     {
+        dd(        \Lampa::getAnnounceGames());
         $url          = sprintf('http://%s.lampagame.ru', $domain);
         $this->client = new Client(['base_uri' => $url]);
         $this->domain = $domain;
 
         $crawler   = $this->get($url);
         $paginator = $crawler
-            ->filter('.yiiPager')
+            ->filter('.pagination')
             ->first()
             ->filter('li a');
+        $counter = $paginator->count();
         $games     = $paginator->count() ? [] : $this->getGames('/');
 
         foreach ($paginator->getIterator() as $page) {
@@ -122,8 +124,10 @@ class Lampa extends Controller
 
     private function getGames($page)
     {
-        return $this
-            ->get($page)
+        $html = $this->get($page);
+        print($html->html());
+        dd();
+        return $html
             ->filter('#games-list .view')
             ->each(function (Crawler $item) {
                 $el    = $item->filter('h3 a')->first();
