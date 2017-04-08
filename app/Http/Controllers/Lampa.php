@@ -107,29 +107,6 @@ class Lampa extends Controller
         $this->client = new Client($params);
     }
 
-    private function getGames($page)
-    {
-        $html = $this->get($page);
-        print($html->html());
-        dd();
-        return $html
-            ->filter('#games-list .view')
-            ->each(function (Crawler $item) {
-                $el    = $item->filter('h3 a')->first();
-                $link  = $el->attr('href');
-                $title = $el->text();
-
-                $title = preg_replace('/^#[0-9]+/', '', $title);
-                $title = trim($title, "\t\n\r \v#");
-                $id    = last(explode('/', $link));
-
-                return [
-                    'title' => $title,
-                    'id'    => $id,
-                ];
-            });
-    }
-
     /**
      * @param      $url
      * @param bool $noCache
