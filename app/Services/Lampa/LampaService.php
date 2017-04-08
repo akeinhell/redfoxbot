@@ -124,7 +124,7 @@ class LampaService
         foreach ($teamIterator as $htmlNode) {
             $node = new Crawler($htmlNode);
             $id = $node->attr('value');
-            if ($id) {
+            if ($id !== null) {
                 $teams->push([
                     'id'   => $id,
                     'name' => $node->text(),
