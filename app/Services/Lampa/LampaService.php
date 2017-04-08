@@ -3,7 +3,13 @@
 namespace App\Services\Lampa;
 
 
+use App\Games\Sender;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\FileCookieJar;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\MessageFormatter;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Collection;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -26,18 +32,25 @@ class LampaService
      */
     private $client;
 
+    /** @var  int */
+    private $gameId;
+
     function __construct()
     {
         $this->crawler = new Crawler();
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @param bool $force
      * @return Crawler
+     * @throws \Exception
      */
     private function fetch(string $url, bool $force = false): Crawler
     {
+        if (!$this->client) {
+            throw new \Exception('Client is not initialized');
+        }
         \Log::debug(__METHOD__, ['domain' => $this->domain, 'url' => $url, 'force' => $force]);
         $cacheKey = sprintf(self::CACHE_KEY, $this->domain, $url);
 
@@ -58,7 +71,8 @@ class LampaService
     public function setDomain(string $domain): LampaService
     {
         $this->domain = $domain;
-        $this->client = new Client(['base_uri' => sprintf('http://%s.lampagame.ru', $domain)]);
+        $this->initClient();
+
         return $this;
     }
 
@@ -79,6 +93,55 @@ class LampaService
     }
 
     /**
+     * @param int $gameId
+     * @return LampaService
+     */
+    public function setGame(int $gameId): LampaService
+    {
+        $this->gameId = $gameId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     * @throws \Exception
+     */
+    public function getGameCommands(): Collection
+    {
+        \Log::debug(__METHOD__);
+        $url = sprintf('games/%d/enter', $this->gameId);
+        $html = $this->fetch($url, true);
+        if (!$this->isAuth($html)) {
+            $html = $this->doAuth(env('LAMPA_LOGIN'), env('LAMPA_PASS'));
+            if (!$this->isAuth($html)) {
+                throw  new \Exception('Cannot auth in lampa');
+            }
+        }
+
+        $teams = collect();
+        $teamIterator = $html->filter('#GamesTeams_id option')->getIterator();
+        foreach ($teamIterator as $htmlNode) {
+            $node = new Crawler($htmlNode);
+            $id = $node->attr('value');
+            if ($id) {
+                $teams->push([
+                    'id'   => $id,
+                    'name' => $node->text(),
+                ]);
+            }
+        }
+
+        return $teams;
+    }
+
+    private function isAuth(Crawler $crawler): bool
+    {
+        \Log::debug(__METHOD__);
+        return $crawler->filter('#login-form')->count() == 0;
+    }
+
+    /**
      * @return int
      */
     private function detectPageCount(): int
@@ -93,7 +156,7 @@ class LampaService
 
         $lastPage = explode('/', $paginator->filter('.last a')->attr('href'));
 
-        return (int) collect($lastPage)->last();
+        return (int)collect($lastPage)->last();
     }
 
     /**
@@ -111,9 +174,9 @@ class LampaService
             $pages->push($html);
         }
 
-        $pages->each(function(Crawler $page) use ($games) {
+        $pages->each(function (Crawler $page) use ($games) {
             $gameBlock = $page->filter('#games-list .list-item');
-            $gameBlock->each(function(Crawler $game) use ($games) {
+            $gameBlock->each(function (Crawler $game) use ($games) {
                 $link = $game->filter('.list-text-name');
                 $games->push([
                     'title' => trim($link->text()),
@@ -124,4 +187,50 @@ class LampaService
 
         return $games;
     }
+
+
+    private function initClient(): void
+    {
+        $cookieFile = storage_path('cookies/lampa_site.jar');
+        $jar = new FileCookieJar($cookieFile, true);
+        $stack = HandlerStack::create();
+        $stack->push(
+            Middleware::log(
+                \Log::getMonolog(),
+                new MessageFormatter('[{code}] {method} {uri}')
+            )
+        );
+        $params = [
+            'base_uri'                      => sprintf('http://%s.lampagame.ru/', $this->domain),
+            'cookies'                       => $jar,
+            'headers'                       => [
+                'User-Agent' => Sender::getUserAgent(),
+            ],
+            'handler'                       => $stack,
+            RequestOptions::ALLOW_REDIRECTS => [
+                'max'             => 10,        // allow at most 10 redirects.
+                'strict'          => true,      // use "strict" RFC compliant redirects.
+                'referer'         => true,      // add a Referer header
+                'track_redirects' => true,
+            ],
+        ];
+        \Log::debug(__METHOD__, $params);
+        $this->client = new Client($params);
+    }
+
+    private function doAuth(string $login, string $pass): Crawler
+    {
+        \Log::debug(__METHOD__);
+        $result = $this->client
+            ->post('/login', [
+                'form_params' => [
+                    'LoginForm[username]' => $login,
+                    'LoginForm[password]' => $pass,
+                ],
+            ]);
+
+        return new Crawler($result->getBody()->__toString());
+    }
+
+
 }
