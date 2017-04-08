@@ -34,12 +34,12 @@ class EnvVersion extends Command
         $version = trim($process->getOutput());
         $env = file_get_contents('.env');
         $lines = collect(explode(PHP_EOL, $env))
-            ->filter(function($item){
+            ->filter(function($item) {
                 return $item;
             })
             ->map(function($item) use ($version){
                 $v = explode('=', $item, 2);
-                if ($v[0] == 'BOT_VERSION'){
+                if ($v[0] == 'BOT_VERSION') {
                     $v[1] = $version;
                 }
                 return implode('=', $v);

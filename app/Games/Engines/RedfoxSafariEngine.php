@@ -19,7 +19,7 @@ class RedfoxSafariEngine extends RedfoxBaseEngine
     {
         $html = $this->getSender()->sendGet('/play/safari');
 
-        if (! $this->checkAuth($html)) {
+        if (!$this->checkAuth($html)) {
             $this->doAuth();
             $html = $this->getSender()->sendGet('/play/safari');
         }
@@ -45,7 +45,7 @@ class RedfoxSafariEngine extends RedfoxBaseEngine
     {
         $this->checkQuestSelected();
         $taskId = Config::getValue($this->chatId, self::QUEST_ID);
-        if (! $taskId) {
+        if (!$taskId) {
             throw new NoQuestSelectedException();
         }
 
@@ -85,7 +85,7 @@ class RedfoxSafariEngine extends RedfoxBaseEngine
 
     private function checkQuestSelected()
     {
-        if (! Config::getValue($this->chatId, self::QUEST_ID)) {
+        if (!Config::getValue($this->chatId, self::QUEST_ID)) {
             throw new NoQuestSelectedException();
         }
     }

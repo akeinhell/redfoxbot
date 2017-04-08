@@ -92,7 +92,7 @@ abstract class AbstractGameEngine
     {
         $crawler = new Crawler($response);
         $crawler->filter('img')
-            ->each(function (Crawler $node) {
+            ->each(function(Crawler $node) {
                 $url = $node->attr('src');
 
                 return $url;
@@ -103,7 +103,7 @@ abstract class AbstractGameEngine
     {
         $url = Config::getValue($this->chatId, 'url');
 
-        if (! $url) {
+        if (!$url) {
             \Log::error('No url specified');
             throw new \Exception('No url specified');
         }
@@ -146,7 +146,7 @@ abstract class AbstractGameEngine
 
     protected function getCacheKey()
     {
-        if (! Config::getValue($this->chatId, 'activeQuest')) {
+        if (!Config::getValue($this->chatId, 'activeQuest')) {
             return null;
         }
 

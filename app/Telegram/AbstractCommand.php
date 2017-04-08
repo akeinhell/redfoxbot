@@ -130,6 +130,9 @@ abstract class AbstractCommand
         return $this->active;
     }
 
+    /**
+     * @param string $payload
+     */
     abstract public function execute($payload);
 
     public function checkPattern($text)
@@ -159,7 +162,7 @@ abstract class AbstractCommand
 
     protected function prepare()
     {
-        if (! $this->config) {
+        if (!$this->config) {
             throw new TelegramCommandException('Cannot get config for chat: ' . $this->chatId);
         }
     }

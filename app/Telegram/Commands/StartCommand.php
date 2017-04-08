@@ -30,7 +30,7 @@ class StartCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        if (! $payload) {
+        if (!$payload) {
             $this->responseText  = 'Настройки необходимо вводить на сайте https://redfoxbot.ru';
             $this->responseReply = true;
 
@@ -40,7 +40,7 @@ class StartCommand extends AbstractCommand
         $key  = self::CACHE_KEY_START . $payload;
         $data = Cache::get($key);
         $data = json_decode($data);
-        if (! $data) {
+        if (!$data) {
             throw new TelegramCommandException('Не корректный формат данных' . PHP_EOL);
         }
 
@@ -57,7 +57,7 @@ class StartCommand extends AbstractCommand
 
         $projectClass = '\\App\\Games\\Engines\\' . $data->project . 'Engine';
 
-        if (! class_exists($projectClass)) {
+        if (!class_exists($projectClass)) {
             $this->responseText = 'Лиса не умеет работать с ' . $data->project . PHP_EOL . ' фыр-фыр :-(';
 
             return;

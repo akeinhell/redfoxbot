@@ -22,6 +22,9 @@ class CodeCommand extends AbstractCommand
         '!',
     ];
 
+    /**
+     * @param string $payload
+     */
     public function execute($payload)
     {
         $this->responseText  = $this->getEngine()->sendCode($payload);

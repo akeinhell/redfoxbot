@@ -27,7 +27,7 @@ class SectorCommand extends AbstractCommand
         /** @var EncounterEngine $engine */
         $engine = $this->getEngine();
         if (method_exists($engine, 'getSectors')) {
-            $this->responseText  = $this->getEngine()->getSectors();
+            $this->responseText = $this->getEngine()->getSectors();
 //            $this->responseReply = true;
         }
     }

@@ -44,7 +44,7 @@ class Sender
     {
         $this->jar    = static::getCookieFile($this->chatId);
         $this->config = Config::get($this->chatId);
-        if (! $this->config) {
+        if (!$this->config) {
             \Log::error('Cannot load config', [$this->chatId]);
 
             return;
@@ -56,7 +56,7 @@ class Sender
                 new MessageFormatter('[{code}] {method} {uri}')
             )
         );
-        $params       = [
+        $params = [
             'base_uri'    => $this->config->url,
             'cookies'     => $this->jar,
             'headers'     => [
@@ -82,7 +82,7 @@ class Sender
      */
     public static function getInstance($chatId, $errors = true)
     {
-        if (! array_key_exists($chatId, self::$instance)) {
+        if (!array_key_exists($chatId, self::$instance)) {
             self::$instance[$chatId] = new self($chatId, $errors);
         }
 

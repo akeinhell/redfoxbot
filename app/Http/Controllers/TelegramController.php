@@ -78,7 +78,7 @@ class TelegramController extends Controller
      *
      * @see https://gist.github.com/hnq90/316f08047a3bf348b823
      *
-     * @param mixed $str
+     * @param string $str
      *
      * @return bool if existed emoji in string
      */
@@ -109,7 +109,7 @@ class TelegramController extends Controller
             $response                     = $this->executeCommand($commandClass, $payload, $chatId);
         }
 
-        if (! $data && $config && $action = $this->getAction($message->getText())) {
+        if (!$data && $config && $action = $this->getAction($message->getText())) {
             list($method, $payload) = $action;
             $reply                  = $message->getMessageId();
             $project                = Config::getValue($chatId, 'project');
@@ -149,9 +149,9 @@ class TelegramController extends Controller
 
     /**
      * @param Message $message
-     * @param mixed   $raw
+     * @param string   $raw
      *
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|null
      */
     private function parseMessage($message, $raw)
     {
@@ -199,9 +199,9 @@ class TelegramController extends Controller
     }
 
     /**
-     * @param $command AbstractCommand
-     * @param $chatId
-     * @param $from
+     * @param AbstractCommand $command AbstractCommand
+     * @param integer $chatId
+     * @param integer $from
      */
     private function exec($command, $chatId, $from)
     {
@@ -330,7 +330,7 @@ class TelegramController extends Controller
         $response = html_entity_decode(strip_tags($response, '<b><strong><i><code><a><pre>'));
         $parts    = explode(PHP_EOL, chunk_split($response, 1800, PHP_EOL));
 
-        return array_filter($parts, function ($part) {
+        return array_filter($parts, function($part) {
             return $part;
         });
     }
@@ -370,6 +370,11 @@ class TelegramController extends Controller
         }
     }
 
+    /**
+     * @param string $deg
+     * @param string $min
+     * @param string $sec
+     */
     private function convertCoords($deg, $min, $sec)
     {
         return round($deg + ((($min * 60) + ($sec)) / 3600), 8);
@@ -387,9 +392,9 @@ class TelegramController extends Controller
         $domain = Config::getValue($chatId, 'url', '');
         $links  = [];
         $cr->filter('img')
-            ->each(function (Crawler $crawler) use (&$links, $domain) {
+            ->each(function(Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
-                if (! strpos('http', $link)) {
+                if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
                 }
                 $links[] = $link;
@@ -400,14 +405,14 @@ class TelegramController extends Controller
             });
 
         $tags     = ['b', 'strong', 'i', 'code', 'a', 'pre'];
-        $response = strip_tags($message, implode(array_map(function ($tag) {
+        $response = strip_tags($message, implode(array_map(function($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {
             foreach ($tags as $tag) {
                 $tagPattern = '<' . $tag . '>';
                 // @TODO костыль
-                if (preg_match('/' . $tagPattern . '/isu', $string) && ! preg_match('/<\/' . $tag . '>/isu', $string)) {
+                if (preg_match('/' . $tagPattern . '/isu', $string) && !preg_match('/<\/' . $tag . '>/isu', $string)) {
                     $string = preg_replace('/' . $tagPattern . '/', '', $string);
                 }
             }

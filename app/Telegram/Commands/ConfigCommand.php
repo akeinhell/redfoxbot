@@ -28,7 +28,7 @@ class ConfigCommand extends AbstractCommand
         if ($config) {
             $ret = [];
             foreach (get_object_vars($config) as $key => $val) {
-                if (! is_array($val)) {
+                if (!is_array($val)) {
                     $ret[] = sprintf('%s: %s', $key, $val);
                 } else {
                     $ret[] = sprintf('%s: %s', $key, var_export($val, true));
