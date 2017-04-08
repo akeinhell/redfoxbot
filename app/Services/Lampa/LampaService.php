@@ -2,7 +2,6 @@
 
 namespace App\Services\Lampa;
 
-
 use App\Games\Sender;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -35,7 +34,7 @@ class LampaService
     /** @var  int */
     private $gameId;
 
-    function __construct()
+    public function __construct()
     {
         $this->crawler = new Crawler();
     }
@@ -231,6 +230,4 @@ class LampaService
 
         return new Crawler($result->getBody()->__toString());
     }
-
-
 }
