@@ -28,12 +28,12 @@ class LampaQuest extends BaseQuest
 
     public function isGameSelected()
     {
-        return ! preg_match('/неактуальные куки/isu', $this->html);
+        return !preg_match('/неактуальные куки/isu', $this->html);
     }
 
     public function isAuth()
     {
-        return ! preg_match('/LoginForm_username/isu', $this->html);
+        return !preg_match('/LoginForm_username/isu', $this->html);
     }
 
     public function isRunning()
@@ -44,7 +44,7 @@ class LampaQuest extends BaseQuest
     public function getText()
     {
         $level = $this->quests->first();
-        if (! ($text = array_get($level, 'text'))) {
+        if (!($text = array_get($level, 'text'))) {
             throw new TelegramCommandException('Не удалось получить текст задания');
         }
 
@@ -104,7 +104,7 @@ class LampaQuest extends BaseQuest
     public function getQuests()
     {
         $quests = $this->quests;
-        if (! $quests->count()) {
+        if (!$quests->count()) {
             throw  new TelegramCommandException('Не возможно получить список заданий');
         }
 
@@ -136,9 +136,9 @@ class LampaQuest extends BaseQuest
     {
         $questNodes = new Collection($this->crawler
             ->filter('h3')
-            ->each(function (Crawler $node) {
+            ->each(function(Crawler $node) {
                 $div = $node->filter('div')->getNode(0) ?: $node->filter('span')->getNode(0);
-                if (! $div) {
+                if (!$div) {
                     return null;
                 }
                 $id  = $div->getAttribute('id');
@@ -154,13 +154,13 @@ class LampaQuest extends BaseQuest
                     'id'    => $id,
                 ];
             }));
-        $crawler    = &$this->crawler;
+        $crawler = &$this->crawler;
 
         $this->quests = $questNodes
-            ->filter(function ($i) {
+            ->filter(function($i) {
                 return $i;
             })
-            ->map(function ($quest, $id) use ($crawler) {
+            ->map(function($quest, $id) use ($crawler) {
                 $items = $crawler->filter('#levels-accord > div');
 
                 $q             = $items->eq($id);
@@ -171,7 +171,7 @@ class LampaQuest extends BaseQuest
                 }
 
                 $codes          = $q->filter('.items span');
-                $codeCollection = new Collection($codes->each(function (Crawler $node) {
+                $codeCollection = new Collection($codes->each(function(Crawler $node) {
                     return [
                         'text'     => $node->text(),
                         'accepted' => $node->attr('class') === 'accepted',
@@ -180,12 +180,12 @@ class LampaQuest extends BaseQuest
                 }));
 
                 $quest['codes'] = $codeCollection
-                    ->filter(function ($item) {
+                    ->filter(function($item) {
                         return array_get($item, 'id') && array_get($item, 'text');
                     })
-                    ->map(function ($code) {
+                    ->map(function($code) {
                         list($metka, $params) = explode('(', array_get($code, 'text'));
-                        $params = array_map(function ($item) {
+                        $params = array_map(function($item) {
                             return last(explode(':', $item)); //;last(explode());
                         }, explode(',', trim($params, '()')));
 
@@ -198,10 +198,10 @@ class LampaQuest extends BaseQuest
                     ->groupBy('ko');
 
                 $quest['estCodes'] = $quest['codes']
-                    ->filter(function ($item) {
-                        return ! array_get($item, 'accepted');
+                    ->filter(function($item) {
+                        return !array_get($item, 'accepted');
                     })
-                    ->map(function ($item, $key) {
+                    ->map(function($item, $key) {
                         return $key . (count($item) > 1 ? sprintf(' (%s шт)', count($item)) : '');
                     })
                     ->toArray();

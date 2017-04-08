@@ -12,7 +12,6 @@ use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\EncounterAbstractEngine;
 use App\Games\Sender;
 use App\Quests\EncounterQuest;
-use App\Telegram\Config;
 
 class EncounterEngine extends EncounterAbstractEngine
 {
@@ -43,7 +42,7 @@ class EncounterEngine extends EncounterAbstractEngine
 
         $response = $this->sender->sendPost($this->getUrl(), $data, ['json' => 1]);
 
-        if (! $response) {
+        if (!$response) {
             throw new TelegramCommandException('Ошибка отправки кода #' . __LINE__);
         }
 
@@ -63,7 +62,7 @@ class EncounterEngine extends EncounterAbstractEngine
     public function checkAuth()
     {
         $data = $this->sender->sendGet($this->getUrl(), ['json' => 1]);
-        $auth = ! preg_match('/Login.aspx/isu', $data);
+        $auth = !preg_match('/Login.aspx/isu', $data);
 
         return $auth ? $data : false;
     }
@@ -81,19 +80,22 @@ class EncounterEngine extends EncounterAbstractEngine
             'ddlNetwork'   => '1',
             'socialAssign' => '0',
         ];
-        $data   = $this->sender->sendPost('/Login.aspx?return=' . urlencode($this->getUrl()), $params);
-        if (! $this->checkAuth()) {
+        $data = $this->sender->sendPost('/Login.aspx?return=' . urlencode($this->getUrl()), $params);
+        if (!$this->checkAuth()) {
             throw new TelegramCommandException('Ошибка авторизации');
         }
 
         return $data;
     }
 
+    /**
+     * @param string $data
+     */
     public function getQuest($data = null)
     {
-        if (! $data) {
+        if (!$data) {
             $data = $this->checkAuth();
-            if (! $data) {
+            if (!$data) {
                 $this->doAuth();
             }
             $url  = $this->getUrl();
@@ -145,15 +147,17 @@ class EncounterEngine extends EncounterAbstractEngine
      */
     public function checkRunnigGame(EncounterQuest $q)
     {
-        if (! $q->isRunning()) {
-            $gameTitle = $q->getGameTitle() ? '<b>' . $q->getGameTitle() . '</b> еще не началась' :
-                'Не могу получить задание, возможно игра не началась';
+        if (!$q->isRunning()) {
+            $gameTitle = $q->getGameTitle() ? '<b>' . $q->getGameTitle() . '</b> еще не началась' : 'Не могу получить задание, возможно игра не началась';
             throw new TelegramCommandException($gameTitle);
         }
 
         return $q->isRunning();
     }
 
+    /**
+     * @param EncounterQuest $quest
+     */
     public function getSectors($quest = null)
     {
         $quest = $quest ?: $this->getQuest();

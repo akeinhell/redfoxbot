@@ -28,7 +28,7 @@ class DozorLiteEngine extends AbstractGameEngine
     {
         $data = $this->getHtml();
 
-        return ! preg_match('#test_pin#isu', $data);
+        return !preg_match('#test_pin#isu', $data);
     }
 
     public function doAuth()
@@ -62,10 +62,10 @@ class DozorLiteEngine extends AbstractGameEngine
 
     public function getQuestText($html = null)
     {
-        if (! $html) {
+        if (!$html) {
             $html = $this->getHtml();
         }
-        if (! preg_match_all('#levelTextBegin-->(.*?)<!--levelTextEnd#isu', $html, $matches)) {
+        if (!preg_match_all('#levelTextBegin-->(.*?)<!--levelTextEnd#isu', $html, $matches)) {
             throw new TelegramCommandException('Ошибка получения текста задания', __LINE__);
         }
         $return = $matches[1][0];
@@ -78,10 +78,13 @@ class DozorLiteEngine extends AbstractGameEngine
         throw new TelegramCommandException('Временно не доступно', __LINE__);
     }
 
+    /**
+     * @param string $html
+     */
     private function getLevel($html)
     {
         return 0;
-        if (! preg_match('#<input type=hidden name=lev value=(.*?)>#isu', $html, $m)) {
+        if (!preg_match('#<input type=hidden name=lev value=(.*?)>#isu', $html, $m)) {
             throw new TelegramCommandException('Ошибка получения номера уровня', __LINE__);
         }
 
@@ -115,11 +118,17 @@ class DozorLiteEngine extends AbstractGameEngine
         return $this->iconv($this->sender->sendGet($url, ['pin' => $this->config->pin]));
     }
 
+    /**
+     * @param string $html
+     */
     private function iconv($html)
     {
         return iconv('cp1251', 'utf8', $html);
     }
 
+    /**
+     * @param string $html
+     */
     private function getEstimatedCodes($html)
     {
         if (preg_match('/<!--difficultyCods(.*?)<\/div>/is', $html, $matches)) {
@@ -130,10 +139,10 @@ class DozorLiteEngine extends AbstractGameEngine
             if (count($codes) === 2) {
                 $collect = $collect
                     ->merge(explode(',', $codes[1]))
-                    ->filter(function ($item) {
+                    ->filter(function($item) {
                         return trim(strip_tags($item)) === trim($item);
                     })
-                    ->map(function ($item) {
+                    ->map(function($item) {
                         return trim(strip_tags($item));
                     });
             }

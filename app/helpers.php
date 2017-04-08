@@ -2,7 +2,7 @@
 
 use Carbon\Carbon;
 
-if (! function_exists('format_time')) {
+if (!function_exists('format_time')) {
     /**
      * @param $time
      *
@@ -16,7 +16,7 @@ if (! function_exists('format_time')) {
     }
 }
 
-if (! function_exists('format_text')) {
+if (!function_exists('format_text')) {
     /**
      * Убирает HTML тэги для бота.
      *

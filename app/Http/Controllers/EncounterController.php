@@ -48,12 +48,12 @@ class EncounterController extends Controller
 
             $games = $crawler
                 ->filter('tr.infoRow')
-                ->reduce(function (Crawler $node, $i) use ($domain) {
+                ->reduce(function(Crawler $node, $i) use ($domain) {
                     $gameDomain = $node->filter('td')->eq(3)->text();
 
                     return preg_match('#^' . $domain . '$#', $gameDomain) === 1;
                 })
-                ->each(function (Crawler $node, $i) use ($params) {
+                ->each(function(Crawler $node, $i) use ($params) {
                     $startText = $node->filter('td')->eq(4)->filter('script')->text();
                     $startText = preg_replace('#.*?String\(\'(.*?)\'\).*#', '$1', $startText);
                     $start      = new Carbon($startText);
@@ -69,7 +69,7 @@ class EncounterController extends Controller
                 });
 
             $return = array_merge($return, $games);
-            if (! $lastPage) {
+            if (!$lastPage) {
                 $pages = $crawler->filter('table')->last()->filter('tr')->first()->filter('a');
 
                 if ($pages->count() === 0) {
@@ -88,6 +88,9 @@ class EncounterController extends Controller
         return $return;
     }
 
+    /**
+     * @param string $url
+     */
     private function get($url, $params)
     {
         ksort($params);
@@ -98,14 +101,14 @@ class EncounterController extends Controller
         }
         $response = (string) $this->client->get($url, ['query' => $params])->getBody();
 
-        return Cache::remember($cacheKey, 10, function () use ($response) {
+        return Cache::remember($cacheKey, 10, function() use ($response) {
             return $response;
         });
     }
 
     private function getParams()
     {
-        $zones  = [
+        $zones = [
             'Real',
             'Points',
             'Virtual',

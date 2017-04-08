@@ -49,7 +49,7 @@ class LampaEngine extends AbstractGameEngine
         ]);
 
         $quest = new LampaQuest($html);
-        if (! $quest->isAuth()) {
+        if (!$quest->isAuth()) {
             throw  new TelegramCommandException('Ошибка авторизации');
         }
 
@@ -63,7 +63,7 @@ class LampaEngine extends AbstractGameEngine
 
         $currentQuest = \Cache::get($cacheKey);
 
-        if (! $currentQuest) {
+        if (!$currentQuest) {
             list($id, $status) = $this->massSend($levels, $code);
         } else {
             if ($status = $this->doSendCode($code, $currentQuest)) {
@@ -90,7 +90,7 @@ class LampaEngine extends AbstractGameEngine
 
         $currentQuest = \Cache::get($cacheKey);
 
-        if (! $currentQuest) {
+        if (!$currentQuest) {
             list($id, $status) = $this->massSendSpoiler($levels, $spoiler);
         } else {
             if ($status = $this->doSendSpoiler($spoiler, $currentQuest)) {
@@ -141,11 +141,11 @@ class LampaEngine extends AbstractGameEngine
         $html = $html ?: $this->sender->sendGet('/game');
 
         $quest = new LampaQuest($html);
-        if (! $quest->isAuth()) {
+        if (!$quest->isAuth()) {
             $quest = $this->doAuth();
         }
 
-        if (! $quest->isGameSelected()) {
+        if (!$quest->isGameSelected()) {
             $quest = $this->selectGame();
         }
 
@@ -208,6 +208,9 @@ class LampaEngine extends AbstractGameEngine
         return sprintf('%s "%s" <b>%s</b>', $label, $code, $status);
     }
 
+    /**
+     * @param string $action
+     */
     private function getUrl($id, $action)
     {
         return implode('/', [null, 'game', $id, $action]);
@@ -229,7 +232,7 @@ class LampaEngine extends AbstractGameEngine
             'GameLog[code]' => $spoiler,
             'ajax'          => 'code-form',
         ], [], ['headers' => ['X-Requested-With' => 'XMLHttpRequest']]);
-        $data     = json_decode(trim($response), true);
+        $data = json_decode(trim($response), true);
 
         $data = array_get($data, 'data', []);
 
@@ -250,9 +253,9 @@ class LampaEngine extends AbstractGameEngine
             'GamesTeams[id]'       => $teamId,
             'GamesTeams[password]' => $pass,
         ]);
-        $quest  = new LampaQuest($html);
+        $quest = new LampaQuest($html);
 
-        if (! $quest->isGameSelected()) {
+        if (!$quest->isGameSelected()) {
             throw new TelegramCommandException('Ошибка входа в игру');
         }
 

@@ -28,7 +28,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         $url      = $this->getUrl(self::CODE_URL);
         $params   = array_merge(['code' => $code], $this->getBaseParams());
         $response = $this->getSender()->sendPost($url, $params);
-        if (! $this->checkAuth($response)) {
+        if (!$this->checkAuth($response)) {
             $this->doAuth();
             $response = $this->getSender()->sendPost($url, $params);
         }
@@ -38,13 +38,16 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return $return;
     }
 
+    /**
+     * @param string $html
+     */
     public function checkAuth($html = null)
     {
-        if (! $html) {
+        if (!$html) {
             $html = $this->getSender()->sendGet('play', []);
         }
 
-        return ! preg_match('#user\/login#i', $html);
+        return !preg_match('#user\/login#i', $html);
     }
 
     public function doAuth()
@@ -54,8 +57,8 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             'email' => $this->config->login,
             'pass'  => $this->config->password,
         ];
-        $response     = $this->getSender()->sendPost('/user/login', $params);
-        if (! $this->checkAuth($response)) {
+        $response = $this->getSender()->sendPost('/user/login', $params);
+        if (!$this->checkAuth($response)) {
             throw new \Exception('Ошибка авторизации');
         }
     }
@@ -88,7 +91,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         $url      = $this->getUrl(self::SPOILER_URL);
         $params   = array_merge(['spoiler_code' => $text], $this->getBaseParams());
         $response = $this->getSender()->sendPost($url, $params);
-        if (! $this->checkAuth($response)) {
+        if (!$this->checkAuth($response)) {
             $this->doAuth();
             $response = $this->getSender()->sendPost($url, $params);
         }
@@ -102,7 +105,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
     {
         $url      = $this->getUrl(self::QUEST_URL);
         $response = $this->getSender()->sendGet($url);
-        if (! $this->checkAuth($response)) {
+        if (!$this->checkAuth($response)) {
             $this->doAuth();
             $response = $this->getSender()->sendGet($url);
         }
@@ -121,7 +124,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
     {
         $url      = $this->getUrl(self::QUEST_URL);
         $response = $this->getSender()->sendGet($url);
-        if (! $this->checkAuth($response)) {
+        if (!$this->checkAuth($response)) {
             $this->doAuth();
             $response = $this->getSender()->sendGet($url);
         }
@@ -130,16 +133,16 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
     }
 
     /**
-     * @param $html
+     * @param string $html
      *
      * @return Collection[]
      */
     public function getNewKo($html)
     {
-        if (! preg_match('/<p class="codes_class">.*?<\/strong>(.*?)<.p>\n/isu', $html, $codesBlock)) {
+        if (!preg_match('/<p class="codes_class">.*?<\/strong>(.*?)<.p>\n/isu', $html, $codesBlock)) {
             return [];
         }
-        if (! preg_match_all('/strong>(.*?)<\/strong>(.*?)<\/p>/', $codesBlock[1], $matchedBlocks)) {
+        if (!preg_match_all('/strong>(.*?)<\/strong>(.*?)<\/p>/', $codesBlock[1], $matchedBlocks)) {
             return [];
         }
         $codes = [];
@@ -147,7 +150,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             $text = trim($matchedBlocks[2][$i], ':');
             /** @var Collection $_codes */
             $_codes    = collect(preg_split('/,/', $text));
-            $_codes    = $_codes->map(function ($i) {
+            $_codes    = $_codes->map(function($i) {
                 return [
                     'found' => preg_match('/found/', $i),
                     'code'  => strip_tags($i),
@@ -170,16 +173,16 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         $result = '';
         foreach ($codes as $type => $collection) {
             $array = $collection
-                ->filter(function ($i) {
-                    return ! array_get($i, 'found');
+                ->filter(function($i) {
+                    return !array_get($i, 'found');
                 });
             $count = $array->count();
             /** @var Collection $array */
             $array = $array
-                ->groupBy(function ($item) {
+                ->groupBy(function($item) {
                     return array_get($item, 'code');
                 })
-                ->map(function ($item, $key) {
+                ->map(function($item, $key) {
                     return $key . (count($item) > 1 ? sprintf(' (%s шт)', count($item)) : '');
                 })
                 ->toArray();
@@ -194,6 +197,9 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return $this->getEstimatedCodes();
     }
 
+    /**
+     * @param integer $type
+     */
     abstract protected function getUrl($type);
 
     protected function getBaseParams()
@@ -201,9 +207,12 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return [];
     }
 
+    /**
+     * @param string $response
+     */
     private function parseResponse($response, $code)
     {
-        if (! $this->gameIsRunning($response)) {
+        if (!$this->gameIsRunning($response)) {
             if (preg_match('#h3><p>(.*?)<\/p#i', $response, $m)) {
                 return $m[1];
             }
@@ -228,12 +237,12 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
      */
     private function getEst($response, $code)
     {
-        if (! preg_match('/<p class="codes_class">.*?strong>:(.*?)<.p>/isu', $response, $codes)) {
+        if (!preg_match('/<p class="codes_class">.*?strong>:(.*?)<.p>/isu', $response, $codes)) {
             return '';
         }
         $estCodes = [];
         foreach (explode(',', $codes[1]) as $value) {
-            if (! preg_match('/found/', $value)) {
+            if (!preg_match('/found/', $value)) {
                 $estCodes[] = trim($value);
             }
         }

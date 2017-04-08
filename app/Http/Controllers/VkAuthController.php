@@ -68,7 +68,7 @@ class VkAuthController extends Controller
         $url    = self::VK_API_OAUTH . self::METHOD_TOKEN . '?' . http_build_query($params);
         $data   = (string) $this->client->get($url, ['query' => $params])->getBody();
         $data   = json_decode($data);
-        if (! isset($data->access_token)) {
+        if (!isset($data->access_token)) {
             throw new \Exception('Error Processing Request', __LINE__);
         }
 
@@ -115,6 +115,9 @@ class VkAuthController extends Controller
         return Auth::check();
     }
 
+    /**
+     * @param string $url
+     */
     private function build_url($url, $params)
     {
         return $url . '?' . http_build_query($params);

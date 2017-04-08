@@ -155,6 +155,7 @@ class QuestParserCommand extends Command
      * @param string $description
      * @param Carbon $start
      * @param Carbon $stop
+     * @param string $location
      * @return array
      */
     private function createEvent($title, $description, $start, $stop, $location)

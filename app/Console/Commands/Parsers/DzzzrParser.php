@@ -82,9 +82,12 @@ class DzzzrParser extends AbstractParser
 
     public function get($url)
     {
-        return iconv('cp1251', 'utf8', (string)$this->client->get($url)->getBody());
+        return iconv('cp1251', 'utf8', (string) $this->client->get($url)->getBody());
     }
 
+    /**
+     * @param string $data
+     */
     private function getInfo($data)
     {
         if (!preg_match_all('/<strong id=orang>(.*?)<\/strong>(.*?)<\/td>/', $data, $lines)) {

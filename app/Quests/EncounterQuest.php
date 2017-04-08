@@ -60,10 +60,10 @@ class EncounterQuest extends BaseQuest
     {
         return $this
             ->getHintsCollection()
-            ->filter(function ($hint) {
+            ->filter(function($hint) {
                 return array_get($hint, 'time', 0) === 0;
             })
-            ->map(function ($hint) {
+            ->map(function($hint) {
                 return '<b>Подсказка №' . array_get($hint, 'number') . '</b>' . PHP_EOL . array_get($hint,
                     'text') . PHP_EOL;
             })
@@ -74,10 +74,10 @@ class EncounterQuest extends BaseQuest
     {
         return $this
             ->getHintsCollection()
-            ->filter(function ($hint) {
+            ->filter(function($hint) {
                 return array_get($hint, 'time', 0) > 0;
             })
-            ->map(function ($hint) {
+            ->map(function($hint) {
                 return '<b>Подсказка №' . array_get($hint, 'number') . '</b> через ' . array_get($hint,
                     'formattedTime') . PHP_EOL;
             })
@@ -93,7 +93,7 @@ class EncounterQuest extends BaseQuest
             array_get($this->getLevel(), 'Helps', []),
             array_get($this->getLevel(), 'PenaltyHelps', [])
         ))
-            ->map(function ($hint) {
+            ->map(function($hint) {
                 $time = array_get($hint, 'RemainSeconds');
 
                 return [
@@ -217,29 +217,32 @@ class EncounterQuest extends BaseQuest
         return $level;
     }
 
+    /**
+     * @param string $arrayKey
+     */
     private function getCodes($arrayKey)
     {
         /** @var Collection $codes */
         $codes = collect(array_get($this->getLevel(), $arrayKey, []));
 
         return $codes
-            ->filter(function ($code) {
-                return ! array_get($code, 'IsAnswered');
+            ->filter(function($code) {
+                return !array_get($code, 'IsAnswered');
             })
-            ->map(function ($code) {
+            ->map(function($code) {
                 return array_get($code, 'Name');
             })
-            ->groupBy(function ($item, $key) {
+            ->groupBy(function($item, $key) {
                 return $item;
             })
-            ->map(function ($item, $key) {
+            ->map(function($item, $key) {
                 return $key . (count($item) > 1 ? sprintf(' (%s шт)', count($item)) : '');
             })
             ->toArray();
     }
 
     /**
-     * @param null $action
+     * @param string $action
      *
      * @return array
      */

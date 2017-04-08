@@ -91,7 +91,7 @@ class DozorClassicQuest extends BaseQuest
      */
     public function getQuests()
     {
-        return collect($this->crawler->filter('div.zad')->each(function (Crawler $level) {
+        return collect($this->crawler->filter('div.zad')->each(function(Crawler $level) {
             $html = trim($level->html());
 
             return preg_replace('/(<br>)/', PHP_EOL, $html);
@@ -112,7 +112,7 @@ class DozorClassicQuest extends BaseQuest
     {
         $level = $this->getQuests()->first();
         if ($level) {
-            $est = collect($this->crawler->filter('div.title div')->each(function (Crawler $div) {
+            $est = collect($this->crawler->filter('div.title div')->each(function(Crawler $div) {
                 return sprintf('<b>%s</b>', $div->text());
             }));
 
@@ -125,12 +125,12 @@ class DozorClassicQuest extends BaseQuest
             $codesPart = collect(explode('</strong>', $codesHtml));
             $return    = strip_tags($codesPart->shift()) . PHP_EOL;
             $codesPart = $codesPart
-                ->map(function ($line) {
+                ->map(function($line) {
                     $parts  = explode(':', $line, 3);
                     $codes  = explode(',', array_pop($parts));
                     $prefix = implode(':', $parts) . ': ';
 
-                    $codes = array_filter($codes, function ($code) {
+                    $codes = array_filter($codes, function($code) {
                         return trim(strip_tags($code)) === trim($code);
                     });
 
@@ -139,7 +139,7 @@ class DozorClassicQuest extends BaseQuest
                         'prefix' => strip_tags($prefix),
                     ];
                 })
-                ->map(function ($item) {
+                ->map(function($item) {
                     return array_get($item, 'prefix', '') . strip_tags(implode(',', array_get($item, 'codes', [])));
                 });
 

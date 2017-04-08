@@ -39,7 +39,7 @@ class DozorClassicEngine extends AbstractGameEngine
         parent::__construct($chatId);
         $teamLogin = Config::getValue($chatId, 'teamLogin');
         $teamPass  = Config::getValue($chatId, 'teamPassword');
-        if (! $teamLogin || ! $teamPass) {
+        if (!$teamLogin || !$teamPass) {
             throw new TelegramCommandException('team login or password not set');
         }
 
@@ -97,7 +97,7 @@ class DozorClassicEngine extends AbstractGameEngine
             'password' => Config::getValue($this->chatId, 'password'),
         ]);
 
-        if (! $this->checkAuth($crawler)) {
+        if (!$this->checkAuth($crawler)) {
             throw new TelegramCommandException('Ошибка авторизации. Неверный логин пасс для бота');
         }
 
@@ -144,9 +144,9 @@ class DozorClassicEngine extends AbstractGameEngine
 
     public function getQuest()
     {
-        if (! ($quest = \Cache::get($this->getKey()))) {
+        if (!($quest = \Cache::get($this->getKey()))) {
             $crawler = $this->get();
-            if (! $this->checkAuth($crawler)) {
+            if (!$this->checkAuth($crawler)) {
                 $crawler = $this->doAuth();
             }
 

@@ -26,7 +26,7 @@ class SelectQuestCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        if (! empty($payload)) {
+        if (!empty($payload)) {
             $params                = explode(' ', $payload, 2);
             $questId               = $params[0];
             $questText             = count($params) === 2 ? $params[1] : 'Задание №' . $questId;

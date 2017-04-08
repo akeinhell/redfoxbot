@@ -70,7 +70,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function vk(){
+    public function vk() {
         
     }
 }
