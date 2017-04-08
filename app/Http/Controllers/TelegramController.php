@@ -245,7 +245,7 @@ class TelegramController extends Controller
     }
 
     /**
-     * @param $chatId
+     * @param integer $chatId
      * @param $text
      *
      * @return bool
@@ -381,7 +381,7 @@ class TelegramController extends Controller
     }
 
     /**
-     * @param                     $chatId
+     * @param                     integer $chatId
      * @param                     $message
      * @param ReplyKeyboardMarkup $keyboard
      * @param int|null            $replyTo

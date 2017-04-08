@@ -17,7 +17,7 @@ class EncounterQuest extends BaseQuest
     /**
      * EncounterQuest constructor.
      *
-     * @param $html
+     * @param string $html
      **/
     public function __construct($html)
     {

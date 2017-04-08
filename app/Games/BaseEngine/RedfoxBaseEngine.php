@@ -63,6 +63,9 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         }
     }
 
+    /**
+     * @param string $html
+     */
     public function gameIsRunning($html)
     {
         return preg_match('/team_name/i', $html);

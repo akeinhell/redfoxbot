@@ -83,7 +83,7 @@ abstract class AbstractCommand
     }
 
     /**
-     * @return mixed
+     * @return \TelegramBot\Api\Types\ReplyKeyboardMarkup|null
      */
     public function getResponseKeyboard()
     {

@@ -22,7 +22,7 @@ abstract class AbstractParser {
 
 
 
-    public function __construct(){
+    public function __construct() {
         $stack = HandlerStack::create();
         $stack->push(
             Middleware::log(
