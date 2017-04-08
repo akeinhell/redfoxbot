@@ -27,7 +27,7 @@ class LampaProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(LampaService::class, function () {
+        $this->app->singleton(LampaService::class, function() {
             return new LampaService();
         });
 

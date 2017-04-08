@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Games\Sender;
-use DOMElement;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
 use GuzzleHttp\HandlerStack;
@@ -45,12 +44,12 @@ class Lampa extends Controller
         $this->domain = $domain;
         $this->getClient($domain);
         $gameId = $request->get('gameId');
-        if (! $gameId) {
+        if (!$gameId) {
             return response()->json(['error' => 'gameId not set'], 422);
         }
         $cacheKey = sprintf('LampaCrawler:commands:%s:%s', $domain, $gameId);
 
-        if (! ($teams = \Cache::get($cacheKey))) {
+        if (!($teams = \Cache::get($cacheKey))) {
             $crawler = $this->get('games/' . $gameId . '/enter', true);
             if ($crawler->filter('#login-form')->count()) {
                 $crawler = $this->post('/login', [
@@ -64,7 +63,7 @@ class Lampa extends Controller
             }
 
             $teams = new Collection($crawler->filter('select#GamesTeams_id option')
-                ->each(function (Crawler $option) {
+                ->each(function(Crawler $option) {
                     return [
                         'id'   => $option->attr('value'),
                         'name' => $option->text(),
@@ -74,7 +73,7 @@ class Lampa extends Controller
             \Cache::put($cacheKey, $teams, 10);
         }
 
-        return response()->json($teams->filter(function ($team) {
+        return response()->json($teams->filter(function($team) {
             return array_get($team, 'id');
         }));
     }
@@ -96,7 +95,7 @@ class Lampa extends Controller
                 new MessageFormatter('[{code}] {method} {uri}')
             )
         );
-        $params       = [
+        $params = [
             'base_uri' => $url,
             'cookies'  => $jar,
             'headers'  => [
@@ -108,7 +107,7 @@ class Lampa extends Controller
     }
 
     /**
-     * @param      $url
+     * @param      string $url
      * @param bool $noCache
      *
      * @return Crawler
@@ -117,7 +116,7 @@ class Lampa extends Controller
     {
         $cacheKey = sprintf('LampaCrawler:%s:%s', $this->domain, $url);
 
-        if (! ($result = \Cache::get($cacheKey)) || $noCache) {
+        if (!($result = \Cache::get($cacheKey)) || $noCache) {
             $result = $this->client->get($url)->getBody()->__toString();
             \Cache::put($cacheKey, $result, 60);
         }
@@ -126,7 +125,7 @@ class Lampa extends Controller
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @param $array
      *
      * @return Crawler
