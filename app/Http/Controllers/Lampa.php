@@ -28,27 +28,14 @@ class Lampa extends Controller
         $this->crawler = new Crawler();
     }
 
+    /**
+     * Получение игр на определенном домене
+     * @param $domain
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function games($domain)
     {
-        $url          = sprintf('http://%s.lampagame.ru', $domain);
-        $this->client = new Client(['base_uri' => $url]);
-        $this->domain = $domain;
-
-        $crawler   = $this->get($url);
-        $paginator = $crawler
-            ->filter('.yiiPager')
-            ->first()
-            ->filter('li a');
-        $games     = $paginator->count() ? [] : $this->getGames('/');
-
-        foreach ($paginator->getIterator() as $page) {
-            /** @var DOMElement $page */
-            $link  = $page->getAttribute('href');
-            $games = array_merge($games, $this->getGames($link));
-        }
-
-        // @TODO DELETE HARDCORE
-        $games = new Collection(array_merge($games, $this->getGames('/m2/games/announces/Games_page/8')));
+        $games = \Lampa::setDomain($domain)->getAnnounceGames();
 
         return response()->json($games->unique('id')->sortBy('id')->toArray());
     }
@@ -67,8 +54,8 @@ class Lampa extends Controller
             $crawler = $this->get('games/' . $gameId . '/enter', true);
             if ($crawler->filter('#login-form')->count()) {
                 $crawler = $this->post('/login', [
-                    'LoginForm[username]'   => 'akeinhell',
-                    'LoginForm[password]'   => '09111258',
+                    'LoginForm[username]'   => env('LAMPA_LOGIN'),
+                    'LoginForm[password]'   => env('LAMPA_PASS'),
                     'LoginForm[rememberMe]' => 1,
                 ]);
                 if ($crawler->filter('#login-form')->count()) {
@@ -118,27 +105,6 @@ class Lampa extends Controller
             'handler'  => $stack,
         ];
         $this->client = new Client($params);
-    }
-
-    private function getGames($page)
-    {
-        return $this
-            ->get($page)
-            ->filter('#games-list .view')
-            ->each(function (Crawler $item) {
-                $el    = $item->filter('h3 a')->first();
-                $link  = $el->attr('href');
-                $title = $el->text();
-
-                $title = preg_replace('/^#[0-9]+/', '', $title);
-                $title = trim($title, "\t\n\r \v#");
-                $id    = last(explode('/', $link));
-
-                return [
-                    'title' => $title,
-                    'id'    => $id,
-                ];
-            });
     }
 
     /**

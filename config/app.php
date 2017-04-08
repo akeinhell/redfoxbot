@@ -1,4 +1,5 @@
 <?php
+use App\Services\Lampa\LampaFacade;
 
 return [
     /*
@@ -157,6 +158,7 @@ return [
         Illuminate\Redis\RedisServiceProvider::class,
 
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
+        \App\Providers\LampaProvider::class,
     ],
 
     /*
@@ -203,5 +205,6 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
         'Tg'  => Telegram\Bot\Laravel\Facades\Telegram::class,
+        'Lampa'  => LampaFacade::class,
     ],
 ];
