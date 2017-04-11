@@ -11,16 +11,17 @@ const mainConfig = {
         styles: './resources/assets/sass/main.scss',
     },
     output: {
-        path: path.join(__dirname, 'public/dist'),
+        path: __dirname + '/public/dist/',
         filename: "js/[name].js",
-        sourceMapFilename: "js/[name].map"
+        sourceMapFilename: "js/[name].map",
+        publicPath: '/dist/'
     },
     module: {
         loaders: [
             {test: /\.coffee$/, use: 'coffee-loader'},
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                use: 'file-loader?name=../fonts/[name].[ext]'
+                use: 'file-loader?name=../fonts/[name].[ext]&outputPath=../dist/fonts/'
             },
             {
                 test: /\.scss$/,
@@ -31,7 +32,7 @@ const mainConfig = {
             },
             {
                 test: /\.(jpe?g|png|gif)$/i,
-                use: 'file-loader?name=../images/[name].[ext]'
+                use: 'file-loader?name=images/[name].[ext]'
             },
 
         ]
