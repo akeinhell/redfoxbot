@@ -13,6 +13,7 @@
     "extract-text-webpack-plugin": "^2.0.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
+    "node-sass": "^4.5.2",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-hot-loader": "^1.3.1",
@@ -21,6 +22,9 @@
   },
   "dependencies": {
     "angular": "^1.0.0",
+    "angular-animate": "^1.6.4",
+    "angular-loading-bar": "^0.9.0",
+    "angular-ui-bootstrap": "^2.5.0",
     "bootstrap-less": "^3.3.8",
     "bower": "^1.7.9",
     "classnames": "^2.2.5",
@@ -31,6 +35,7 @@
     "fontawesome": "^4.7.2",
     "glob": "^7.0.3",
     "ng-annotate-webpack-plugin": "^0.1.2",
+    "sass-loader": "^6.0.3",
     "watchify": "^3.7.0",
     "webpack": "^2.3.3"
   },

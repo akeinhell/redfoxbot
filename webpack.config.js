@@ -8,7 +8,7 @@ const mainConfig = {
     name: 'main',
     entry: {
         application: glob.sync('./resources/assets/coffee/**/*.coffee'),
-        styles: glob.sync('./resources/assets/js/application.js'),
+        styles: './resources/assets/sass/main.scss',
     },
     output: {
         path: path.join(__dirname, 'public/dist'),
@@ -17,18 +17,23 @@ const mainConfig = {
     },
     module: {
         loaders: [
-            { test: /\.coffee$/, loader: 'coffee-loader' },
-            {
-                test: /\.less$/,
-                loader: ExtractTextPlugin.extract({
-                    fallbackLoader: 'style-loader',
-                    loader: 'css-loader!less-loader',
-                })
-            },
+            {test: /\.coffee$/, use: 'coffee-loader'},
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                loader: 'file-loader?name=../fonts/[name].[ext]&outputPath=../dist/fonts/'
+                use: 'file-loader?name=../fonts/[name].[ext]'
             },
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader!sass-loader',
+                }),
+            },
+            {
+                test: /\.(jpe?g|png|gif)$/i,
+                use: 'file-loader?name=../images/[name].[ext]'
+            },
+
         ]
     },
     resolve: {
