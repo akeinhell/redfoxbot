@@ -2,76 +2,47 @@ const path = require('path');
 const glob = require('glob');
 const webpack = require('webpack');
 const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
-const BowerWebpackPlugin = require('bower-webpack-plugin');
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const mainConfig = {
     name: 'main',
-    debug: true,
     entry: {
         application: glob.sync('./resources/assets/coffee/**/*.coffee'),
-        // react: glob.sync('./resources/assets/react-app/**/*.jsx'),
+        styles: glob.sync('./resources/assets/js/application.js'),
     },
     output: {
-        path: path.join(__dirname, 'public/js/'),
-        filename: "[name].bundle.js",
-        chunkFilename: "[id].chunk.js"
+        path: path.join(__dirname, 'public/dist'),
+        filename: "js/[name].js",
+        sourceMapFilename: "js/[name].map"
     },
     module: {
         loaders: [
             { test: /\.coffee$/, loader: 'coffee-loader' },
-            // {
-            //     test: /\.jsx?$/,
-            //     exclude: [/node_modules/],
-            //     loader: "babel-loader",
-            //     query: {
-            //         presets: ['es2015', 'react', 'stage-0', 'stage-1']
-            //     }
-            // },
-            // {
-            //     test: /\.scss$/,
-            //     loader: ExtractTextPlugin.extract('style-loader', 'css-loader!resolve-url!sass-loader?sourceMap')
-            // },
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-            },
-            {
-                test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png|\.jpe?g|\.gif$/,
-                loader: 'file-loader'
-            },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
-            }
+                loader: ExtractTextPlugin.extract({
+                    fallbackLoader: 'style-loader',
+                    loader: 'css-loader!less-loader',
+                })
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2)$/,
+                loader: 'file-loader?name=../fonts/[name].[ext]&outputPath=../dist/fonts/'
+            },
         ]
     },
     resolve: {
-        extensions: ['', '.js', '.jsx', '.coffee']
+        extensions: ['.js', '.coffee']
     },
     devtool: '#cheap-module-source-map',
     plugins: [
-        new ngAnnotatePlugin({
-            add: true
+        new ngAnnotatePlugin({add: true}),
+        new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: Infinity
         }),
-        // Устанавливаем глобальную переменную в режиме разработки
-        new webpack.DefinePlugin({
-            DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
-        }),
-        new BowerWebpackPlugin({
-            modulesDirectories: ['bower_components'],
-            manifestFiles: ['bower.json', '.bower.json'],
-            includes: /.*/,
-            excludes: /.*\.less$/
-        }),
-        new CommonsChunkPlugin({
-            filename: "commons.js",
-            name: "commons"
-        }),
-        new ExtractTextPlugin('[name].css', {
-            allChunks: true
-        })
+        new ExtractTextPlugin('css/style.css')
     ]
 };
 
