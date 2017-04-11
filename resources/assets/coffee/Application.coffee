@@ -1,3 +1,8 @@
+angular = require 'angular'
+require 'angular-ui-bootstrap'
+require 'angular-loading-bar'
+require 'angular-animate'
+
 App = angular.module 'site', ['ui.bootstrap', 'angular-loading-bar', 'ngAnimate']
 App.config(['cfpLoadingBarProvider', (cfpLoadingBarProvider)-> (
   cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-spinner fa-spin"></span>Загружаем список игр</div>';
