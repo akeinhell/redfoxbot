@@ -31,14 +31,12 @@ class ConsoleBotCommand extends Command
     public function handle()
     {
         $this->info('Start pooling bot updates');
-        $params = [
-            'timeout' => 30,
-        ];
 
         while (true) {
-            $update = Telegram::commandsHandler(false);
-            if ($update) {
-                dump($update);
+            if ($updates = Telegram::commandsHandler(false)) {
+                foreach ($updates as $update) {
+                    \Redfoxbot::parseUpdate($update);
+                }
             }
         }
     }

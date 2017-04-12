@@ -159,6 +159,7 @@ return [
 
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\LampaProvider::class,
+        \App\Providers\RedfoxbotProvider::class,
     ],
 
     /*
@@ -206,5 +207,6 @@ return [
 
         'Telegram'  => Telegram\Bot\Laravel\Facades\Telegram::class,
         'Lampa'  => LampaFacade::class,
+        'Redfoxbot'  => \App\Services\Redfoxbot\RedfoxbotFacade::class,
     ],
 ];

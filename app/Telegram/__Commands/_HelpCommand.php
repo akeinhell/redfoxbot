@@ -10,7 +10,7 @@ namespace App\Telegram\Commands;
 
 use App\Telegram\AbstractCommand;
 
-class HelpCommand extends AbstractCommand
+class __HelpCommand extends AbstractCommand
 {
     public static $description = '/help Справка по командам лисы';
 

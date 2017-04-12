@@ -44,7 +44,7 @@ abstract class AbstractCommand
      * @param $fromId
      * @param $text
      */
-    public function __construct($chatId, $fromId = null, $text = null)
+    public function __construct($chatId = null, $fromId = null, $text = null)
     {
         $this->chatId = $chatId;
         $this->fromId = $fromId;

@@ -1,5 +1,8 @@
 <?php
 
+
+use App\Telegram\Commands\HelpCommand;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -56,6 +59,6 @@ return [
     |
     */
     'commands' => [
-        Telegram\Bot\Commands\HelpCommand::class,
+        HelpCommand::class,
     ],
 ];
