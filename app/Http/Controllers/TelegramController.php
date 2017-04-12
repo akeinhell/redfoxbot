@@ -3,32 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\TelegramCommandException;
-use App\Games\BaseEngine\AbstractGameEngine;
-use App\Telegram\AbstractCommand;
 use App\Telegram\Bot;
-use App\Telegram\Commands\CodeCommand;
-use App\Telegram\Commands\SpoilerCommand;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\Config;
 use DOMElement;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Log;
 use Symfony\Component\DomCrawler\Crawler;
-use Telegram\Bot\Objects\Message;
+use Symfony\Component\HttpFoundation\Response;
 use Telegram\Bot\Objects\Update;
 
 
 class TelegramController extends Controller
 {
-
-    public function setup()
+    /**
+     * Устанавливает web-hooks
+     * @return Response
+     */
+    public function setup(): Response
     {
         \Telegram::setWebhook([
             'url' => \URL::to('newbot'),
         ]);
+
+        return response('Done', 201);
     }
 
-    public function generateToken(Request $request)
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function generateToken(Request $request): JsonResponse
     {
         $data = $request->all();
 
@@ -41,16 +48,20 @@ class TelegramController extends Controller
         return response()->json(['token' => $token]);
     }
 
-    public function newhook()
+    /**
+     * Основная точка входа сообщения из телеграмма
+     * @return Response
+     */
+    public function newhook(): Response
     {
         /** @var Update $update */
         $update = \Telegram::commandsHandler(true);
         $type   = \Telegram::detectMessageType($update);
         if ($type == 'text') {
             try {
-                $response = $this->parseMessage($update->getMessage());
+                $this->parseUpdate($update);
 
-                return $response;
+                return response('ok', 201);
             } catch (TelegramCommandException $e) {
 
                 Bot::action()->sendMessage($update->getMessage()->getChat()->getId(), $e->getMessage());
@@ -59,20 +70,15 @@ class TelegramController extends Controller
             }
         }
 
-
-        return response('Null message', 200);
+        return response('ok', 200);
     }
 
     /**
-     * Check emoji from string.
+     * @param $str
      *
-     * @see https://gist.github.com/hnq90/316f08047a3bf348b823
-     *
-     * @param string $str
-     *
-     * @return bool if existed emoji in string
+     * @return null|string
      */
-    public function checkEmoji($str)
+    public function checkEmoji($str): ?string
     {
         $array = Bot::$emoji;
         foreach ($array as $key => $icon) {
@@ -81,111 +87,78 @@ class TelegramController extends Controller
                 return $key;
             }
         }
-
-        return false;
     }
 
 
-    private function formatError(\Exception $e)
+    /**
+     * @param \Exception $e
+     *
+     * @return string
+     */
+    private function formatError(\Exception $e): string
     {
         return sprintf('%s [%s:%s]', $e->getMessage(), $e->getFile(), $e->getLine()) . PHP_EOL . $e->getTraceAsString();
     }
 
     /**
-     * @param Message $message
-     *
-     * @return null
-     */
-    private function parseMessage($message)
+     * @param Update $update
+     **/
+    private function parseUpdate(Update $update)
     {
-        $chatId = $message->getChat()->getId();
-        $userId = $message->getFrom()->getId();
-
-        $this->parseCoords($chatId, $message->getText());
-        $this->parseEmoji($message);
+        $message = $update->getMessage();
+        $chatId  = $message->getChat()->getId();
+        $this->parseCoords($update);
+        $this->parseEmoji($update);
 
         if ($pattern = Config::getValue($chatId, 'format')) {
             $auto = Config::getValue($chatId, 'auto', 'true') === 'true';
-            $code = new CodeCommand($chatId, $userId);
             if (preg_match('/^[' . $pattern . ']+$/i', $message->getText()) && $auto) {
-                $code->execute($message->getText());
-                $this->exec($code, $chatId, $message->getMessageId());
+                $this->triggerCommand('code', [$message->getText()], $update);
             }
             if (preg_match('/^!(.*?)$/i', $message->getText(), $codes)) {
-                $code->execute($codes[1]);
-                $this->exec($code, $chatId, $message->getMessageId());
+                $this->triggerCommand('code', [$codes[1]], $update);
             }
 
             if (preg_match('/^\?(.*?)$/i', $message->getText(), $codes)) {
-                $spoiler = new SpoilerCommand($chatId, $userId);
-                $spoiler->execute($codes[1]);
-                $this->exec($spoiler, $chatId, $message->getMessageId());
+                $this->triggerCommand('spoiler', [$codes[1]], $update);
             }
         }
     }
 
-    /**
-     * @param AbstractCommand $command AbstractCommand
-     * @param integer         $chatId
-     * @param integer         $from
-     */
-    private function exec($command, $chatId, $from)
+    private function triggerCommand(string $name, array $params, Update $update)
     {
-        if ($text = $command->getResponseText()) {
-            $this->parseCoords($chatId, $text);
-            $replyTo = $command->getResponseReply() ? $from : null;
-            $this->sendMessage($chatId, $text, $command->getResponseKeyboard(), $replyTo);
-        }
+        \Telegram::getCommandBus()->execute($name, $params, $update);
     }
 
     /**
-     * @param Message $message
+     * @param Update $update
      */
-    private function parseEmoji($message)
+    private function parseEmoji($update)
     {
-        $chatId = $message->getChat()->getId();
+        $chatId = $update->getMessage()->getChat()->getId();
         $config = Config::get($chatId);
-        if ($config && $text = $message->getText()) {
+        if ($config && $text = $update->getMessage()->getText()) {
             if ($key = $this->checkEmoji($text)) {
-                $projectClass = '\\App\\Games\\Engines\\' . $config->project . 'Engine';
-                /* @var AbstractGameEngine $engine */
-                try {
-                    $engine   = new $projectClass($chatId);
-                    $method   = 'get' . ucfirst(Bot::$map[$key]);
-                    $response = null;
-                    if (method_exists($engine, $method)) {
-                        $response = $engine->$method();
-                    } else {
-                        Log::info('method ' . $method . ' not exists in ' . $projectClass);
-                    }
-                    if ($response) {
-                        $this->sendMessage($chatId, $response);
-                    }
-                } catch (TelegramCommandException $e) {
-                    Bot::action()->sendMessage($chatId, $e->getMessage());
-                } catch (\Exception $e) {
-                    Log::alert($e->getFile() . $e->getMessage(), [$e->getTraceAsString()]);
-                }
+                $method = Bot::$map[$key];
+                $this->triggerCommand($method, [], $update);
             }
         }
     }
 
     /**
-     * @param integer $chatId
-     * @param         $text
+     * @param Update $update
      *
-     * @return bool
+     * @return array|bool|null
      */
-    private function parseCoords($chatId, $text)
+    private function parseCoords(Update $update): ?array
     {
-        if ($coords = $this->getCoords($text)) {
-            list($lon, $lat) = $coords;
-            Bot::action()->sendLocation($chatId, $lon, $lat);
+        if ($coords = $this->getCoords($update->getMessage()->getText())) {
+            \Telegram::getCommandBus()->execute('coords', $coords, $update);
 
-            return true;
+            return $coords;
         }
 
-        return false;
+        return null;
     }
 
     private function getCoords($text)
@@ -203,16 +176,16 @@ class TelegramController extends Controller
 
         $pattern = '/([\d]{1,3})°\s*([\d]{1,2})\'\s*([\d\.]+)"/isu';
         if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
-            $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
+            $lon = $this->convertCoords((int)$match[1][0], (int)$match[2][0], (int)$match[3][0]);
+            $lat = $this->convertCoords((int)$match[1][1], (int)$match[2][1], (int)$match[3][1]);
 
             return [$lon, $lat];
         }
 
         $pattern = '/([0-9]+)\s([0-9]+)\s([0-9.]+)/isu';
         if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
-            $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
+            $lon = $this->convertCoords((int)$match[1][0], (int)$match[2][0], (int)$match[3][0]);
+            $lat = $this->convertCoords((int)$match[1][1], (int)$match[2][1], (int)$match[3][1]);
 
             return [$lon, $lat];
         }
@@ -221,13 +194,13 @@ class TelegramController extends Controller
     }
 
     /**
-     * @param string $deg
-     * @param string $min
-     * @param string $sec
+     * @param int $deg
+     * @param int $min
+     * @param int $sec
      *
      * @return float
      */
-    private function convertCoords($deg, $min, $sec)
+    private function convertCoords($deg, $min, $sec): float
     {
         return round($deg + ((($min * 60) + ($sec)) / 3600), 8);
     }
