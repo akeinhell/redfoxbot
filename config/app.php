@@ -204,7 +204,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
 
-        'Tg'  => Telegram\Bot\Laravel\Facades\Telegram::class,
+        'Telegram'  => Telegram\Bot\Laravel\Facades\Telegram::class,
         'Lampa'  => LampaFacade::class,
     ],
 ];
