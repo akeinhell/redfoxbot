@@ -188,7 +188,7 @@ class LampaService
     }
 
 
-    private function initClient(): void
+    private function initClient()
     {
         $cookieFile = storage_path('cookies/lampa_site.jar');
         $jar = new FileCookieJar($cookieFile, true);
