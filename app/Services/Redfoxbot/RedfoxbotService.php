@@ -42,6 +42,8 @@ class RedfoxbotService
                 return $key;
             }
         }
+
+        return null;
     }
 
 
