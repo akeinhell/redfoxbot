@@ -21,7 +21,7 @@ class RedfoxbotProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Redfoxbot', function ($app) {
+        $this->app->singleton('Redfoxbot', function($app) {
             return new RedfoxbotService();
         });
         $this->app->alias(RedfoxbotService::class, 'redfoxbot');
@@ -30,7 +30,7 @@ class RedfoxbotProvider extends ServiceProvider
     /**
      * Get the services provided by the provider.
      *
-     * @return array
+     * @return string[]
      */
     public function provides()
     {

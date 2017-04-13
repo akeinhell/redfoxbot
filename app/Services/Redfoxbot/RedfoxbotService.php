@@ -33,7 +33,7 @@ class RedfoxbotService
      *
      * @return null|string
      */
-    public function checkEmoji($str): ?string
+    public function checkEmoji($str): ? string
     {
         $array = static::$emoji;
         foreach ($array as $key => $icon) {
@@ -100,7 +100,7 @@ class RedfoxbotService
      *
      * @return array|bool|null
      */
-    private function parseCoords(Update $update): ?array
+    private function parseCoords(Update $update): ? array
     {
         if ($coords = $this->getCoords($update->getMessage()->getText())) {
             \Telegram::getCommandBus()->execute('coords', $coords, $update);
@@ -126,16 +126,16 @@ class RedfoxbotService
 
         $pattern = '/([\d]{1,3})°\s*([\d]{1,2})\'\s*([\d\.]+)"/isu';
         if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords((int)$match[1][0], (int)$match[2][0], (int)$match[3][0]);
-            $lat = $this->convertCoords((int)$match[1][1], (int)$match[2][1], (int)$match[3][1]);
+            $lon = $this->convertCoords((int) $match[1][0], (int) $match[2][0], (int) $match[3][0]);
+            $lat = $this->convertCoords((int) $match[1][1], (int) $match[2][1], (int) $match[3][1]);
 
             return [$lon, $lat];
         }
 
         $pattern = '/([0-9]+)\s([0-9]+)\s([0-9.]+)/isu';
         if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords((int)$match[1][0], (int)$match[2][0], (int)$match[3][0]);
-            $lat = $this->convertCoords((int)$match[1][1], (int)$match[2][1], (int)$match[3][1]);
+            $lon = $this->convertCoords((int) $match[1][0], (int) $match[2][0], (int) $match[3][0]);
+            $lat = $this->convertCoords((int) $match[1][1], (int) $match[2][1], (int) $match[3][1]);
 
             return [$lon, $lat];
         }
@@ -167,7 +167,7 @@ class RedfoxbotService
         $domain = Config::getValue($chatId, 'url', '');
         $links = [];
         $cr->filter('img')
-            ->each(function (Crawler $crawler) use (&$links, $domain) {
+            ->each(function(Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
                 if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
@@ -180,7 +180,7 @@ class RedfoxbotService
             });
 
         $tags = ['b', 'strong', 'i', 'code', 'a', 'pre'];
-        $response = strip_tags($message, implode(array_map(function ($tag) {
+        $response = strip_tags($message, implode(array_map(function($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {
