@@ -40,10 +40,10 @@ class HelpCommand extends Command
 
 TEXT;
         foreach ($commands as $name => $handler) {
-            $text .= sprintf('/%s - %s'.PHP_EOL, $name, $handler->getDescription());
+            $text .= sprintf('/%s - %s' . PHP_EOL, $name, $handler->getDescription());
         }
 
-        $text .=<<<TEXT
+        $text .= <<<TEXT
 
 Для отправки кода просто напишите его :-) (формат кода англ. буквы и цифры)
 Для принудительной отправки кода поставьте перед ним воскл. знак (к пр. !какой-то код)
