@@ -1,5 +1,7 @@
 <?php
+
 namespace Deployer;
+
 require 'recipe/laravel.php';
 
 //set('branch', 'beta');
@@ -13,7 +15,7 @@ add('shared_files', [
 set('shared_dirs', [
     'storage',
     'node_modules',
-    'bower_components'
+    'bower_components',
 ]);
 
 add('writable_dirs', [
@@ -29,14 +31,14 @@ server('production', '54.88.33.46')
     ->set('deploy_path', '/var/www/telegram');
 
 task('npm', function () {
-    run('cd ' . get('release_path'). ' && yarn install');
-    run('cd ' . get('release_path'). ' && npm run build');
+    run('cd ' . get('release_path') . ' && yarn install');
+    run('cd ' . get('release_path') . ' && npm run build');
 });
 
 desc('Update version');
-task('env', function(){
-    run('cd ' . get('release_path'). ' && php artisan deploy:env');
-    run('cd ' . get('release_path'). ' && php artisan config:clear');
+task('env', function () {
+    run('cd ' . get('release_path') . ' && php artisan deploy:env');
+    run('cd ' . get('release_path') . ' && php artisan config:clear');
 });
 
 // Tasks

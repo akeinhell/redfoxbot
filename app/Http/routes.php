@@ -1,6 +1,7 @@
 <?php
 
 Route::group(['middleware' => ['web']], function() {
+    Route::get('/test', ['as' => 'index', 'uses' => 'TelegramController@test']);
     Route::get('/', ['as' => 'index', 'uses' => 'SiteController@index']);
     Route::get('/settings', ['as' => 'settings', 'uses' => 'SiteController@settings']);
     Route::get('/vk/settings', ['as' => 'vk.settings', 'uses' => 'SiteController@vk']);

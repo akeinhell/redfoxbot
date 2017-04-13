@@ -2,37 +2,48 @@
 /**
  * Created by PhpStorm.
  * User: akeinhell
- * Date: 18.04.16
- * Time: 11:31.
+ * Date: 12.04.17
+ * Time: 20:11
  */
 
 namespace App\Telegram\Commands;
 
-use App\Telegram\AbstractCommand;
+use Telegram\Bot\Commands\Command;
 
-class HelpCommand extends AbstractCommand
+/**
+ * Class HelpCommand.
+ */
+class HelpCommand extends Command
 {
-    public static $description = '/help Справка по командам лисы';
+    /**
+     * @var string Command Name
+     */
+    protected $name = 'help';
 
-    public static $entities = ['/help'];
-    protected $active       = true;
-    protected $visible      = true;
+    /**
+     * @var string Command Description
+     */
+    protected $description = 'Получение справки о боте';
 
-    protected $patterns = [
-        '\/help',
-    ];
-
-    public function execute($payload)
+    /**
+     * {@inheritdoc}
+     */
+    public function handle($arguments)
     {
-        $help = <<<'TEXT'
+        $commands = $this->telegram->getCommands();
+
+        $text = <<<'TEXT'
 Лиса приветствует тебя игрок.
 Настройки для бота вводить через сайт: http://redfoxbot.ru/
 
-<b>Основные команды:</b>
-/help Справка
-/spoiler ... - отправка спойлера (сокр. /s)
-/quest - Получение текста задания (сокр. /q)
-/select - Выбор задания куда бить коды (используется когда выдается много заданий сразу)
+Список основных команд:
+
+TEXT;
+        foreach ($commands as $name => $handler) {
+            $text .= sprintf('/%s - %s' . PHP_EOL, $name, $handler->getDescription());
+        }
+
+        $text .= <<<TEXT
 
 Для отправки кода просто напишите его :-) (формат кода англ. буквы и цифры)
 Для принудительной отправки кода поставьте перед ним воскл. знак (к пр. !какой-то код)
@@ -46,6 +57,7 @@ http://vk.com/foxbot_project
 @akeinhell
 TEXT;
 
-        $this->responseText = $help;
+
+        $this->replyWithMessage(compact('text'));
     }
 }
