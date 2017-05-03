@@ -25,8 +25,7 @@ class TelegramController extends Controller
 
     public function setup()
     {
-        $url = \URL::to('hook');
-        dump(\Tg::setWebhook([
+        dump(Bot::action()->setWebhook([
             'url' => \URL::to('newbot'),
         ]));
     }
@@ -95,53 +94,6 @@ class TelegramController extends Controller
         return false;
     }
 
-    public function handle(Message $message, $raw)
-    {
-        $this->saveMessage($message, $raw);
-
-        $chatId = $message->getChat()->getId();
-        $config = Config::get($chatId);
-
-        $reply    = false;
-        $response = null;
-        if ($data = CommandParser::getCommand($message->getEntities(), $message->getText())) {
-            list($commandClass, $payload) = $data;
-            $response                     = $this->executeCommand($commandClass, $payload, $chatId);
-        }
-
-        if (!$data && $config && $action = $this->getAction($message->getText())) {
-            list($method, $payload) = $action;
-            $reply                  = $message->getMessageId();
-            $project                = Config::getValue($chatId, 'project');
-            $projectClass           = '\\App\\Games\\Engines\\' . $project . 'Engine';
-            try {
-                $engine   = new $projectClass($chatId);
-                $method   = 'get' . ucfirst($method);
-                $response = call_user_func_array([$engine, $method], [$payload]);
-            } catch (\Exception $e) {
-                Log::alert($e->getMessage());
-            }
-        }
-
-        if ($response) {
-            $additionalAnswers = $this->getExtraResponse($response);
-            $response          = $this->parseResponse($response);
-
-            foreach ($response as $text) {
-                Bot::action()->sendMessage($chatId, $text, $reply);
-            }
-        }
-
-        if ($text = $message->getText()) {
-            $this->parseCoords($chatId, $text);
-        }
-    }
-
-    public function newbot()
-    {
-        $update = \Tg::getWebhookUpdates();
-    }
-
     private function formatError(\Exception $e)
     {
         return sprintf('%s [%s:%s]', $e->getMessage(), $e->getFile(), $e->getLine()) . PHP_EOL . $e->getTraceAsString();
@@ -149,11 +101,10 @@ class TelegramController extends Controller
 
     /**
      * @param Message $message
-     * @param string   $raw
      *
-     * @return \Symfony\Component\HttpFoundation\Response|null
+     * @return null|\Symfony\Component\HttpFoundation\Response
      */
-    private function parseMessage($message, $raw)
+    private function parseMessage($message)
     {
         $chatId = $message->getChat()->getId();
         $userId = $message->getFrom()->getId();
@@ -168,8 +119,7 @@ class TelegramController extends Controller
         }
 
         if ($text = $message->getText()) {
-            if ($this->parseCoords($chatId, $text)) {
-            }
+            $this->parseCoords($chatId, $text);
         }
 
         if ($pattern = Config::getValue($chatId, 'format')) {
@@ -252,133 +202,12 @@ class TelegramController extends Controller
      */
     private function parseCoords($chatId, $text)
     {
-        if ($coords = $this->getCoords($text)) {
+        if ($coords = getCoordinates($text)){
             list($lon, $lat) = $coords;
             Bot::action()->sendLocation($chatId, $lon, $lat);
-
-            return true;
-        }
-
-        if ($coords = $this->getCoords2($text)) {
-            list($lon, $lat) = $coords;
-            Bot::action()->sendLocation($chatId, $lon, $lat);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $commandClass
-     * @param string $payload
-     * @param int    $chatId
-     *
-     * @return AbstractCommand
-     */
-    private function executeCommand($commandClass, $payload, $chatId)
-    {
-        /** @var AbstractCommand $command */
-        $command = new $commandClass($chatId);
-        $command->execute($payload);
-
-        return $command->getResponseText() ? null : [$command->getResponseText(), $command->getResponseReply()];
-    }
-
-    /**
-     * @param string $text
-     *
-     * @return bool
-     */
-    private function getAction($text)
-    {
-        if ($method = $this->checkEmoji($text)) {
-            return [$method, null];
-        }
-
-        $hotKeys = [
-            '!'  => 'sendCode',
-            '\?' => 'sendSpoiler',
-        ];
-        foreach ($hotKeys as $hotKey => $method) {
-            $pattern = sprintf('/^%s(.*?)$/i', $hotKey);
-            if (preg_match($pattern, $text, $match)) {
-                return [$method, $match[1]];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $response
-     *
-     * @return array
-     */
-    private function getExtraResponse($response)
-    {
-        $return = [];
-        if ($coords = $this->getCoords($response)) {
-            $return['sendLocation'] = $coords;
-        }
-
-        return $return;
-    }
-
-    private function parseResponse($response)
-    {
-        $response = html_entity_decode(strip_tags($response, '<b><strong><i><code><a><pre>'));
-        $parts    = explode(PHP_EOL, chunk_split($response, 1800, PHP_EOL));
-
-        return array_filter($parts, function($part) {
-            return $part;
-        });
-    }
-
-    private function getCoords($text)
-    {
-        $pattern = '/([\d]{1,3}[\.,][\d]{5,})/';
-        if (preg_match_all($pattern, $text, $match)) {
-            $coords = $match[1];
-            if (count($coords) > 1) {
-                return [
-                    floatval($coords[0]),
-                    floatval($coords[1]),
-                ];
-            }
-        }
-
-        return null;
-    }
-
-    private function getCoords2($text)
-    {
-        $pattern = '/([\d]{1,3})°\s*([\d]{1,2})\'\s*([\d\.]+)"/isu';
-        if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
-            $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
-
-            return [$lon, $lat];
-        }
-
-        $pattern = '/([0-9]+)\s([0-9]+)\s([0-9.]+)/isu';
-        if (preg_match_all($pattern, $text, $match) && count($match) > 1) {
-            $lon = $this->convertCoords($match[1][0], $match[2][0], $match[3][0]);
-            $lat = $this->convertCoords($match[1][1], $match[2][1], $match[3][1]);
-
-            return [$lon, $lat];
         }
     }
 
-    /**
-     * @param string $deg
-     * @param string $min
-     * @param string $sec
-     */
-    private function convertCoords($deg, $min, $sec)
-    {
-        return round($deg + ((($min * 60) + ($sec)) / 3600), 8);
-    }
 
     /**
      * @param                     integer $chatId
