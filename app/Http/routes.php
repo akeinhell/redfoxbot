@@ -47,5 +47,4 @@ Route::group(['prefix' => 'api'], function() {
 });
 
 Route::any('hook', 'TelegramController@newhook');
-Route::any('newbot', 'TelegramController@newbot');
 Route::get('setup', 'TelegramController@setup');
