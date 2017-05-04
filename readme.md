@@ -1,6 +1,7 @@
-### Официальный репозиторий телеграмм-бота [Лиса](https://redfoxbot.ru)
+[![codecov](https://codecov.io/gh/akeinhell/redfoxbot/branch/master/graph/badge.svg)](https://codecov.io/gh/akeinhell/redfoxbot)
 
-[Чат для разработчиков](https://t.me/joinchat/AAAAAAz_1f35EIrwXDSQ1g)
+
+### Официальный репозиторий телеграмм-бота [Лиса](https://redfoxbot.ru)
 
 Сейчас поддерживаются проекты:
 - redfox
