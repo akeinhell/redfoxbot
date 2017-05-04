@@ -20,7 +20,7 @@ before_script:
   - php artisan key:generate
 
 script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --coverage-text --coverage-clover clover.xml
 
 after_success:
 
