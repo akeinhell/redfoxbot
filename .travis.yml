@@ -1,0 +1,29 @@
+language: php
+
+php:
+  - 7.0
+
+sudo: false
+
+install:
+  - composer require satooshi/php-coveralls
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: hhvm
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer update --no-interaction --prefer-source
+
+script:
+  - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+
+after_success:
+
+after_success:
+  - phpunit --coverage-clover=coverage.clover
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover coverage.clover
+  - bash <(curl -s https://codecov.io/bash)
