@@ -16,6 +16,8 @@ matrix:
 before_script:
   - travis_retry composer self-update
   - travis_retry composer update --no-interaction --prefer-source
+  - cp .env.example .env
+  - php artisan key:generate
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
