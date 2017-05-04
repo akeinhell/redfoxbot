@@ -65,8 +65,6 @@ class TelegramController extends Controller
             } catch (\Exception $e) {
                 Log::error(__LINE__ . $this->formatError($e));
             }
-        } else {
-            Log::alert('Cannot fetch data', [$dataRaw]);
         }
 
         return response('Null message', 200);

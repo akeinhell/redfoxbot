@@ -22,7 +22,7 @@ add('writable_dirs', [
 
 // Servers
 
-server('production', '54.88.33.46')
+server('production', 'redfoxbot.ru')
     ->user('ubuntu')
     ->identityFile()
     ->set('keep_releases', 5)
@@ -36,6 +36,10 @@ task('npm', function () {
 desc('Update version');
 task('env', function(){
     run('cd ' . get('release_path'). ' && php artisan deploy:env');
+});
+
+desc('clear cache');
+task('cache-clear', function(){
     run('cd ' . get('release_path'). ' && php artisan config:clear');
 });
 
@@ -47,3 +51,4 @@ task('php-fpm:restart', function () {
 after('deploy:vendors', 'npm');
 after('npm', 'env');
 after('deploy:symlink', 'php-fpm:restart');
+after('php-fpm:restart', 'cache-clear');
