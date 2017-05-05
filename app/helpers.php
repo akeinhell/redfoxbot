@@ -98,7 +98,7 @@ function getCoordinates($text)
     $patterns = [
         '/([\d]{1,3}[\.,][\d]{5,})/isu'                           => parseSmallCoords(),
         '/([\d]{1,3})°\s*([\d]{1,2})\'\s*([\d]+)\.?([\d]+)?"/isu' => parseLongCoords(),
-        '/(?=(\d+)\s?)\1/isu'                                     => parseSimpleCoords(),
+//        '/(?=(\d+)\s?)\1/isu'                                     => parseSimpleCoords(),
     ];
 
     /**

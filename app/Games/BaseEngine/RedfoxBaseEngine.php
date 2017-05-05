@@ -118,7 +118,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             $text = preg_replace('/\s+/', ' ', $text);
             $text = str_replace('</p>', PHP_EOL, $text);
 
-            return html_entity_decode($text);
+            return html_entity_decode($text, null, 'UTF-8');
         }
         throw new TelegramCommandException('Не возможно получить текст задания', __LINE__);
     }
