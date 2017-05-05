@@ -224,7 +224,7 @@ class TelegramController extends Controller
                 if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
                 }
-                $links[] = $link;
+                $links[] = utf8_decode($link);
                 foreach ($crawler as $node) {
                     /* @var DOMElement $node */
                     $node->parentNode->removeChild($node);
@@ -246,7 +246,7 @@ class TelegramController extends Controller
 
             Bot::action()->sendMessage(
                 $chatId,
-                $string,
+                mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
                 'HTML',
                 true,
                 $replyTo, // reply
