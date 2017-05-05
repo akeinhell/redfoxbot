@@ -20,6 +20,7 @@ class HelperTest extends TestCase
                 $this->assertEquals(round($data[$i], 4), round($actual[$i], 4));
             }
         }
+        $data = getCoordinates('3 4');
     }
 
 }

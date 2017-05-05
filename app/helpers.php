@@ -48,6 +48,15 @@ function parseSmallCoords(): Closure
  */
 function parseNormalizedCoords($normalized)
 {
+    $coords = collect($normalized)
+        ->filter(function($coord){
+            return count($coord) > 2;
+        });
+
+    if ($coords->count() < 2){
+        return null;
+    }
+
     return array_map(function ($coord) {
         $deg = array_get($coord, 0, 0);
         $min = array_get($coord, 1, 0);
