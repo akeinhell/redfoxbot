@@ -158,6 +158,7 @@ return [
         Illuminate\Redis\RedisServiceProvider::class,
 
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
+        \App\Providers\TrackProvider::class,
         \App\Providers\LampaProvider::class,
     ],
 
@@ -204,7 +205,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
 
-        'Tg'  => Telegram\Bot\Laravel\Facades\Telegram::class,
-        'Lampa'  => LampaFacade::class,
+        'Tg'       => Telegram\Bot\Laravel\Facades\Telegram::class,
+        'Track' => \App\Services\Tracking\TrackingFacade::class,
+        'Lampa'    => LampaFacade::class,
     ],
 ];

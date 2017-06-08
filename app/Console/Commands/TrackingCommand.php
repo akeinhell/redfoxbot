@@ -28,9 +28,7 @@ class TrackingCommand extends Command
      */
     public function handle()
     {
-        var_dump(\Redis::sadd(TRACKING_KEY, [1,2,3,4,5]));
-        var_dump('chats', \Redis::smembers(TRACKING_KEY));
-
-
+        var_dump(\Track::addChat(1) == 0);
+        var_dump(\Track::getChatList());
     }
 }
