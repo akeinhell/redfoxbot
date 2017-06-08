@@ -45,28 +45,34 @@ class TrackingCommand extends Command
     public function handle()
     {
         $chats = \Track::getChatList();
+//        $chats = [94986676];
         foreach ($chats as $chatId) {
             try {
-                $this->info('scan ' . $chatId);
+                $cacheKey = 'TRACK:' . $chatId;
+                $this->info('scan ' . $cacheKey);
                 $engine = $this->getEngine($chatId);
                 $actualLevelList = collect($engine->getQuestList());
-                 /* $actualLevelList = collect([
-                    1 => 'test 1',
-                    2 => 'test2',
-                    3 => 'test3',
-                    4 => 'test4',
-                    5 => 'test5',
-                ]); */
-                $oldLevels       = collect(\Cache::get('TRACK:' . $chatId, [
+//                 $actualLevelList = collect([
+//                    1 => 'test 1',
+//                    2 => 'test2',
+//                    3 => 'test3',
+//                    4 => 'test4',
 //                    5 => 'test5',
-                ]));
+//                ]);
+                $oldLevels       = collect(\Cache::get($cacheKey, []));
+                $this->info('$oldLevels '. $oldLevels->toJson());
 
                 $diffKeys = $actualLevelList->diffKeys($oldLevels);
+                $this->info('diff '. $diffKeys->toJson());
                 if ($diffKeys->count()) {
+                    $newSet = $oldLevels->merge($diffKeys->toArray());
+                    $this->info('new set '. $newSet->toJson());
+                    \Cache::put($cacheKey, $newSet->toArray(), 60 * 24 * 7);
                     Bot::action()->sendMessage($chatId, $this->formatMessage($diffKeys));
                     $self = &$this;
                     if ($engine instanceof CanTrackingInterface) {
-                        $diffKeys->each(function ($title, $id) use ($engine, $self) {
+                        $diffKeys->each(function ($title, $id) use ($engine, $self, &$oldLevels) {
+                            $oldLevels->put($id, $title);
                             $self->info('get info from ' . $title . ':' . $id);
                             /** @var $engine CanTrackingInterface */
 //                            $engine->getRawHtml($id);
