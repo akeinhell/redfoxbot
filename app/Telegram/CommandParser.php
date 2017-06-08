@@ -14,6 +14,7 @@ use App\Telegram\Commands\KeyboardCommand;
 use App\Telegram\Commands\QuestCommand;
 use App\Telegram\Commands\SelectQuestCommand;
 use App\Telegram\Commands\StartCommand;
+use App\Telegram\Commands\TrackingCommand;
 use TelegramBot\Api\Types\MessageEntity;
 
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
@@ -22,6 +23,7 @@ class CommandParser
 {
     public static $commands = [
         StartCommand::class,
+        TrackingCommand::class,
 //        CodeCommand::class,
 //        SpoilerCommand::class,
         QuestCommand::class,
