@@ -29,8 +29,6 @@ class TrackingCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        $this->responseText = \Track::addChat($this->chatId) ?
-            'Добавлено отслеживание для этого чата':
-            'Вы уже включили отслеживание для этого чата :-) Не стоит тыкать много раз, от этого ничего не изменится';
+        \Track::addChat($this->chatId);
     }
 }

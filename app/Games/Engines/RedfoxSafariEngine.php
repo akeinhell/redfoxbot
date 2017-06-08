@@ -11,9 +11,10 @@ namespace App\Games\Engines;
 use App\Exceptions\NoQuestSelectedException;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\RedfoxBaseEngine;
+use App\Games\Interfaces\CanTrackingInterface;
 use App\Telegram\Config;
 
-class RedfoxSafariEngine extends RedfoxBaseEngine
+class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterface
 {
     public function getQuestList()
     {
@@ -88,5 +89,17 @@ class RedfoxSafariEngine extends RedfoxBaseEngine
         if (!Config::getValue($this->chatId, self::QUEST_ID)) {
             throw new NoQuestSelectedException();
         }
+    }
+
+    public function getRawHtml($levelId = null)
+    {
+        $url = '/play/safari/' . $levelId;
+        $response = $this->getSender()->sendGet($url);
+        if (!$this->checkAuth($response)) {
+            $this->doAuth();
+            $response = $this->getSender()->sendGet($url);
+        }
+
+        return $response;
     }
 }
