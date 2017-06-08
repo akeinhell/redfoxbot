@@ -29,7 +29,9 @@ class TrackingCommand extends AbstractCommand
 
     public function execute($payload)
     {
-//        $this->responseText = $this->getEngine()->getQuestText();
-        Redis::hset();
+
+        $this->responseText = \Track::addChat($this->chatId) ?
+            'Добавлено отслеживание для этого чата':
+            'Ошибка добавления отслеживания';
     }
 }
