@@ -22,4 +22,8 @@ class TrackingService
     public function getChatList() {
         return Redis::smembers(self::TRACKING_PREFIX . self::TRACKING_CHATS);
     }
+
+    public function removeChat($id){
+        return Redis::srem(self::TRACKING_PREFIX . self::TRACKING_CHATS, $id);
+    }
 }
