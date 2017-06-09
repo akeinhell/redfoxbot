@@ -64,6 +64,16 @@ class TrackingCommand extends Command
                     if ($engine instanceof CanTrackingInterface) {
                         foreach ($newSet as $id => $title) {
                             $this->info('fetch:    ' . $id . ':  ' . $title);
+                            try {
+                                if ($chatId === 94986676) {
+                                    $html = $engine->getRawHtml($id);
+                                    $dir  = '/var/www/safari/dump';
+                                    @\File::makeDirectory($dir, 0777, true);
+                                    file_put_contents($dir . '/' . $title . '.html', $html);
+                                }
+                            }catch (\Exception $e){
+                                $this->warn($e->getMessage());
+                            }
                         }
                     }
                 }
@@ -80,6 +90,6 @@ class TrackingCommand extends Command
 
     private function formatMessage(array $diffKeys)
     {
-        return '#Вброс' . PHP_EOL . 'Новые задания: ' . PHP_EOL . implode(PHP_EOL, array_flip($diffKeys));
+        return '#Вброс' . PHP_EOL . 'Новые задания: ' . PHP_EOL . implode(PHP_EOL, $diffKeys);
     }
 }
