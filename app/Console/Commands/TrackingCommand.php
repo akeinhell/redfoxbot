@@ -45,13 +45,14 @@ class TrackingCommand extends Command
     public function handle()
     {
         $chats = \Track::getChatList();
+	dump($chats);
 //        $chats = [94986676];
         foreach ($chats as $chatId) {
             try {
                 $cacheKey = 'TRACK:' . $chatId;
                 $this->info('scan ' . $cacheKey);
                 $engine = $this->getEngine($chatId);
-                $actualLevelList = collect($engine->getQuestList());
+                $actualLevelList = $engine->getQuestList();
 //                 $actualLevelList = collect([
 //                    1 => 'test 1',
 //                    2 => 'test2',
@@ -59,24 +60,23 @@ class TrackingCommand extends Command
 //                    4 => 'test4',
 //                    5 => 'test5',
 //                ]);
-                $oldLevels       = collect(\Cache::get($cacheKey, []));
-                $this->info('$oldLevels '. $oldLevels->toJson());
+//		dump('actual', $actualLevelList);
+                $oldLevels       = \Cache::get($cacheKey, []);
+//		dump('old', $oldLevels);
 
-                $diffKeys = $actualLevelList->diffKeys($oldLevels);
-                $this->info('diff '. $diffKeys->toJson());
-                if ($diffKeys->count()) {
-                    $newSet = $oldLevels->merge($diffKeys->toArray());
-                    $this->info('new set '. $newSet->toJson());
-                    \Cache::put($cacheKey, $newSet->toArray(), 60 * 24 * 7);
+                $diffKeys = array_flip(array_diff($actualLevelList, $oldLevels));
+//                dump('diff ', $diffKeys);
+                if ($diffKeys) {
+                    $newSet = array_flip(array_merge($oldLevels, $diffKeys));
+//		    dump('newSet', $newSet);
+                    \Cache::put($cacheKey, $newSet, 60 * 24 * 7);
                     Bot::action()->sendMessage($chatId, $this->formatMessage($diffKeys));
-                    $self = &$this;
+                    
                     if ($engine instanceof CanTrackingInterface) {
-                        $diffKeys->each(function ($title, $id) use ($engine, $self, &$oldLevels) {
-                            $oldLevels->put($id, $title);
-                            $self->info('get info from ' . $title . ':' . $id);
-                            /** @var $engine CanTrackingInterface */
-//                            $engine->getRawHtml($id);
-                        });
+//                   	dump('fetch', $newSet);                
+                  	foreach($newSet as $id => $title) {
+			    $this->info('fetch:    '.$id. ':  '.$title);
+			} 
                     }
                 }
             } catch (\Exception $e) {
@@ -90,8 +90,8 @@ class TrackingCommand extends Command
         }
     }
 
-    private function formatMessage(Collection $diffKeys)
+    private function formatMessage(array $diffKeys)
     {
-        return '#Вброс' . PHP_EOL . 'Новые задания: ' . PHP_EOL . $diffKeys->implode(PHP_EOL);
+        return '#Вброс' . PHP_EOL . 'Новые задания: ' . PHP_EOL . implode(PHP_EOL, array_flip($diffKeys));
     }
 }
