@@ -2,7 +2,7 @@
 namespace Deployer;
 require 'recipe/laravel.php';
 
-set('branch', 'feature_track');
+//set('branch', 'feature_track');
 set('repository', 'git@github.com:akeinhell/redfoxbot.git');
 
 add('shared_files', [

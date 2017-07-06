@@ -44,8 +44,6 @@ class TrackingCommand extends Command
     public function handle()
     {
         $chats = \Track::getChatList();
-//        $chats = [94986676];
-        dump($chats);
         foreach ($chats as $chatId) {
             try {
                 $cacheKey = 'TRACK:' . $chatId;
@@ -60,22 +58,6 @@ class TrackingCommand extends Command
                     $newSet = $oldLevels + $diffKeys;
                     \Cache::put($cacheKey, $newSet, 60 * 24 * 7);
                     Bot::action()->sendMessage($chatId, $this->formatMessage($diffKeys));
-
-                    if ($engine instanceof CanTrackingInterface) {
-                        foreach ($newSet as $id => $title) {
-                            $this->info('fetch:    ' . $id . ':  ' . $title);
-                            try {
-                                if ($chatId == 94986676) {
-                                    $html = $engine->getRawHtml($id);
-                                    $dir  = '/var/www/safari/dump';
-                                    @\File::makeDirectory($dir, 0777, true);
-                                    file_put_contents($dir . '/' . $title . '.html', $html);
-                                }
-                            }catch (\Exception $e){
-                                $this->warn($e->getMessage());
-                            }
-                        }
-                    }
                 }
             } catch (\Exception $e) {
                 $this->warn('remove chat: ' . $chatId . ': ' . $e->getMessage());

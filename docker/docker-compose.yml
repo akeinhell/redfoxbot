@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  fpm:
+    build: ./
+    expose:
+      - 9000
+    links:
+      - db
+    depends_on:
+      - nginx
+
+  db:
+    image: postgres:latest
+
+  nginx:
+    image: nginx:latest
+    environment:
+      - VIRTUAL_HOST=redfoxbot.dev
+    volumes:
+      - ./:/var/www/bot
+    networks:
+      - red-net
+
+
+  redis:
+    image: redis:latest
+    ports:
+      - "63791:6379"
+
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - 8008:80
+    links:
+      - nginx
+    networks:
+      - red-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  red-net:
+    driver: bridge

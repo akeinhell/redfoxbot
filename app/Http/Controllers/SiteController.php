@@ -52,11 +52,11 @@ class SiteController extends Controller
         $settings = [
             'domain' => 'foxbot_project',
             'count'  => 10,
-	    'access_token' => env('VK_ACCESS_TOKEN'),
+	        'access_token' => env('VK_ACCESS_TOKEN'),
         ];
         $url      = 'https://api.vk.com/method/wall.get?' . http_build_query($settings);
         $dataRaw  = file_get_contents($url);
-	file_put_contents('/tmp/news.log', print_r($dataRaw, 1));
+
         $dataRaw  = json_decode($dataRaw)->response;
         unset($dataRaw[0]);
         $posts = [];
