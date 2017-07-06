@@ -65,7 +65,7 @@ class TrackingCommand extends Command
                         foreach ($newSet as $id => $title) {
                             $this->info('fetch:    ' . $id . ':  ' . $title);
                             try {
-                                if ($chatId === 94986676) {
+                                if ($chatId == 94986676) {
                                     $html = $engine->getRawHtml($id);
                                     $dir  = '/var/www/safari/dump';
                                     @\File::makeDirectory($dir, 0777, true);
