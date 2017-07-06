@@ -2,6 +2,8 @@
 
 use Carbon\Carbon;
 
+const TRACKING_KEY = 'tracking_chats';
+
 if (!function_exists('format_time')) {
     /**
      * @param $time

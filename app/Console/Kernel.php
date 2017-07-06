@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\EnvVersion::class,
         Commands\QuestParserCommand::class,
+        Commands\TrackingCommand::class,
     ];
 
     /**
