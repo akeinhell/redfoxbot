@@ -45,6 +45,10 @@ class TelegramController extends Controller
 
     public function newhook()
     {
+        header("HTTP/1.1 202");
+        ob_flush();
+        flush();
+
         $dataRaw = file_get_contents('php://input');
         $encoded = json_decode($dataRaw, true);
         $update  = Update::fromResponse($encoded);
