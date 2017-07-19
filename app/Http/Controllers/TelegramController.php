@@ -12,6 +12,8 @@ use App\Telegram\Commands\SpoilerCommand;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\Config;
 use DOMElement;
+use Domnikl\Statsd\Client;
+use Domnikl\Statsd\Connection\UdpSocket;
 use Illuminate\Http\Request;
 use Log;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,6 +24,28 @@ use TelegramBot\Api\Types\Update;
 
 class TelegramController extends Controller
 {
+    private $statsd;
+
+    private $timers = [];
+
+    public function __construct()
+    {
+        $this->statsd = new Client(new UdpSocket('redfoxbot.ru', 8126), 'bot.data');
+        $this->startTimer('main');
+    }
+
+    private function startTimer($id)
+    {
+        $this->statsd->startTiming($id);
+        $this->timers[] = $id;
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->timers as $id) {
+            $this->statsd->endTiming($id);
+        }
+    }
 
     public function setup()
     {
@@ -108,6 +132,7 @@ class TelegramController extends Controller
      */
     private function parseMessage($message)
     {
+        $this->statsd->increment('message.incoming');
         $chatId = $message->getChat()->getId();
         $userId = $message->getFrom()->getId();
         if ($data = CommandParser::getCommand($message->getEntities() ?: [], $message->getText())) {
@@ -204,7 +229,7 @@ class TelegramController extends Controller
      */
     private function parseCoords($chatId, $text)
     {
-        if ($coords = getCoordinates($text)){
+        if ($coords = getCoordinates($text)) {
             list($lon, $lat) = $coords;
             Bot::action()->sendLocation($chatId, $lon, $lat);
         }
@@ -219,11 +244,12 @@ class TelegramController extends Controller
      */
     private function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
+        $this->statsd->increment('message.outgoing');
         $cr     = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');
         $links  = [];
         $cr->filter('img')
-            ->each(function(Crawler $crawler) use (&$links, $domain) {
+            ->each(function (Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
                 if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
@@ -236,7 +262,7 @@ class TelegramController extends Controller
             });
 
         $tags     = ['b', 'strong', 'i', 'code', 'a', 'pre'];
-        $response = strip_tags($message, implode(array_map(function($tag) {
+        $response = strip_tags($message, implode(array_map(function ($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {
