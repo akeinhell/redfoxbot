@@ -1,0 +1,28 @@
+machine:
+  pre:
+    - sudo apt-get update; USE_PRECOMPILE=true sudo -E circleci-install php 7.1.0
+  php:
+    version: 7.1.0
+
+  environment:
+    ENVIRONMENT: testing
+    DB_URL: 127.0.0.1
+    DB_NAME: circle_test
+    DB_USER: ubuntu
+    DB_CONNECTION: pgsql
+    APP_KEY: abcdefghijklmnopqrstuvwxyz123456
+
+test:
+  override:
+    - ls -la
+    - ./vendor/bin/phpunit
+
+dependencies:
+  override:
+    - composer install --no-interaction
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - dep deploy
