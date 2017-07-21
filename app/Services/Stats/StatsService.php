@@ -30,6 +30,4 @@ class StatsService
     {
         $this->statsd->increment($tkey, $rate);
     }
-
-
 }
