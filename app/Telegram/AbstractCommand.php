@@ -157,6 +157,8 @@ abstract class AbstractCommand
         $this->engine = new $projectClass($this->chatId);
         $this->engine->setCurrentUser($this->fromId);
 
+        \Stats::gauge('engine.' . $this->config->project, '+1');
+
         return $this->engine;
     }
 
