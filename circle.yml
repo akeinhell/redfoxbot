@@ -1,7 +1,8 @@
 machine:
-
+  pre:
+    - sudo apt-get update; USE_PRECOMPILE=true sudo -E circleci-install php 7.1.0
   php:
-    version: 7.1
+    version: 7.1.0
 
   environment:
     ENVIRONMENT: testing
