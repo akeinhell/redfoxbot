@@ -12,6 +12,11 @@ machine:
     DB_CONNECTION: pgsql
     APP_KEY: abcdefghijklmnopqrstuvwxyz123456
 
+test:
+  override:
+    - ls -la
+    - ./vendor/bin/phpunit
+
 dependencies:
   override:
     - composer install --no-interaction
