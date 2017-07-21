@@ -1,5 +1,6 @@
 <?php
 use App\Services\Lampa\LampaFacade;
+use App\Services\Stats\StatsFacade;
 
 return [
     /*
@@ -160,6 +161,7 @@ return [
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\TrackProvider::class,
         \App\Providers\LampaProvider::class,
+        \App\Providers\StatsProvider::class,
     ],
 
     /*
@@ -208,5 +210,6 @@ return [
         'Tg'       => Telegram\Bot\Laravel\Facades\Telegram::class,
         'Track' => \App\Services\Tracking\TrackingFacade::class,
         'Lampa'    => LampaFacade::class,
+        'Stats'    => StatsFacade::class,
     ],
 ];

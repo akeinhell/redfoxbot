@@ -24,28 +24,6 @@ use TelegramBot\Api\Types\Update;
 
 class TelegramController extends Controller
 {
-    private $statsd;
-
-    private $timers = [];
-
-    public function __construct()
-    {
-        $this->statsd = new Client(new UdpSocket('redfoxbot.ru', 8126), 'bot.data');
-        $this->startTimer('main');
-    }
-
-    private function startTimer($id)
-    {
-        $this->statsd->startTiming($id);
-        $this->timers[] = $id;
-    }
-
-    public function __destruct()
-    {
-        foreach ($this->timers as $id) {
-            $this->statsd->endTiming($id);
-        }
-    }
 
     public function setup()
     {
@@ -132,7 +110,7 @@ class TelegramController extends Controller
      */
     private function parseMessage($message)
     {
-        $this->statsd->increment('message.incoming');
+        \Stats::increment('message.incoming');
         $chatId = $message->getChat()->getId();
         $userId = $message->getFrom()->getId();
         if ($data = CommandParser::getCommand($message->getEntities() ?: [], $message->getText())) {
@@ -153,15 +131,18 @@ class TelegramController extends Controller
             $auto = Config::getValue($chatId, 'auto', 'true') === 'true';
             $code = new CodeCommand($chatId, $userId);
             if (preg_match('/^[' . $pattern . ']+$/i', $message->getText()) && $auto) {
+                \Stats::increment('send.code');
                 $code->execute($message->getText());
                 $this->exec($code, $chatId, $message->getMessageId());
             }
             if (preg_match('/^!(.*?)$/i', $message->getText(), $codes)) {
+                \Stats::increment('send.code');
                 $code->execute($codes[1]);
                 $this->exec($code, $chatId, $message->getMessageId());
             }
 
             if (preg_match('/^\?(.*?)$/i', $message->getText(), $codes)) {
+                \Stats::increment('send.spoiler');
                 $spoiler = new SpoilerCommand($chatId, $userId);
                 $spoiler->execute($codes[1]);
                 $this->exec($spoiler, $chatId, $message->getMessageId());
@@ -230,6 +211,7 @@ class TelegramController extends Controller
     private function parseCoords($chatId, $text)
     {
         if ($coords = getCoordinates($text)) {
+            \Stats::increment('send.coords');
             list($lon, $lat) = $coords;
             Bot::action()->sendLocation($chatId, $lon, $lat);
         }
@@ -244,7 +226,6 @@ class TelegramController extends Controller
      */
     private function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
-        $this->statsd->increment('message.outgoing');
         $cr     = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');
         $links  = [];
@@ -266,6 +247,7 @@ class TelegramController extends Controller
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {
+            \Stats::increment('message.outgoing');
             foreach ($tags as $tag) {
                 $tagPattern = '<' . $tag . '>';
                 // @TODO костыль
@@ -285,6 +267,7 @@ class TelegramController extends Controller
         }
 
         foreach ($links as $link) {
+            \Stats::increment('message.outgoing');
             Bot::action()->sendMessage(
                 $chatId,
                 $link,
