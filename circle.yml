@@ -1,0 +1,22 @@
+machine:
+
+  php:
+    version: 7.1
+
+  environment:
+    ENVIRONMENT: testing
+    DB_URL: 127.0.0.1
+    DB_NAME: circle_test
+    DB_USER: ubuntu
+    DB_CONNECTION: pgsql
+    APP_KEY: abcdefghijklmnopqrstuvwxyz123456
+
+dependencies:
+  override:
+    - composer install --no-interaction
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - dep deploy
