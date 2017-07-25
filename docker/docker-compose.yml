@@ -10,6 +10,7 @@ services:
       - redis
     volumes:
       - ../:/var/www
+    restart: always
 
   db:
     image: postgres:latest
