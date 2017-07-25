@@ -21,8 +21,8 @@ dependencies:
   override:
     - composer install --no-interaction
 
-deployment:
-  production:
-    branch: master
-    commands:
-      - dep deploy
+#deployment:
+#  production:#
+#branch: master
+#commands:
+#  - dep deploy
