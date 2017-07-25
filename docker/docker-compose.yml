@@ -2,43 +2,25 @@ version: '2'
 
 services:
   fpm:
-    build: ./
-    expose:
-      - 9000
+    image: ttaranto/docker-nginx-php7
+    ports:
+      - 8008:80
     links:
       - db
-    depends_on:
-      - nginx
+      - redis
+    volumes:
+      - ../:/var/www
 
   db:
     image: postgres:latest
-
-  nginx:
-    image: nginx:latest
     environment:
-      - VIRTUAL_HOST=redfoxbot.dev
+      - POSTGRES_PASSWORD=root
     volumes:
-      - ./:/var/www/bot
-    networks:
-      - red-net
-
+      - ./docker/data/postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
     ports:
       - "63791:6379"
-
-  lb:
-    image: dockercloud/haproxy
-    ports:
-      - 8008:80
-    links:
-      - nginx
-    networks:
-      - red-net
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
-networks:
-  red-net:
-    driver: bridge
+      - ./docker/data/redis:/data
