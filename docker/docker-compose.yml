@@ -3,8 +3,6 @@ version: '2'
 services:
   fpm:
     image: ttaranto/docker-nginx-php7
-    ports:
-      - 8008:80
     links:
       - db
       - redis
@@ -17,11 +15,21 @@ services:
     environment:
       - POSTGRES_PASSWORD=root
     volumes:
-      - ./docker/data/postgres-data:/var/lib/postgresql/data
+      - ./data/postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
     ports:
       - "63791:6379"
     volumes:
-      - ./docker/data/redis:/data
+      - ./data/redis:/data
+
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - 4430:80
+      - 8008:80
+    links:
+      - fpm
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
