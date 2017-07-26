@@ -18,4 +18,6 @@ RUN composer dump-autoload --optimize && \
 
 RUN npm run build
 
+COPY public/dist ./public/dist
+
 
