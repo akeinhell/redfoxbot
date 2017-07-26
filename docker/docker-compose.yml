@@ -2,7 +2,7 @@ version: '2'
 
 services:
   fpm:
-    image: ttaranto/docker-nginx-php7
+    image: akeinhell/redfoxbot
     links:
       - db
       - redis

@@ -6,7 +6,7 @@
     "type": "project",
     "minimum-stability":"dev",
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=7.1",
         "laravel/framework": "5.2.*",
         "telegram-bot/api": "dev-master",
         "guzzlehttp/guzzle": "^6",
@@ -28,9 +28,6 @@
         "codacy/coverage": "dev-master"
     },
     "autoload": {
-        "classmap": [
-            "database"
-        ],
         "psr-4": {
             "App\\": "app/"
         },
@@ -40,7 +37,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/TestCase.php"
+            "tests/TestCase.php",
+            "database"
         ]
     },
     "scripts": {
