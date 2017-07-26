@@ -40,7 +40,9 @@ class Config
         if (!$config) {
             $db = \App\Config::whereChatId($chatId)->first();
             if ($db) {
-                return json_decode($db->config);
+                $data = json_decode($db->config);
+                self::set($chatId, $data);
+                return $data;
             }
         }
 
