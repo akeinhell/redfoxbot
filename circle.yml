@@ -3,6 +3,10 @@ machine:
     - sudo apt-get update; USE_PRECOMPILE=true sudo -E circleci-install php 7.1.0
   php:
     version: 7.1.0
+  node:
+    version: v8.2.0
+  services:
+    - postgresql
 
   environment:
     ENVIRONMENT: testing
@@ -12,14 +16,35 @@ machine:
     DB_CONNECTION: pgsql
     APP_KEY: abcdefghijklmnopqrstuvwxyz123456
 
+general:
+  artifacts:
+    - ./build/logs/clover.xml
+
 test:
+  post:
+    - ls ./build/logs/clover.xml
+    - ls -la $CIRCLE_ARTIFACTS
+    - php vendor/bin/codacycoverage clover ./build/logs/clover.xml
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover build/logs/clover.xml
+    - bash <(curl -s https://codecov.io/bash)
+
   override:
     - ls -la
-    - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
 dependencies:
   override:
+    - composer global require hirak/prestissimo
     - composer install --no-interaction
+    - composer require satooshi/php-coveralls
+    - createdb test
+    - echo "CREATE ROLE test WITH UNENCRYPTED PASSWORD 'password';" | psql -U postgres
+    - echo "ALTER ROLE test WITH LOGIN;" | psql -U postgres
+    - echo "GRANT SELECT, UPDATE, INSERT ON ALL TABLES IN SCHEMA test.public TO test;" | psql -U postgres
+    - echo "GRANT CREATE, CONNECT ON DATABASE test TO test;" | psql -U postgres
+    - php artisan migrate --force
+
 
 #deployment:
 #  production:#

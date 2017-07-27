@@ -17,7 +17,7 @@ class CreateConfigsTable extends Migration
         Schema::create('configs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('chat_id')->unique();
-            $table->jsonb('config');
+            $table->jsonb('config')->nullable();
             $table->timestamps();
         });
     }

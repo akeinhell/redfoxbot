@@ -3,24 +3,33 @@ language: php
 php:
   - 7.1
 
-sudo: false
+services:
+  - mysql
 
-install:
-  - composer require satooshi/php-coveralls
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - php: hhvm
+dist: trusty
+sudo: required
 
 before_script:
+  - mysql -V
+  - bash .travis.setup-db.sh
+  - mysql -V
+  - composer global require hirak/prestissimo
   - travis_retry composer self-update
-  - travis_retry composer update --no-interaction --prefer-source
+  - travis_retry composer update
+  - composer require satooshi/php-coveralls
+  - cp .env.travis .env
+  - mysql -e 'create database test;'
+  - php artisan key:generate
+  - php artisan migrate --force
+
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
 
-after_success:
+dependencies:
+  cache_directories:
+    - node_modules
+    - vendor
 
 after_success:
   - php vendor/bin/codacycoverage clover build/logs/clover.xml

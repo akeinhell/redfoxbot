@@ -9,6 +9,7 @@
 namespace App\Games;
 
 use App\Exceptions\TelegramCommandException;
+use App\Helpers\Cookie\S3CookieJar;
 use App\Telegram\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -116,13 +117,13 @@ class Sender
     /**
      * @param $chatId
      *
-     * @return FileCookieJar
+     * @return S3CookieJar
      */
     public static function getCookieFile($chatId)
     {
-        $cookieFile = storage_path('cookies/c' . $chatId . '.jar');
+        $cookieFile = 'cookies/c' . $chatId . '.jar';
 
-        return new FileCookieJar($cookieFile, true);
+        return new S3CookieJar($cookieFile, true);
     }
 
     private function formatResponse(ResponseInterface $response)
