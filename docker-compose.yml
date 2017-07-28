@@ -2,17 +2,16 @@ version: '2'
 
 services:
   fpm:
-    image: akeinhell/redfoxbot:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     links:
       - db
       - redis
     depends_on:
       - db
     volumes:
-      - .env:/var/www/.env
-      - ./data/laravel/storage/logs/:/var/www/storage/logs
-      - ./data/laravel/storage/chats/:/var/www/storage/chats
-      - ./data/laravel/storage/cookies/:/var/www/storage/cookies
+      - ./:/var/www/
     restart: always
 
   db:
@@ -22,14 +21,14 @@ services:
       - POSTGRES_DB=telegram
       - POSTGRES_USER=root
     volumes:
-      - ./data/postgres-data:/var/lib/postgresql/data
+      - ./docker/data/postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
     ports:
       - "63791:6379"
     volumes:
-      - ./data/redis:/data
+      - ./docker/data/redis:/data
     command: redis-server --appendonly yes
 
   lb:

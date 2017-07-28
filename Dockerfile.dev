@@ -1,0 +1,11 @@
+FROM akeinhell/docker-nginx-php7.1
+
+WORKDIR /var/www
+
+
+#RUN composer install
+#RUN npm install
+#RUN npm run build
+
+
+
