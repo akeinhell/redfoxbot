@@ -42,7 +42,10 @@ class Config
             if ($db) {
                 $data = json_decode($db->config);
                 self::set($chatId, $data);
+
                 return $data;
+            } else {
+                return new \stdClass();
             }
         }
 
