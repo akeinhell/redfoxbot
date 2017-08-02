@@ -13,7 +13,7 @@ class CreateTChatsTable extends Migration
     public function up()
     {
         Schema::create('t_chats', function (Blueprint $table) {
-            $table->integer('id')->unique();
+            $table->unsignedBigInteger('id')->unique();
             $table->enum('type', [
                 'private',
                 'group',

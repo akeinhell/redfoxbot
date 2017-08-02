@@ -14,7 +14,7 @@ class CreateTChatMembersTable extends Migration
     {
         Schema::create('t_chat_members', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->enum('status', ['creator', 'administrator', 'member', 'left', 'kicked']);
             $table->timestamps();
         });
