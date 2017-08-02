@@ -44,9 +44,8 @@ class Config
                 self::set($chatId, $data);
 
                 return $data;
-            } else {
-                return new \stdClass();
             }
+            return new \stdClass();
         }
 
         return $config ?: $default;
