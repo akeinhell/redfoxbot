@@ -25,6 +25,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 
     protected function getRandomChatId()
     {
-        return '_test_' . random_int(PHP_INT_MIN, PHP_INT_MAX);
+        return random_int(PHP_INT_MIN, PHP_INT_MAX);
     }
 }

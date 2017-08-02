@@ -10,7 +10,7 @@ class ConfigTest extends TestCase
         $chatId = $this->getRandomChatId();
 
         $this->assertNull(\Config::get(str_random()));
-        
+
         $randomKey = str_random();
         $randomVal = str_random();
 
