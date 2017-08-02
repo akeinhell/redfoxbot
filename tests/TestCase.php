@@ -16,10 +16,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
+        $app = require __DIR__ . '/../bootstrap/app.php';
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    protected function getRandomChatId()
+    {
+        return '_test_' . random_int(PHP_INT_MIN, PHP_INT_MAX);
     }
 }
