@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: akeinhell/redfoxbot:latest
+    working_directory: /tmp/my-project
+    steps:
+      - deploy:
+          name: Maybe Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              dep deploy
+            else
+              echo "Not master branch so not deploying"
+            fi
