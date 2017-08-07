@@ -4,6 +4,17 @@ jobs:
   build:
     docker:
       - image: akeinhell/docker-nginx-php7.1
+        environment:
+          - DB_HOST=localhost
+          - DB_CONNECTION=pgsql
+          - DB_DATABASE=test
+          - DB_USERNAME=test
+          - DB_PASSWORD=test
+      - image: postgres:9.5
+        environment:
+        - POSTGRES_PASSWORD=test
+        - POSTGRES_DB=test
+        - POSTGRES_USER=test
     working_directory: /tmp/laravel
     steps:
       - checkout
@@ -22,6 +33,13 @@ jobs:
       - run: php vendor/bin/codacycoverage clover ./build/logs/clover.xml
       - run: php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover build/logs/clover.xml
       - run: bash <(curl -s https://codecov.io/bash)
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              dep deploy
+            else
+              echo "Only master branc build"
+            fi
 
 workflows:
   version: 2
