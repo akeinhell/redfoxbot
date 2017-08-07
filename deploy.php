@@ -28,7 +28,9 @@ host('production')
     ->user('ubuntu')
     ->set('keep_releases', 5)
     ->set('deploy_path', '/var/www/telegram')
-    ->identityFile('~/.ssh/id_rsa');
+    ->identityFile('~/.ssh/id_rsa')
+    ->addSshOption('UserKnownHostsFile', '/dev/null')
+    ->addSshOption('StrictHostKeyChecking', 'no');
 
 task('npm', function () {
     run('cd ' . get('release_path'). ' && yarn install');
