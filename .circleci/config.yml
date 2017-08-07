@@ -1,10 +1,101 @@
 version: 2
+version: 2.0
+
 jobs:
-  build:
-    docker:
-      - image: akeinhell/redfoxbot:latest
-    working_directory: /tmp/my-project
+  checkout_code:
+    working_directory: ~/redfoxbot
     steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-repo-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/redfoxbot
+
+  bundle_dependencies:
+    working_directory: ~/redfoxbot
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ checksum "package-json.lock" }}
+      - run: npm install
+      - save_cache:
+          key: v1-npm-{{ checksum "package-json.lock" }}
+          paths:
+            - ~/redfoxbot/node_modules
+
+  phpunit:
+    docker:
+      - image: circleci/postgres:9.5.0-alpine
+    working_directory: ~/redfoxbot
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ checksum "package-json.lock" }}
+      - run:
+          - createdb test
+          - echo "CREATE ROLE test WITH UNENCRYPTED PASSWORD 'password';" | psql -U postgres
+          - echo "ALTER ROLE test WITH LOGIN;" | psql -U postgres
+          - echo "GRANT SELECT, UPDATE, INSERT ON ALL TABLES IN SCHEMA test.public TO test;" | psql -U postgres
+          - echo "GRANT CREATE, CONNECT ON DATABASE test TO test;" | psql -U postgres
+      - run: ./artisan migrate
+      - run:
+          name: Run tests
+          command: ./vendor/bin/phpunit
+
+  deploy:
+    machine:
+        enabled: true
+    working_directory: ~/redfoxbot
+    environment:
+      - HEROKU_APP: still-shelf-38337
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v1-bundle-{{ checksum "package-json.lock" }}
+      - restore_cache:
+          keys:
+            - v1-assets-{{ checksum ".circle-sha" }}
+      - run:
+          name: Setup Heroku
+          command: bash .circleci/setup-heroku.sh
+      - run:
+          command: |
+            git push heroku fan-in-fan-out:master
+            heroku run rake db:migrate
+            sleep 5 # sleep for 5 seconds to wait for dynos
+            heroku restart
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - checkout_code
+      - bundle_dependencies:
+          requires:
+            - checkout_code
+      - rake_test:
+          requires:
+            - checkout_code
+            - bundle_dependencies
       - deploy:
           name: Maybe Deploy
           command: |
@@ -13,3 +104,6 @@ jobs:
             else
               echo "Not master branch so not deploying"
             fi
+          requires:
+            - checkout_code
+            - phpunit
