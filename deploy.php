@@ -22,15 +22,13 @@ add('writable_dirs', [
 ]);
 
 // Servers
-$configMethod = getenv('CIRCLECI') ? 'configFile' : 'identityFile';
-$configArgs = getenv('CIRCLECI') ? '~/.ssh/config' : '~/.ssh/id_rsa';
 
 host('production')
     ->hostname('redfoxbot.ru')
     ->user('ubuntu')
     ->set('keep_releases', 5)
     ->set('deploy_path', '/var/www/telegram')
-    ->{$configMethod}($configArgs);
+    ->identityFile('~/.ssh/id_rsa');
 
 task('npm', function () {
     run('cd ' . get('release_path'). ' && yarn install');
