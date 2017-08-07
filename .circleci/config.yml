@@ -4,16 +4,14 @@ jobs:
   build:
     docker:
       - image: akeinhell/docker-nginx-php7.1
-    working_directory: ~/laravel
+    working_directory: /tmp/laravel
     steps:
       - checkout
       - run: composer self-update
       - restore_cache:
           keys:
             - composer-v1-{{ checksum "composer.json" }}
-            - composer-v1-
       - run: composer install -n --prefer-dist
-      - run: composer require satooshi/php-coveralls
       - save_cache:
           key: composer-v1-{{ checksum "composer.json" }}
           paths:
@@ -32,10 +30,15 @@ jobs:
         - POSTGRES_PASSWORD=test
         - POSTGRES_DB=test
         - POSTGRES_USER=test
-    working_directory: ~/laravel
+    working_directory: /tmp/laravel
     steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.json" }}
       - run: php artisan migrate --force
       - run: ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+      - run: composer require satooshi/php-coveralls
       - run: php vendor/bin/codacycoverage clover ./build/logs/clover.xml
       - run: php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover build/logs/clover.xml
       - run: bash <(curl -s https://codecov.io/bash)
