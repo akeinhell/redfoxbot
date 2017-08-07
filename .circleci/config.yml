@@ -14,12 +14,12 @@ jobs:
       - checkout
       - run: composer self-update
       - run: composer global require hirak/prestissimo
-      - run: composer require satooshi/php-coveralls
       - restore_cache:
           keys:
             - composer-v1-{{ checksum "composer.json" }}
             - composer-v1-
       - run: composer install -n --prefer-dist
+      - run: composer require satooshi/php-coveralls
       - save_cache:
           key: composer-v1-{{ checksum "composer.json" }}
           paths:
