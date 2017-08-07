@@ -30,6 +30,7 @@ jobs:
           key: composer-v1-{{ checksum "composer.json" }}
           paths:
             - vendor
+      - run: php artisan migrate
       - run: ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
       - run: php vendor/bin/codacycoverage clover ./build/logs/clover.xml
       - run: wget https://scrutinizer-ci.com/ocular.phar
