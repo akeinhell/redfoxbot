@@ -32,6 +32,5 @@ jobs:
       - run: php artisan migrate --force
       - run: ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
       - run: php vendor/bin/codacycoverage clover ./build/logs/clover.xml
-      - run: wget https://scrutinizer-ci.com/ocular.phar
       - run: php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover build/logs/clover.xml
       - run: bash <(curl -s https://codecov.io/bash)
