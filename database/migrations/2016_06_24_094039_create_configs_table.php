@@ -16,7 +16,7 @@ class CreateConfigsTable extends Migration
         DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'array');
         Schema::create('configs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('chat_id')->unique();
+            $table->unsignedBigInteger('chat_id')->unique();
             $table->jsonb('config');
             $table->timestamps();
         });

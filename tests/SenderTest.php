@@ -5,14 +5,33 @@ use App\Telegram\Config;
 
 class SenderTest extends TestCase
 {
-    public function testSender()
+    private $cookies = [
+        'name' => 'key'
+    ];
+
+    private $chatId = 0;
+    private $sender;
+    private $testUrl;
+
+    public function setUp()
     {
-        $config = new stdClass();
-        $config->url = 'http://httpbin.org';
-        Config::set(0, $config);
-        $this->assertEquals($config->url, Config::getValue(0, 'url'));
-        $sender = \App\Games\Sender::getInstance(0);
-        $this->assertNotNull($sender->sendGet('/cookies/set?name=value'));
+        parent::setUp();
+        $this->createApplication();
+        $this->testUrl = 'http://httpbin.org';
+        Config::setValue($this->chatId, 'url', $this->testUrl);
+        $this->sender = \App\Games\Sender::getInstance($this->chatId);
     }
 
+    public function testCookiesSet() {
+        $this->assertNotNull($this->sender->sendGet('/cookies/set', $this->cookies));
+    }
+
+    public function testSender()
+    {
+        $this->assertEquals($this->testUrl, Config::getValue($this->chatId, 'url'));
+
+        $response = $this->sender->sendGet('/cookies');
+        $json = json_decode($response, true);
+        $this->assertEquals(array_get($this->cookies, 'name'), array_get($json, 'cookies.name'));
+    }
 }
