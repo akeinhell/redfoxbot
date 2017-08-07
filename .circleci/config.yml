@@ -92,7 +92,7 @@ workflows:
       - bundle_dependencies:
           requires:
             - checkout_code
-      - rake_test:
+      - phpunit:
           requires:
             - checkout_code
             - bundle_dependencies
