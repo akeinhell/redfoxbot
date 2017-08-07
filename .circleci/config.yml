@@ -7,13 +7,13 @@ jobs:
         environment:
           - DB_HOST=localhost
           - DB_CONNECTION=pgsql
-          - DB_DATABASE=telegram
+          - DB_DATABASE=test
           - DB_USERNAME=test
           - DB_PASSWORD=test
       - image: postgres:9.5
         environment:
           - POSTGRES_PASSWORD=test
-          - POSTGRES_DB=telegram
+          - POSTGRES_DB=test
           - POSTGRES_USER=test
     working_directory: ~/laravel
     steps:
