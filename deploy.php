@@ -1,6 +1,7 @@
 <?php
 namespace Deployer;
-require 'recipe/laravel.php';
+require './vendor/deployer/deployer/recipe/laravel.php';
+
 
 //set('branch', 'feature_track');
 set('repository', 'git@github.com:akeinhell/redfoxbot.git');
@@ -21,12 +22,15 @@ add('writable_dirs', [
 ]);
 
 // Servers
+$configMethod = getenv('CIRCLECI') ? 'configFile' : 'identityFile';
+$configArgs = getenv('CIRCLECI') ? '~/.ssh/config' : '~/.ssh/id_rsa';
 
-server('production', 'redfoxbot.ru')
+host('production')
+    ->hostname('redfoxbot.ru')
     ->user('ubuntu')
-    ->identityFile()
     ->set('keep_releases', 5)
-    ->set('deploy_path', '/var/www/telegram');
+    ->set('deploy_path', '/var/www/telegram')
+    ->{$configMethod}($configArgs);
 
 task('npm', function () {
     run('cd ' . get('release_path'). ' && yarn install');
@@ -47,6 +51,7 @@ task('cache-clear', function(){
 desc('Restart PHP-FPM service');
 task('php-fpm:restart', function () {
     run('sudo systemctl restart php7.0-fpm.service');
+    run('sudo systemctl restart php7.1-fpm.service');
 });
 after('deploy:vendors', 'npm');
 after('npm', 'env');

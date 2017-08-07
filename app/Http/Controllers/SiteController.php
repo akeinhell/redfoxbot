@@ -45,7 +45,6 @@ class SiteController extends Controller
      */
     public function getLastNews()
     {
-        \Stats::increment('site.index');
         if ($news = \Cache::get(self::NEWS_KEY)) {
             return $news;
         }

@@ -36,7 +36,7 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              dep deploy
+              ./vendor/bin/dep deploy
             else
               echo "Only master branc build"
             fi

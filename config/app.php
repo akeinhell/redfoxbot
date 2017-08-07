@@ -1,6 +1,5 @@
 <?php
 use App\Services\Lampa\LampaFacade;
-use App\Services\Stats\StatsFacade;
 
 return [
     /*
