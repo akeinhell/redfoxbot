@@ -1,5 +1,6 @@
 [![codecov](https://codecov.io/gh/akeinhell/redfoxbot/branch/master/graph/badge.svg)](https://codecov.io/gh/akeinhell/redfoxbot)
 
+BuildStatus: [![CircleCI](https://circleci.com/gh/akeinhell/redfoxbot/tree/master.svg?style=svg)](https://circleci.com/gh/akeinhell/redfoxbot/tree/master)
 
 ### Официальный репозиторий телеграмм-бота [Лиса](https://redfoxbot.ru)
 
@@ -8,8 +9,8 @@
 - encounter
 - Dozor.lite
 - экипаж
-- lampagame
-- dozor classic
+- ~~lampagame~~
+- ~~dozor classic~~
 
 
 ## Установка

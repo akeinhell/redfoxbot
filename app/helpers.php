@@ -18,6 +18,24 @@ if (!function_exists('format_time')) {
     }
 }
 
+if (!function_exists('publish_to_sns')) {
+    /**
+     * @param $message
+     *
+     * @return string
+     */
+    function publish_to_sns($message)
+    {
+        try {
+            $sns    = new AmazonSNS(env('S3_KEY'), env('S3_SECRET'));
+            $topics = $sns->listTopics();
+            $sns->publish(current($topics)['TopicArn'], json_encode($message));
+        } catch (\Exception $e) {
+            Log::critical('Cannot publish to sns: '.$e->getMessage());
+        }
+    }
+}
+
 if (!function_exists('format_text')) {
     /**
      * Убирает HTML тэги для бота.
