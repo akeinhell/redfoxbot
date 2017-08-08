@@ -44,6 +44,7 @@ class TrackingCommand extends Command
     public function handle()
     {
         $chats = \Track::getChatList();
+        $isNotified = false;
         foreach ($chats as $chatId) {
             try {
                 $cacheKey = 'TRACK:' . $chatId;
@@ -55,6 +56,10 @@ class TrackingCommand extends Command
 
                 $diffKeys = array_diff($actualLevelList, $oldLevels);
                 if ($diffKeys) {
+                    if (!$isNotified) {
+                        publish_to_sns($diffKeys);
+                        $isNotified = true;
+                    }
                     $newSet = $oldLevels + $diffKeys;
                     \Cache::put($cacheKey, $newSet, 60 * 24 * 7);
                     Bot::action()->sendMessage($chatId, $this->formatMessage($diffKeys));
