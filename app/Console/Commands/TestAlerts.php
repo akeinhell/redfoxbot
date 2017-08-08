@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use AmazonSNS;
 use App\Jobs\AlertJob;
+use AWS;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
@@ -31,6 +33,8 @@ class TestAlerts extends Command
      */
     public function handle()
     {
-        $this->dispatch(new AlertJob());
+        publish_to_sns([
+            'quest_list' => [1,2,3,4]
+        ]);
     }
 }
