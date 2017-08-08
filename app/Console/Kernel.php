@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\EnvVersion::class,
         Commands\QuestParserCommand::class,
         Commands\TrackingCommand::class,
+        Commands\TestAlerts::class,
     ];
 
     /**

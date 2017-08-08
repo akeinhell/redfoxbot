@@ -51,10 +51,10 @@ return [
 
         'sqs' => [
             'driver' => 'sqs',
-            'key' => 'your-public-key',
-            'secret' => 'your-secret-key',
-            'prefix' => 'https://sqs.us-east-1.amazonaws.com/your-account-id',
-            'queue' => 'your-queue-name',
+            'key' => env('S3_KEY'),
+            'secret' => env('S3_SECRET'),
+            'prefix' => 'https://sqs.us-east-1.amazonaws.com/101606170543',
+            'queue' => 'redfoxbot',
             'region' => 'us-east-1',
         ],
 
