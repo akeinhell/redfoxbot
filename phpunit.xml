@@ -27,9 +27,10 @@
         <env name="TELEGRAM_KEY" value="...."/>
     </php>
     <logging>
+        <log type="junit" target="./report/junit/report.xml" logIncompleteSkipped="false"/>
         <log type="coverage-html" target="report" charset="UTF-8"
              yui="true" highlight="true"
              lowUpperBound="50" highLowerBound="80" />
-        <log type="coverage-clover" target="./coverage.xml"/>
+        <log type="coverage-clover" target="./report/clover/coverage.xml"/>
     </logging>
 </phpunit>
