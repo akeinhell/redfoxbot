@@ -12,7 +12,6 @@ use App\Exceptions\TelegramCommandException;
 use App\Helpers\Cookie\S3CookieJar;
 use App\Telegram\Config;
 use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\FileCookieJar;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
@@ -29,10 +28,15 @@ class Sender
     /**
      * @var Client
      */
-    public $client;
+    public         $client;
     private static $instance = [];
-    private $jar;
-    private $config;
+    private        $jar;
+    private        $config;
+
+    /**
+     * @var HandlerStack
+     */
+    public        $stack;
 
     public function __construct($chatId, $enableExceptions = true)
     {
@@ -50,8 +54,8 @@ class Sender
 
             return;
         }
-        $stack = HandlerStack::create();
-        $stack->push(
+        $this->stack = HandlerStack::create();
+        $this->stack->push(
             Middleware::log(
                 \Log::getMonolog(),
                 new MessageFormatter('[{code}] {method} {uri}')
@@ -63,8 +67,8 @@ class Sender
             'headers'     => [
                     'User-Agent'       => self::getUserAgent(),
                 ],
-            'debug'       => env('APP_DEBUG') ?: true,
-            'handler'     => $stack,
+            'debug'       => env('APP_DEBUG'),
+            'handler'     => $this->stack,
             'http_errors' => $this->enableExceptions,
         ];
         $this->client = new Client($params);
@@ -108,7 +112,12 @@ class Sender
         try {
             $response = $this->client->get($url . '?' . http_build_query($params));
         } catch (\Exception $e) {
-            throw new TelegramCommandException('Ошибка доступа к движку');
+            \Log::error($e->getMessage(), compact('url', 'params'));
+
+            throw new TelegramCommandException(implode(': ', [
+                'Ошибка доступа к движку',
+                $e->getMessage()
+            ]));
         }
 
         return $this->formatResponse($response);
