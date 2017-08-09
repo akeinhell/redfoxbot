@@ -12,6 +12,7 @@ use App\Exceptions\TelegramCommandException;
 use App\Helpers\Cookie\S3CookieJar;
 use App\Telegram\Config;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\FileCookieJar;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
@@ -20,6 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class Sender
 {
+    private static $instance = [];
     public $lastRequest;
     /**
      * @var Uri
@@ -28,26 +30,24 @@ class Sender
     /**
      * @var Client
      */
-    public         $client;
-    private static $instance = [];
-    private        $jar;
-    private        $config;
-
+    public $client;
     /**
      * @var HandlerStack
      */
-    public        $stack;
+    public $stack;
+    private $jar;
+    private $config;
 
     public function __construct($chatId, $enableExceptions = true)
     {
-        $this->chatId           = $chatId;
+        $this->chatId = $chatId;
         $this->enableExceptions = $enableExceptions;
         $this->updateParams();
     }
 
     public function updateParams()
     {
-        $this->jar    = static::getCookieFile($this->chatId);
+        $this->jar = static::getCookieFile($this->chatId);
         $this->config = Config::get($this->chatId);
         if (!$this->config) {
             \Log::error('Cannot load config', [$this->chatId]);
@@ -65,13 +65,25 @@ class Sender
             'base_uri'    => $this->config->url,
             'cookies'     => $this->jar,
             'headers'     => [
-                    'User-Agent'       => self::getUserAgent(),
-                ],
+                'User-Agent' => self::getUserAgent(),
+            ],
             'debug'       => env('APP_DEBUG'),
             'handler'     => $this->stack,
             'http_errors' => $this->enableExceptions,
         ];
         $this->client = new Client($params);
+    }
+
+    /**
+     * @param $chatId
+     *
+     * @return FileCookieJar
+     */
+    public static function getCookieFile($chatId)
+    {
+        $cookieFile = storage_path('cookies/c' . $chatId . '.jar');
+
+        return new FileCookieJar($cookieFile, true);
     }
 
     public static function getUserAgent()
@@ -107,6 +119,11 @@ class Sender
         return $this->formatResponse($response);
     }
 
+    private function formatResponse(ResponseInterface $response)
+    {
+        return (string)$response->getBody();
+    }
+
     public function sendGet($url, $params = [])
     {
         try {
@@ -116,27 +133,10 @@ class Sender
 
             throw new TelegramCommandException(implode(': ', [
                 'Ошибка доступа к движку',
-                $e->getMessage()
+                $e->getMessage(),
             ]));
         }
 
         return $this->formatResponse($response);
-    }
-
-    /**
-     * @param $chatId
-     *
-     * @return S3CookieJar
-     */
-    public static function getCookieFile($chatId)
-    {
-        $cookieFile = 'cookies/c' . $chatId . '.jar';
-
-        return new S3CookieJar($cookieFile, true);
-    }
-
-    private function formatResponse(ResponseInterface $response)
-    {
-        return (string) $response->getBody();
     }
 }

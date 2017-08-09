@@ -10,6 +10,10 @@ namespace App\Games\BaseEngine;
 
 use App\Games\Sender;
 use App\Telegram\Config;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\MessageFormatter;
+use GuzzleHttp\Middleware;
 
 abstract class AbstractGameEngine
 {
@@ -38,11 +42,34 @@ abstract class AbstractGameEngine
     public function __construct($chatId)
     {
         $this->chatId = $chatId;
+
+        $this->jar = Sender::getCookieFile($this->chatId);
+        $this->stack = HandlerStack::create();
+        $this->stack->push(
+            Middleware::log(
+                \Log::getMonolog(),
+                new MessageFormatter('[{code}] {method} {uri}')
+            ), 'logger'
+        );
+        $params = [
+            'base_uri'    => Config::getValue($chatId, 'url'),
+            'cookies'     => $this->jar,
+            'headers'     => [
+                'User-Agent' => Sender::getUserAgent(),
+            ],
+            'handler'     => $this->stack,
+            'http_errors' => false,
+        ];
+        $this->client = new Client($params);
     }
 
-    abstract public function checkAuth();
+    public function checkAuth() {
+        throw new \Exception('not implemented');
+    }
 
-    abstract public function doAuth();
+    public function doAuth(){
+        throw new \Exception('not implemented');
+    }
 
     abstract public function sendCode($code);
 
@@ -61,7 +88,7 @@ abstract class AbstractGameEngine
     {
         $this->userId = $userId;
     }
-  
+
     protected function checkConfig()
     {
         $this->config = Config::get($this->chatId);

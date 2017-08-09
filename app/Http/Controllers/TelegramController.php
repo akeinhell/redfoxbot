@@ -62,7 +62,7 @@ class TelegramController extends Controller
 
         if ($message) {
             try {
-                return $this->parseMessage($message, $dataRaw);
+                return $this->parseMessage($message);
             } catch (TelegramCommandException $e) {
                 // FIXME rjcnskm
                 try {
