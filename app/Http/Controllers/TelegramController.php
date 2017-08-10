@@ -25,9 +25,15 @@ class TelegramController extends Controller
 
     public function setup()
     {
-        dump(Bot::action()->setWebhook([
-            'url' => \URL::to('newbot'),
-        ]));
+        $result = [];
+        try {
+            $result['status'] = Bot::action()->setWebhook(\URL::to('hook'));
+        } catch (\Exception $e) {
+            $result['message'] = $e->getMessage();
+            $result['status']  = false;
+        }
+
+        return response()->json($result);
     }
 
     public function generateToken(Request $request)
