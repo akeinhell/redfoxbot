@@ -56,7 +56,7 @@ class TrackingCommand extends Command
 
                 $diffKeys = array_diff($actualLevelList, $oldLevels);
                 if ($diffKeys) {
-                    if (!$isNotified) {
+                    if (!$isNotified && $chatId == 94986676) {
                         publish_to_sns($diffKeys);
                         $isNotified = true;
                     }
