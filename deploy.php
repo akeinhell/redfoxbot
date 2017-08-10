@@ -13,6 +13,7 @@ add('shared_files', [
 // Laravel shared dirs
 set('shared_dirs', [
     'storage',
+    'vendor',
     'node_modules',
     'bower_components'
 ]);
