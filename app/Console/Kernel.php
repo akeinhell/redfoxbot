@@ -14,17 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\EnvVersion::class,
-        Commands\QuestParserCommand::class,
         Commands\TrackingCommand::class,
         Commands\TestAlerts::class,
     ];
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @param \Illuminate\Console\Scheduling\Schedule $schedule
-     */
-    protected function schedule(Schedule $schedule)
-    {
-    }
 }
