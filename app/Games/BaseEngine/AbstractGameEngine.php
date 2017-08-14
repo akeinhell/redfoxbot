@@ -11,8 +11,6 @@ namespace App\Games\BaseEngine;
 use App\Exceptions\EngineSendSecureException;
 use App\Games\Sender;
 use App\Telegram\Config;
-use App\Tor;
-use Carbon\Carbon;
 use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractGameEngine
@@ -123,20 +121,6 @@ abstract class AbstractGameEngine
         \Cache::put($cacheKey, $login);
 
         return true;
-    }
-
-    protected function changeIp()
-    {
-        if (\Cache::has(self::LAST_IP)) {
-            return false;
-        }
-
-        $ip = Tor::action()->changeIp();
-
-        $expire = Carbon::now()->addSecond(15);
-        \Cache::put(self::LAST_IP, $ip, $expire);
-
-        return $ip;
     }
 
     protected function checkConfig()

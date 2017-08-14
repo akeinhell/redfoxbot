@@ -13,7 +13,6 @@
         "pimple/pimple": "3.0",
         "predis/predis": "1.0",
         "pda/pheanstalk": "3.1",
-        "dunglas/php-torcontrol": "1.0",
         "doctrine/dbal": "~2.3",
         "google/apiclient": "1.*",
         "symfony/dom-crawler": "^3.0",
