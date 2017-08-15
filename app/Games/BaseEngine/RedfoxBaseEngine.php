@@ -230,41 +230,6 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return $status . PHP_EOL . $KO . PHP_EOL . $estCodes;
     }
 
-    /**
-     * @param $response
-     * @param $code
-     *
-     * @return string
-     *
-     * @deprecated
-     */
-    private function getEst($response, $code)
-    {
-        if (!preg_match('/<p class="codes_class">.*?strong>:(.*?)<.p>/isu', $response, $codes)) {
-            return '';
-        }
-        $estCodes = [];
-        foreach (explode(',', $codes[1]) as $value) {
-            if (!preg_match('/found/', $value)) {
-                $estCodes[] = trim($value);
-            }
-        }
-
-        $c           = array_count_values($estCodes);
-        $codesString = [];
-        foreach ($c as $code => $value) {
-            $codesString[] = $code . '=' . $value . ' шт.';
-        }
-
-        $estCodes = 'Осталось ' . count($estCodes) . ' шт.' . PHP_EOL . 'КО: ' . implode(PHP_EOL,
-                    $codesString);
-
-        $status = $this->getStatus($response);
-        $co     = $this->getKO($response, $code);
-
-        return $status . ($co ? ' KO:' . $co : '') . PHP_EOL . $estCodes;
-    }
-
     private function getStatus($response)
     {
         $msg = 'Ошибка отправки';
@@ -273,10 +238,5 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         }
 
         return sprintf('<b>%s</b>', $msg);
-    }
-
-    private function prepareQuestText($response)
-    {
-        return $this->fixImageUrl($response, Config::getValue($this->chatId, 'url'));
     }
 }

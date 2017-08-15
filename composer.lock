@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "443a08a76afa7df3df7959eacfc69bc8",
-    "content-hash": "f70ac9380e3601bee703a55a6a0ca685",
+    "hash": "18ea5b1d474756c51566585997857598",
+    "content-hash": "9e4739b20c88ce708e1a1a3e9a0cda17",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.32.3",
+            "version": "3.32.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d34a5779803ae7bc3efd3c6cab6e4e6f3b7409dd"
+                "reference": "9e2ad0ee0a1269190e411b7409e9b64361626e0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d34a5779803ae7bc3efd3c6cab6e4e6f3b7409dd",
-                "reference": "d34a5779803ae7bc3efd3c6cab6e4e6f3b7409dd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9e2ad0ee0a1269190e411b7409e9b64361626e0a",
+                "reference": "9e2ad0ee0a1269190e411b7409e9b64361626e0a",
                 "shasum": ""
             },
             "require": {
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-08-01 21:51:56"
+            "time": "2017-08-11 21:16:28"
         },
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -923,46 +923,6 @@
             "time": "2017-07-24 09:37:08"
         },
         {
-            "name": "dunglas/php-torcontrol",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dunglas/php-torcontrol.git",
-                "reference": "dbd16f2996a1d23a6bfa6476d923dd17b42ff11a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dunglas/php-torcontrol/zipball/dbd16f2996a1d23a6bfa6476d923dd17b42ff11a",
-                "reference": "dbd16f2996a1d23a6bfa6476d923dd17b42ff11a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kévin Dunglas",
-                    "email": "dunglas@gmail.com"
-                }
-            ],
-            "description": "Tor control library",
-            "homepage": "http://dunglas.fr",
-            "keywords": [
-                "tor"
-            ],
-            "time": "2013-08-20 20:12:12"
-        },
-        {
             "name": "fabpot/goutte",
             "version": "dev-master",
             "source": {
@@ -1448,12 +1408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "a480e98aa919b1841a699630458fbfca1463dceb"
+                "reference": "f61a75d2a3a0cd99ec2e28d3d3de2753824df876"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/a480e98aa919b1841a699630458fbfca1463dceb",
-                "reference": "a480e98aa919b1841a699630458fbfca1463dceb",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/f61a75d2a3a0cd99ec2e28d3d3de2753824df876",
+                "reference": "f61a75d2a3a0cd99ec2e28d3d3de2753824df876",
                 "shasum": ""
             },
             "require": {
@@ -1570,7 +1530,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2017-08-06 13:50:23"
+            "time": "2017-08-12 11:47:23"
         },
         {
             "name": "league/flysystem",
@@ -1578,12 +1538,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f400aa98912c561ba625ea4065031b7a41e5a155"
+                "reference": "d3ce2f8f409ac7d01dea0fd03d30f1e466bdd957"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f400aa98912c561ba625ea4065031b7a41e5a155",
-                "reference": "f400aa98912c561ba625ea4065031b7a41e5a155",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d3ce2f8f409ac7d01dea0fd03d30f1e466bdd957",
+                "reference": "d3ce2f8f409ac7d01dea0fd03d30f1e466bdd957",
                 "shasum": ""
             },
             "require": {
@@ -1653,7 +1613,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2017-08-06 17:41:04"
+            "time": "2017-08-08 08:44:14"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -2357,12 +2317,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "e0ec3fd79fec8f86857c6f1b0ab6a3b69a1ebb15"
+                "reference": "e8a71970b33410591f664f72dba6bd755fa7bf55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/e0ec3fd79fec8f86857c6f1b0ab6a3b69a1ebb15",
-                "reference": "e0ec3fd79fec8f86857c6f1b0ab6a3b69a1ebb15",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/e8a71970b33410591f664f72dba6bd755fa7bf55",
+                "reference": "e8a71970b33410591f664f72dba6bd755fa7bf55",
                 "shasum": ""
             },
             "require": {
@@ -2403,7 +2363,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2017-08-02 17:03:33"
+            "time": "2017-08-10 12:25:50"
         },
         {
             "name": "symfony/browser-kit",
@@ -3525,12 +3485,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "7ac2c1cef304f5bd5a8d40750fbcbdd49333b9e5"
+                "reference": "3dd3d8f90e6604e75cca48ec32b033b50b05135b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/7ac2c1cef304f5bd5a8d40750fbcbdd49333b9e5",
-                "reference": "7ac2c1cef304f5bd5a8d40750fbcbdd49333b9e5",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/3dd3d8f90e6604e75cca48ec32b033b50b05135b",
+                "reference": "3dd3d8f90e6604e75cca48ec32b033b50b05135b",
                 "shasum": ""
             },
             "require": {
@@ -3567,7 +3527,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2017-02-03 22:05:04"
+            "time": "2017-08-08 20:02:34"
         }
     ],
     "packages-dev": [
@@ -3577,12 +3537,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/codacy/php-codacy-coverage.git",
-                "reference": "194b83838c1c08ad7871fa471c10369f1c37717e"
+                "reference": "d46740b6b884bea92157f5434f59c4e751d6db5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/194b83838c1c08ad7871fa471c10369f1c37717e",
-                "reference": "194b83838c1c08ad7871fa471c10369f1c37717e",
+                "url": "https://api.github.com/repos/codacy/php-codacy-coverage/zipball/d46740b6b884bea92157f5434f59c4e751d6db5f",
+                "reference": "d46740b6b884bea92157f5434f59c4e751d6db5f",
                 "shasum": ""
             },
             "require": {
@@ -3614,7 +3574,7 @@
             ],
             "description": "Sends PHP test coverage information to Codacy.",
             "homepage": "https://github.com/codacy/php-codacy-coverage",
-            "time": "2017-04-05 13:51:33"
+            "time": "2017-08-09 14:23:33"
         },
         {
             "name": "doctrine/instantiator",
@@ -3780,16 +3740,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.2.1",
+            "version": "3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "183824db76118b9dddffc7e522b91fa175f75119"
+                "reference": "4aada1f93c72c35e22fb1383b47fee43b8f1d157"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/183824db76118b9dddffc7e522b91fa175f75119",
-                "reference": "183824db76118b9dddffc7e522b91fa175f75119",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/4aada1f93c72c35e22fb1383b47fee43b8f1d157",
+                "reference": "4aada1f93c72c35e22fb1383b47fee43b8f1d157",
                 "shasum": ""
             },
             "require": {
@@ -3821,7 +3781,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2017-08-04 20:55:59"
+            "time": "2017-08-08 06:39:58"
         },
         {
             "name": "phpdocumentor/type-resolver",
