@@ -8,10 +8,8 @@
 
 namespace App\Games\BaseEngine;
 
-use App\Exceptions\EngineSendSecureException;
 use App\Games\Sender;
 use App\Telegram\Config;
-use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractGameEngine
 {
@@ -46,23 +44,7 @@ abstract class AbstractGameEngine
 
     abstract public function doAuth();
 
-    public function sendSecureCode($code)
-    {
-        if ($this->canSendSecure()) {
-            return $this->sendCode($code);
-        }
-        throw new EngineSendSecureException();
-    }
-
     abstract public function sendCode($code);
-
-    public function sendSecureSpoiler($spoiler)
-    {
-        if ($this->canSendSecure()) {
-            return $this->sendSpoiler($spoiler);
-        }
-        throw new EngineSendSecureException();
-    }
 
     abstract public function sendSpoiler($spoiler);
 
@@ -78,49 +60,6 @@ abstract class AbstractGameEngine
     public function setCurrentUser($userId)
     {
         $this->userId = $userId;
-    }
-
-    /**
-     * @param string $response
-     * @param string $baseUrl
-     *
-     * @return string
-     */
-    public function fixImageUrl($response, $baseUrl)
-    {
-        $crawler = new Crawler($response);
-        $crawler->filter('img')
-            ->each(function(Crawler $node) {
-                $url = $node->attr('src');
-
-                return $url;
-            });
-    }
-
-    protected function canSendSecure()
-    {
-        $url = Config::getValue($this->chatId, 'url');
-
-        if (!$url) {
-            \Log::error('No url specified');
-            throw new \Exception('No url specified');
-        }
-
-        $cacheKey = 'LOGIN:' . $url;
-        $login    = Config::getValue($this->chatId, 'login');
-
-        //Если последний раз отправлялось от них значит отправляем еще раз
-        if (\Cache::get($cacheKey) === $login) {
-            return true;
-        }
-
-        if (false === ($ip = $this->changeIp())) {
-            return false;
-        }
-
-        \Cache::put($cacheKey, $login);
-
-        return true;
     }
 
     protected function checkConfig()
