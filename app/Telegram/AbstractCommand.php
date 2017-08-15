@@ -152,7 +152,7 @@ abstract class AbstractCommand
         $this->engine = null;
         $this->config = Config::get($this->chatId);
 
-        $engineName = Config::get($this->chatId, 'engine');
+        $engineName = Config::getValue($this->chatId, 'engine');
         if (!$engineName) {
             throw new TelegramCommandException('Настройки сбились :-(');
         }
