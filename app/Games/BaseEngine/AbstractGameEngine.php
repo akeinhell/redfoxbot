@@ -61,7 +61,7 @@ abstract class AbstractGameEngine
     {
         $this->userId = $userId;
     }
-
+  
     protected function checkConfig()
     {
         $this->config = Config::get($this->chatId);
