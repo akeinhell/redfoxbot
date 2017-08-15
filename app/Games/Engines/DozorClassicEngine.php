@@ -113,13 +113,13 @@ class DozorClassicEngine extends AbstractGameEngine
 
         $form = $crawler->filter('form[name=codeform]');
 
-        if ($form->count()) {
-            $response = $this->client->submit($form->form(), [
-                'cod' => $code,
-            ]);
-        } else {
+        if (!$form->count()) {
             throw new TelegramCommandException('Не возможно отправить код. Возможно игра не началась или уже закончилась');
         }
+
+        $response = $this->client->submit($form->form(), [
+            'cod' => $code,
+        ]);
 
         $quest = new DozorClassicQuest($response);
         \Cache::put($this->getKey(), $quest, Carbon::now()->addSeconds(10));

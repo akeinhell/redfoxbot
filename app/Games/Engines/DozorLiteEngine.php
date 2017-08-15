@@ -103,12 +103,10 @@ class DozorLiteEngine extends AbstractGameEngine
     {
         $this->checkConfig();
         if (preg_match('/ekipazh/i', $this->config->url)) {
-            $url = sprintf('%s/%s/', $this->trimUrl($this->config->url), $this->trimUrl($this->config->domain));
-        } else {
-            $url = sprintf('http://lite.dzzzr.ru/%s/go/', $this->trimUrl($this->config->domain));
+            return sprintf('%s/%s/', $this->trimUrl($this->config->url), $this->trimUrl($this->config->domain));
         }
 
-        return $url;
+        return sprintf('http://lite.dzzzr.ru/%s/go/', $this->trimUrl($this->config->domain));
     }
 
     private function getHtml()
@@ -120,6 +118,8 @@ class DozorLiteEngine extends AbstractGameEngine
 
     /**
      * @param string $html
+     *
+     * @return string
      */
     private function iconv($html)
     {
