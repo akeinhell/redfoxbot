@@ -21,14 +21,14 @@ services:
       - POSTGRES_DB=telegram
       - POSTGRES_USER=root
     volumes:
-      - ./docker/data/postgres-data:/var/lib/postgresql/data
+      - /usr/local/docker/data/redfoxbot/postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
     ports:
       - "63791:6379"
     volumes:
-      - ./docker/data/redis:/data
+      - /usr/local/docker/data/redfoxbot/redis:/data
     command: redis-server --appendonly yes
 
   lb:
