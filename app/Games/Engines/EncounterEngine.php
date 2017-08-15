@@ -50,13 +50,11 @@ class EncounterEngine extends EncounterAbstractEngine
 
         $status = $quest->getCodeStatus($code) ?: 'Ошибка определения статуса отправки кода';
 
-        if ($lastLevel !== $quest->getId()) {
-            $status .= PHP_EOL . '<b>Внимание! Получено новое задание.</b>' . PHP_EOL . $this->getQuestText($quest);
-        } else {
-            $status .= PHP_EOL . $this->getSectors($quest);
+        if ($lastLevel === $quest->getId()) {
+            return $status . PHP_EOL . $this->getSectors($quest);
         }
 
-        return $status;
+        return $status . PHP_EOL . '<b>Внимание! Получено новое задание.</b>' . PHP_EOL . $this->getQuestText($quest);
     }
 
     public function checkAuth()
@@ -90,6 +88,8 @@ class EncounterEngine extends EncounterAbstractEngine
 
     /**
      * @param string $data
+     *
+     * @return EncounterQuest
      */
     public function getQuest($data = null)
     {
@@ -157,6 +157,8 @@ class EncounterEngine extends EncounterAbstractEngine
 
     /**
      * @param EncounterQuest $quest
+     *
+     * @return string
      */
     public function getSectors($quest = null)
     {
