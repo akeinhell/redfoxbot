@@ -18,8 +18,7 @@ class TrackingService
     public function addChat($id)
     {
         $status = Redis::sadd(self::TRACKING_PREFIX . self::TRACKING_CHATS, [$id]);
-        $msg    = $status ? 'Добавлено отслеживание для этого чата' :
-            'Вы уже включили отслеживание для этого чата :-) Не стоит тыкать много раз, от этого ничего не изменится';
+        $msg    = $status ? 'Добавлено отслеживание для этого чата' : 'Вы уже включили отслеживание для этого чата :-) Не стоит тыкать много раз, от этого ничего не изменится';
 
         Bot::action()->sendMessage($id, $msg);
 

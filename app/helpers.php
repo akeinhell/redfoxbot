@@ -31,7 +31,7 @@ if (!function_exists('publish_to_sns')) {
             $topics = $sns->listTopics();
             $sns->publish(current($topics)['TopicArn'], json_encode($message));
         } catch (\Exception $e) {
-            Log::critical('Cannot publish to sns: '.$e->getMessage());
+            Log::critical('Cannot publish to sns: ' . $e->getMessage());
         }
     }
 }
@@ -55,9 +55,9 @@ if (!function_exists('format_text')) {
  */
 function parseSmallCoords(): Closure
 {
-    return function (...$args): array {
-        return array_map(function ($arg) {
-            return (float)$arg;
+    return function(...$args): array {
+        return array_map(function($arg) {
+            return (float) $arg;
         }, $args[0]);
     };
 }
@@ -69,15 +69,15 @@ function parseSmallCoords(): Closure
 function parseNormalizedCoords($normalized)
 {
     $coords = collect($normalized)
-        ->filter(function($coord){
+        ->filter(function($coord) {
             return count($coord) > 2;
         });
 
-    if ($coords->count() < 2){
+    if ($coords->count() < 2) {
         return null;
     }
 
-    return array_map(function ($coord) {
+    return array_map(function($coord) {
         $deg = array_get($coord, 0, 0);
         $min = array_get($coord, 1, 0);
         $sec = array_get($coord, 2, 0) + array_get($coord, 3, 0) / 100;
@@ -91,7 +91,7 @@ function parseNormalizedCoords($normalized)
  */
 function parseLongCoords(): Closure
 {
-    return function (...$args): array {
+    return function(...$args): array {
         $normalized = [];
         foreach ($args as $key => $val) {
             foreach ($val as $k => $v) {
@@ -105,7 +105,7 @@ function parseLongCoords(): Closure
 
 function parseSimpleCoords()
 {
-    return function (...$args) {
+    return function(...$args) {
         $matches    = array_pop($args);
         $normalized = array_chunk($matches, floor(count($matches) / 2));
 
