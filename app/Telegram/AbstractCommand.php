@@ -152,7 +152,11 @@ abstract class AbstractCommand
         $this->engine = null;
         $this->config = Config::get($this->chatId);
 
-        $projectClass = '\\App\\Games\\Engines\\' . $this->config->project . 'Engine';
+        $engineName = Config::get($this->chatId, 'engine');
+        if (!$engineName) {
+            throw new TelegramCommandException('Настройки сбились :-(');
+        }
+        $projectClass = '\\App\\Games\\Engines\\' . $engineName . 'Engine';
         /* @var AbstractGameEngine $engine */
         $this->engine = new $projectClass($this->chatId);
         $this->engine->setCurrentUser($this->fromId);
