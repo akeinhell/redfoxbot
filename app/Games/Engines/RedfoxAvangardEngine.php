@@ -13,11 +13,6 @@ use App\Games\BaseEngine\RedfoxBaseEngine;
 
 class RedfoxAvangardEngine extends RedfoxBaseEngine
 {
-    public function sendSpoiler($text)
-    {
-        return parent::sendSpoiler($text);
-    }
-
     public function getQuestList()
     {
         throw new TelegramCommandException('У авангарда не предусмотрено получение списка заданий', __LINE__);

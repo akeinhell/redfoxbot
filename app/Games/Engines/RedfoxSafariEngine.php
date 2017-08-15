@@ -18,15 +18,10 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
 {
     public function getQuestList()
     {
-        $html = $this->getSender()->sendGet('/play/safari');
-
-        if (!$this->checkAuth($html)) {
-            $this->doAuth();
-            $html = $this->getSender()->sendGet('/play/safari');
-        }
+        $html = $this->client->get('/play/safari');
 
         $pattern = '#a href="\/play\/safari\/([0-9]+)">(.*?)<#isu';
-        if (preg_match_all($pattern, $html, $matches)) {
+        if (preg_match_all($pattern, (string)$html->getBody(), $matches)) {
             $questList = [];
             for ($i = 0; $i < count($matches[0]); ++$i) {
                 $questId             = $matches[1][$i];
@@ -36,8 +31,6 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
 
             return $questList;
         }
-
-        echo $html;
 
         throw new TelegramCommandException('Не найдено списка заданий', __LINE__);
     }
@@ -91,15 +84,9 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
         }
     }
 
-    public function getRawHtml($levelId = null)
+    public function getRawHtml($levelId = null): string
     {
         $url = '/play/safari/' . $levelId;
-        $response = $this->getSender()->sendGet($url);
-        if (!$this->checkAuth($response)) {
-            $this->doAuth();
-            $response = $this->getSender()->sendGet($url);
-        }
-
-        return $response;
+        return (string)$this->client->get($url)->getBody();
     }
 }

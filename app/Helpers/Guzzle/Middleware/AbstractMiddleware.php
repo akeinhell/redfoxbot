@@ -3,7 +3,6 @@
 
 namespace App\Helpers\Guzzle\Middleware;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
@@ -11,32 +10,51 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractMiddleware
 {
+    /**
+     * @var Client
+     */
     protected $client;
 
-    function __construct(Client $client)
+    /**
+     * @var array
+     */
+    protected $params;
+    protected $handler;
+
+    public function __construct(array $params = [])
     {
-        $this->client = $client;
+        $this->params = $params;
     }
 
-    function __invoke(callable $handler)
+    /**
+     * @param callable $handler
+     *
+     * @return \Closure
+     */
+    public function __invoke(callable $handler)
     {
-        $needAuthorisation = $this->needAuthorisation();
-        $retry = $this->retry();
+        $this->handler = $handler;
 
-        return function(RequestInterface $request, array $options) use ($handler, $needAuthorisation, $retry) {
+        return function (RequestInterface $request, array $options) use ($handler) {
             /** @var Promise $promise */
             $promise = $handler($request, $options);
 
-            return $promise->then(function(ResponseInterface $response) use ($request, $needAuthorisation, $retry) {
-                if ($needAuthorisation($request, $response)) {
-                    return $retry($request);
+            return $promise->then(function (ResponseInterface $response) use ($request, $options) {
+                if ($this->needAuthorisation($request, $response)) {
+                    return $this->retry($request, $options);
                 }
+
                 return $response;
             });
         };
     }
 
-    abstract function needAuthorisation();
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return bool
+     */
+    abstract public function needAuthorisation(RequestInterface $request, ResponseInterface $response): bool;
 
-    abstract function retry();
+    abstract public function retry(RequestInterface $request, array $options = []): ResponseInterface;
 }

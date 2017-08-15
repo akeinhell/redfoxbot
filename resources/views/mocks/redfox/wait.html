@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Игровой кабинет - RedFox Quest Томск</title>
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="/static/css/style_lite.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/static/js/cash.min.js"></script>
+
+    
+</head>
+
+<body>
+    <p class="team_name">3G</p>
+
+    <h3><p>На данный момент нет активных игр</p></h3>
+<p class="alert"><a href="/play/message/1502362820">В 18:10 будет запущена игра! Чуть-чуть не доделали (:</a></p>    
+    <p class="timer" style="float:left"><span id="timer"></span></p>
+    
+        
+    
+<script type="text/javascript" language="Javascript">
+
+var current_time = 1502362820000;
+window.onload = function(){
+    // timer();
+    startTime();
+}
+function timer() {
+
+    var time = new Date(current_time);
+    document.getElementById('timer').innerHTML = time.toLocaleTimeString();
+    current_time += 1000;
+    setTimeout('timer()', 1000);
+}
+
+function make_time(time)
+{
+    var time = new Date(time);
+    var hours = time.getUTCHours();
+    if (hours < 10) { 
+        hours = "0" + hours; 
+    }
+    var mins = time.getUTCMinutes();
+    if (mins < 10) { 
+        mins = "0" + mins; 
+    }
+    var seconds = time.getUTCSeconds();
+    if (seconds < 10) { 
+        seconds = "0" + seconds; 
+    }
+    var str = hours + ":" + mins + ":" + seconds;
+    return str;
+}
+
+function checkTime(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    // add a zero in front of numbers<10
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('timer').innerHTML = h + ":" + m + ":" + s;
+    t = setTimeout(function () {
+        startTime()
+    }, 500);
+}
+
+</script>
+
+</body>
+</html>
