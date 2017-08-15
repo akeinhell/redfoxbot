@@ -21,13 +21,13 @@ abstract class AbstractMiddleware
     function __invoke(callable $handler)
     {
         $needAuthorisation = $this->needAuthorisation();
-        $retry    = $this->retry();
+        $retry = $this->retry();
 
-        return function (RequestInterface $request, array $options) use ($handler, $needAuthorisation, $retry) {
+        return function(RequestInterface $request, array $options) use ($handler, $needAuthorisation, $retry) {
             /** @var Promise $promise */
             $promise = $handler($request, $options);
 
-            return $promise->then(function (ResponseInterface $response) use ($request, $needAuthorisation, $retry) {
+            return $promise->then(function(ResponseInterface $response) use ($request, $needAuthorisation, $retry) {
                 if ($needAuthorisation($request, $response)) {
                     return $retry($request);
                 }

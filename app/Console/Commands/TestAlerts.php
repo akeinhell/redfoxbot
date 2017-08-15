@@ -34,7 +34,7 @@ class TestAlerts extends Command
     public function handle()
     {
         publish_to_sns([
-            'quest_list' => [1,2,3,4]
+            'quest_list' => [1, 2, 3, 4]
         ]);
     }
 }

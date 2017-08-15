@@ -24,7 +24,7 @@ class Config
     public static function getValue($chatId, $key, $default = null)
     {
         $config = self::get($chatId);
-        if (! $config || ! isset($config->$key)) {
+        if (!$config || !isset($config->$key)) {
             return $default;
         }
 
@@ -40,7 +40,7 @@ class Config
     public static function get($chatId, $default = null)
     {
         $config = Cache::get(AbstractCommand::CACHE_KEY_CHAT . $chatId);
-        if (! $config) {
+        if (!$config) {
             $db = \App\Config::whereChatId($chatId)->first();
             if ($db) {
                 $data = json_decode($db->config);

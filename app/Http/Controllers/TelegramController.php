@@ -206,7 +206,7 @@ class TelegramController extends Controller
      * @param integer $chatId
      * @param $text
      *
-     * @return bool
+     * @return boolean|null
      */
     private function parseCoords($chatId, $text)
     {
@@ -229,7 +229,7 @@ class TelegramController extends Controller
         $domain = Config::getValue($chatId, 'url', '');
         $links  = [];
         $cr->filter('img')
-            ->each(function (Crawler $crawler) use (&$links, $domain) {
+            ->each(function(Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
                 if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
@@ -242,7 +242,7 @@ class TelegramController extends Controller
             });
 
         $tags     = ['b', 'strong', 'i', 'code', 'a', 'pre'];
-        $response = strip_tags($message, implode(array_map(function ($tag) {
+        $response = strip_tags($message, implode(array_map(function($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {

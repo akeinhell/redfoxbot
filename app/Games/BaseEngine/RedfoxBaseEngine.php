@@ -71,6 +71,9 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return preg_match('/team_name/i', $html);
     }
 
+    /**
+     * @param string $response
+     */
     public function getKO($response, $code)
     {
         $co = '';
@@ -230,6 +233,9 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return $status . PHP_EOL . $KO . PHP_EOL . $estCodes;
     }
 
+    /**
+     * @param string $response
+     */
     private function getStatus($response)
     {
         $msg = 'Ошибка отправки';

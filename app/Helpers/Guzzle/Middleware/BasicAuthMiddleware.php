@@ -15,7 +15,7 @@ class BasicAuthMiddleware extends AbstractMiddleware
 
     function needAuthorisation()
     {
-        return function (RequestInterface $request, ResponseInterface $response) {
+        return function(RequestInterface $request, ResponseInterface $response) {
             if (!$request->getHeader(self::HEADER_KEY)) {
                 return $response->getStatusCode() === 401;
             }
@@ -32,7 +32,7 @@ class BasicAuthMiddleware extends AbstractMiddleware
     {
         $client = $this->client;
 
-        return function (RequestInterface $request) use ($client) {
+        return function(RequestInterface $request) use ($client) {
             return $client->request($request->getMethod(),
                 $request->getUri(), [
                     'auth'    => ['user', 'passwd'],
