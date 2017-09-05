@@ -1,5 +1,4 @@
 FROM akeinhell/docker-nginx-php7.1
-
 WORKDIR /var/www
 
 ADD composer.json /var/www

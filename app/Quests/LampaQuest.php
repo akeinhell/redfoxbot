@@ -139,7 +139,7 @@ class LampaQuest extends BaseQuest
     {
         $level = $this->quests->first();
         if (!($text = array_get($level, 'text'))) {
-            throw new TelegramCommandException('Не удалось получить текст задания');
+            throw new TelegramCommandException('Не удалось получить текст задания', 0); // @todo fix
         }
 
         return $text;

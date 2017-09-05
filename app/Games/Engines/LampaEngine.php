@@ -11,11 +11,12 @@ namespace app\Games\Engines;
 use App\Engines\LampaQuest;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\TwoFactorAuthEngine;
 use App\Games\Sender;
 use App\Telegram\Config;
 use Illuminate\Database\Eloquent\Collection;
 
-class LampaEngine extends AbstractGameEngine
+class LampaEngine extends AbstractGameEngine implements TwoFactorAuthEngine
 {
     private $jar;
 
@@ -256,7 +257,7 @@ class LampaEngine extends AbstractGameEngine
         $quest = new LampaQuest($html);
 
         if (!$quest->isGameSelected()) {
-            throw new TelegramCommandException('Ошибка входа в игру');
+            throw new TelegramCommandException('Ошибка входа в игру', $this->chatId);
         }
 
         return $quest;

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
 /**
  * App\TChatMember.
@@ -13,11 +14,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @method static \Illuminate\Database\Query\Builder|\App\TChatMember whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TChatMember whereUserId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TChatMember whereStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TChatMember whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TChatMember whereUpdatedAt($value)
+ * @method static Builder|TChatMember whereId($value)
+ * @method static Builder|TChatMember whereUserId($value)
+ * @method static Builder|TChatMember whereStatus($value)
+ * @method static Builder|TChatMember whereCreatedAt($value)
+ * @method static Builder|TChatMember whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class TChatMember extends Model

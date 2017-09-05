@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
 /**
  * App\TUser.
@@ -14,12 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereFirstName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereLastName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereUsername($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\TUser whereUpdatedAt($value)
+ * @method static Builder|TUser whereId($value)
+ * @method static Builder|TUser whereFirstName($value)
+ * @method static Builder|TUser whereLastName($value)
+ * @method static Builder|TUser whereUsername($value)
+ * @method static Builder|TUser whereCreatedAt($value)
+ * @method static Builder|TUser whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class TUser extends Model

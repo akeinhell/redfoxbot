@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
 /**
  * App\Config
@@ -12,11 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $config
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @method static \Illuminate\Database\Query\Builder|\App\Config whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Config whereChatId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Config whereConfig($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Config whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Config whereUpdatedAt($value)
+ * @method static Builder|Config whereId($value)
+ * @method static Builder|Config whereChatId($value)
+ * @method static Builder|Config whereConfig($value)
+ * @method static Builder|Config whereCreatedAt($value)
+ * @method static Builder|Config whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Config extends Model

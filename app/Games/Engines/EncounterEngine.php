@@ -10,11 +10,12 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\EncounterAbstractEngine;
+use App\Games\Interfaces\LoginPassEngine;
 use App\Games\Sender;
 use App\Quests\EncounterQuest;
 use App\Telegram\Config;
 
-class EncounterEngine extends EncounterAbstractEngine
+class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
 {
     protected $sender;
 
@@ -44,7 +45,7 @@ class EncounterEngine extends EncounterAbstractEngine
         $response = $this->sender->sendPost($this->getUrl(), $data, ['json' => 1]);
 
         if (!$response) {
-            throw new TelegramCommandException('Ошибка отправки кода #' . __LINE__);
+            throw new TelegramCommandException('Ошибка отправки кода #' . __LINE__, $this->chatId);
         }
 
         $quest = $this->getQuest($response);
@@ -81,7 +82,7 @@ class EncounterEngine extends EncounterAbstractEngine
         ];
         $data = $this->sender->sendPost('/Login.aspx?return=' . urlencode($this->getUrl()), $params);
         if (!$this->checkAuth()) {
-            throw new TelegramCommandException('Ошибка авторизации');
+            throw new TelegramCommandException('Ошибка авторизации', $this->chatId);
         }
 
         return $data;
@@ -150,7 +151,7 @@ class EncounterEngine extends EncounterAbstractEngine
     {
         if (!$q->isRunning()) {
             $gameTitle = $q->getGameTitle() ? '<b>' . $q->getGameTitle() . '</b> еще не началась' : 'Не могу получить задание, возможно игра не началась';
-            throw new TelegramCommandException($gameTitle);
+            throw new TelegramCommandException($gameTitle, $this->chatId);
         }
 
         return $q->isRunning();

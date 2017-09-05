@@ -155,7 +155,7 @@ abstract class AbstractCommand
 
         $engineName = Config::getValue($this->chatId, 'project');
         if (!$engineName) {
-            throw new TelegramCommandException('Настройки сбились :-(');
+            throw new TelegramCommandException('Настройки сбились :-(', $this->chatId);
         }
         $projectClass = '\\App\\Games\\Engines\\' . $engineName . 'Engine';
         /* @var AbstractGameEngine $engine */
@@ -168,7 +168,7 @@ abstract class AbstractCommand
     protected function prepare()
     {
         if (!$this->config) {
-            throw new TelegramCommandException('Cannot get config for chat: ' . $this->chatId);
+            throw new TelegramCommandException('Cannot get config for chat: ' . $this->chatId, $this->chatId);
         }
     }
 

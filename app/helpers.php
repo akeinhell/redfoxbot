@@ -21,10 +21,8 @@ if (!function_exists('format_time')) {
 if (!function_exists('publish_to_sns')) {
     /**
      * @param $message
-     *
-     * @return string
      */
-    function publish_to_sns($message)
+    function publish_to_sns($message): void
     {
         try {
             $sns    = new AmazonSNS(env('S3_KEY'), env('S3_SECRET'));
@@ -64,7 +62,9 @@ function parseSmallCoords(): Closure
 
 
 /**
+ * @param $normalized
  *
+ * @return array|null
  */
 function parseNormalizedCoords($normalized)
 {
@@ -133,4 +133,6 @@ function getCoordinates($text)
             return $callback->__invoke(...$matches);
         }
     }
+
+    return null;
 }
