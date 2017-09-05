@@ -11,6 +11,7 @@ namespace App\Games\Engines;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Sender;
+use App\Telegram\Config;
 use Illuminate\Support\Collection;
 
 class DozorLiteEngine extends AbstractGameEngine
@@ -39,11 +40,10 @@ class DozorLiteEngine extends AbstractGameEngine
     public function sendCode($code)
     {
         $url   = $this->getUrl();
-        $html  = $this->getHtml();
-        $level = $this->getLevel($html);
+        $level = $this->getLevel();
         $html  = $this->sender->sendPost($url, [
             'action' => 'entcod',
-            'pin'    => $this->config->pin,
+            'pin'    => Config::getValue($this->chatId, 'pin'),
             'lev'    => $level,
             'cod'    => iconv('utf8', 'cp1251', $code),
         ]);
@@ -79,9 +79,11 @@ class DozorLiteEngine extends AbstractGameEngine
     }
 
     /**
-     * @param string $html
+     * @return int
+     * @throws TelegramCommandException
+     * @internal param string $html
      */
-    private function getLevel($html)
+    private function getLevel()
     {
         return 0;
         if (!preg_match('#<input type=hidden name=lev value=(.*?)>#isu', $html, $m)) {
@@ -101,19 +103,20 @@ class DozorLiteEngine extends AbstractGameEngine
      */
     private function getUrl()
     {
-        $this->checkConfig();
-        if (preg_match('/ekipazh/i', $this->config->url)) {
-            return sprintf('%s/%s/', $this->trimUrl($this->config->url), $this->trimUrl($this->config->domain));
+        $url = Config::getValue($this->chatId, 'url');
+        $domain = Config::getValue($this->chatId, 'domain');
+        if (preg_match('/ekipazh/i', $url)) {
+            return sprintf('%s/%s/', $this->trimUrl($url), $this->trimUrl($domain));
         }
 
-        return sprintf('http://lite.dzzzr.ru/%s/go/', $this->trimUrl($this->config->domain));
+        return sprintf('http://lite.dzzzr.ru/%s/go/', $this->trimUrl($domain));
     }
 
     private function getHtml()
     {
         $url = $this->getUrl();
 
-        return $this->iconv($this->sender->sendGet($url, ['pin' => $this->config->pin]));
+        return $this->iconv($this->sender->sendGet($url, ['pin' => Config::getValue($this->chatId, 'pin')]));
     }
 
     /**
@@ -128,6 +131,8 @@ class DozorLiteEngine extends AbstractGameEngine
 
     /**
      * @param string $html
+     *
+     * @return string
      */
     private function getEstimatedCodes($html)
     {
@@ -139,10 +144,10 @@ class DozorLiteEngine extends AbstractGameEngine
             if (count($codes) === 2) {
                 $collect = $collect
                     ->merge(explode(',', $codes[1]))
-                    ->filter(function($item) {
+                    ->filter(function ($item) {
                         return trim(strip_tags($item)) === trim($item);
                     })
-                    ->map(function($item) {
+                    ->map(function ($item) {
                         return trim(strip_tags($item));
                     });
             }

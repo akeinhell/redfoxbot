@@ -48,8 +48,7 @@ class Sender
     public function updateParams()
     {
         $this->jar = static::getCookieFile($this->chatId);
-        $this->config = Config::get($this->chatId);
-        if (!$this->config) {
+        if (!Config::get($this->chatId)) {
             \Log::error('Cannot load config', [$this->chatId]);
 
             return;
@@ -62,7 +61,7 @@ class Sender
             )
         );
         $params = [
-            'base_uri'    => $this->config->url,
+            'base_uri'    => Config::getValue($this->chatId, 'url'),
             'cookies'     => $this->jar,
             'headers'     => [
                 'User-Agent' => self::getUserAgent(),

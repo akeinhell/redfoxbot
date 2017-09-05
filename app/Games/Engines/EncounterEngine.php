@@ -12,6 +12,7 @@ use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\EncounterAbstractEngine;
 use App\Games\Sender;
 use App\Quests\EncounterQuest;
+use App\Telegram\Config;
 
 class EncounterEngine extends EncounterAbstractEngine
 {
@@ -71,8 +72,8 @@ class EncounterEngine extends EncounterAbstractEngine
     public function doAuth()
     {
         $params = [
-            'Login'        => $this->config->login,
-            'Password'     => $this->config->password,
+            'Login'        => Config::getValue($this->chatId, 'login'),
+            'Password'     => Config::getValue($this->chatId, 'password'),
             'btnLogin'     => 'Вход',
             'EnButton1'    => 'Вход',
             'ddlNetwork'   => '1',
@@ -207,8 +208,6 @@ class EncounterEngine extends EncounterAbstractEngine
 
     private function getUrl()
     {
-        $this->checkConfig();
-
-        return '/gameengines/encounter/play/' . $this->config->gameId;
+        return '/gameengines/encounter/play/' . Config::getValue($this->chatId, 'gameId');
     }
 }
