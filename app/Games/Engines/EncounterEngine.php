@@ -208,8 +208,6 @@ class EncounterEngine extends EncounterAbstractEngine
 
     private function getUrl()
     {
-        $this->checkConfig();
-
         return '/gameengines/encounter/play/' . Config::getValue($this->chatId, 'gameId');
     }
 }

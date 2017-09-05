@@ -103,7 +103,6 @@ class DozorLiteEngine extends AbstractGameEngine
      */
     private function getUrl()
     {
-        $this->checkConfig();
         $url = Config::getValue($this->chatId, 'url');
         $domain = Config::getValue($this->chatId, 'domain');
         if (preg_match('/ekipazh/i', $url)) {

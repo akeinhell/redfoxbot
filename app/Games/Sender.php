@@ -61,7 +61,7 @@ class Sender
             )
         );
         $params = [
-            'base_uri'    => Config::get($this->chatId, 'url'),
+            'base_uri'    => Config::getValue($this->chatId, 'url'),
             'cookies'     => $this->jar,
             'headers'     => [
                 'User-Agent' => self::getUserAgent(),
