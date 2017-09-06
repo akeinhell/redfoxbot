@@ -40,6 +40,10 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ./vendor/bin/dep deploy
+              curl https://sentry.io/api/hooks/release/builtin/160493/5b71f4a889fdab6b0c433bc020657587555b0fa7ada665d12b804180d4e62596/ \
+                -X POST \
+                -H 'Content-Type: application/json' \
+                -d '{"version": "${CIRCLE_BUILD_NUM}"}'
             else
               echo "Only master branc build"
             fi

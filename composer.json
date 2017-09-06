@@ -22,7 +22,8 @@
         "irazasyed/telegram-bot-sdk": "2.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "deployer/deployer": "^5.1",
-        "chrisbarr/amazon-sns-php-api": "^1.7"
+        "chrisbarr/amazon-sns-php-api": "^1.7",
+        "sentry/sentry-laravel": "^0.8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
