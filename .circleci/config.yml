@@ -35,15 +35,15 @@ jobs:
       - run: php vendor/bin/codacycoverage clover ./report/clover/coverage.xml
       - run: php ocular.phar code-coverage:upload --access-token="74c5df6993414b945a394c9304cce0ace56592b6fb5bad1d10c646ee293015e7" --format=php-clover build/logs/clover.xml
       - run: bash <(curl -s https://codecov.io/bash)
-      - run: ls -la ~/.ssh
+      - run: curl -sL https://sentry.io/get-cli/ | bash
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ./vendor/bin/dep deploy
-              curl https://sentry.io/api/hooks/release/builtin/160493/5b71f4a889fdab6b0c433bc020657587555b0fa7ada665d12b804180d4e62596/ \
-                -X POST \
-                -H 'Content-Type: application/json' \
-                -d '{"version": "'${CIRCLE_BUILD_NUM}'"}'
+              export SENTRY_ORG=akeinhell
+              VERSION=$(sentry-cli releases propose-version)
+              sentry-cli releases new -p redfoxbot $VERSION
+              sentry-cli releases set-commits --auto $VERSION
             else
               echo "Only master branc build"
             fi
