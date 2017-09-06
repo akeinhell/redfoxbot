@@ -49,6 +49,26 @@ class TelegramController extends Controller
         return response()->json(['token' => $token]);
     }
 
+    /**
+     * @param $e \Exception
+     * @param $chatId
+     */
+    private function handleError($e, $chatId)
+    {
+        Log::error($this->formatError($e));
+        /** @var \Raven_Client $sentry */
+        $sentry = app('sentry');
+
+        $sentry->user_context([
+            'chatId'  => $chatId,
+            'project' => Config::getValue($chatId, 'project'),
+            'url'     => Config::getValue($chatId, 'url'),
+            'domain'  => Config::getValue($chatId, 'domain'),
+        ]);
+
+        $sentry->captureException($e);
+    }
+
     public function newhook()
     {
         header("HTTP/1.1 202");
@@ -61,19 +81,22 @@ class TelegramController extends Controller
         $message = $update->getMessage();
 
         if ($message) {
+            $chatId = 'undefined';
             try {
+                $chatId = $message->getChat()->getId();
+
                 return $this->parseMessage($message);
             } catch (TelegramCommandException $e) {
                 // FIXME rjcnskm
                 try {
                     Bot::action()->sendMessage($message->getChat()->getId(), $e->getMessage());
                 } catch (\Exception $e) {
-                    Log::error(__LINE__ . $this->formatError($e));
+                    $this->handleError($e, $chatId);
                 }
             } catch (HttpException $e) {
-                Log::error(__LINE__ . $this->formatError($e));
+                $this->handleError($e, $chatId);
             } catch (\Exception $e) {
-                Log::error(__LINE__ . $this->formatError($e));
+                $this->handleError($e, $chatId);
             }
         }
 
@@ -158,8 +181,8 @@ class TelegramController extends Controller
 
     /**
      * @param AbstractCommand $command AbstractCommand
-     * @param integer $chatId
-     * @param integer $from
+     * @param integer         $chatId
+     * @param integer         $from
      */
     private function exec($command, $chatId, $from)
     {
@@ -204,7 +227,7 @@ class TelegramController extends Controller
 
     /**
      * @param integer $chatId
-     * @param $text
+     * @param         $text
      *
      * @return boolean|null
      */
@@ -219,9 +242,9 @@ class TelegramController extends Controller
 
     /**
      * @param                     integer $chatId
-     * @param                     $message
-     * @param ReplyKeyboardMarkup $keyboard
-     * @param int|null            $replyTo
+     * @param                             $message
+     * @param ReplyKeyboardMarkup         $keyboard
+     * @param int|null                    $replyTo
      */
     private function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
@@ -229,7 +252,7 @@ class TelegramController extends Controller
         $domain = Config::getValue($chatId, 'url', '');
         $links  = [];
         $cr->filter('img')
-            ->each(function(Crawler $crawler) use (&$links, $domain) {
+            ->each(function (Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
                 if (!strpos('http', $link)) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
@@ -242,7 +265,7 @@ class TelegramController extends Controller
             });
 
         $tags     = ['b', 'strong', 'i', 'code', 'a', 'pre'];
-        $response = strip_tags($message, implode(array_map(function($tag) {
+        $response = strip_tags($message, implode(array_map(function ($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
         foreach (str_split($response, 3600) as $string) {
