@@ -217,7 +217,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
     public function getQuestText()
     {
         $url      = $this->getUrl(self::QUEST_URL);
-        $response = $this->client->get($url);
+        $response = (string)$this->client->get($url)->getBody();
 
         if (preg_match('#task_text">(.*?)<ul class="hints">#isu', $response, $match)) {
             $text = array_get($match, 1, '');
