@@ -37,6 +37,15 @@ class DozorLiteEngine extends AbstractGameEngine
         throw new \Exception('not implemented');
     }
 
+    private function getInformation($html) {
+        if (preg_match('#<!--errorText-->(.*?)<!--errorTextEnd-->#', $html, $m)) {
+            $text = str_replace('<!--', '', $m[1]);
+            $text = str_replace('-->','',  $text);
+
+            return strip_tags($text);
+        }
+    }
+
     public function sendCode($code)
     {
         $url   = $this->getUrl();
@@ -48,8 +57,8 @@ class DozorLiteEngine extends AbstractGameEngine
             'cod'    => iconv('utf8', 'cp1251', $code),
         ]);
 
-        if (preg_match('#<!--errorText-->(.*?)<!--errorTextEnd-->#', $this->iconv($html), $m)) {
-            return sprintf('<b>%s</b>', strip_tags($m[1])) . PHP_EOL . $this->getEstimatedCodes($this->iconv($html));
+        if ($info = $this->getInformation($this->iconv($html))) {
+            return sprintf('<b>%s</b>', $info) . PHP_EOL . $this->getEstimatedCodes($this->iconv($html));
         }
 
         return 'Статус отправки не известен';
@@ -66,6 +75,9 @@ class DozorLiteEngine extends AbstractGameEngine
             $html = $this->getHtml();
         }
         if (!preg_match_all('#levelTextBegin-->(.*?)<!--levelTextEnd#isu', $html, $matches)) {
+            if ($info = $this->getInformation($html)) {
+                return $info;
+            }
             throw new TelegramCommandException('Ошибка получения текста задания', __LINE__);
         }
         $return = $matches[1][0];
@@ -105,11 +117,8 @@ class DozorLiteEngine extends AbstractGameEngine
     {
         $url = Config::getValue($this->chatId, 'url');
         $domain = Config::getValue($this->chatId, 'domain');
-        if (preg_match('/ekipazh/i', $url)) {
-            return sprintf('%s/%s/', $this->trimUrl($url), $this->trimUrl($domain));
-        }
 
-        return sprintf('http://lite.dzzzr.ru/%s/go/', $this->trimUrl($domain));
+        return sprintf('%s/%s/go/', $this->trimUrl($url), $this->trimUrl($domain));
     }
 
     private function getHtml()
