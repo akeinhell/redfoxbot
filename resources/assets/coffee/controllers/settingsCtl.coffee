@@ -9,13 +9,13 @@ settingsCtl = ($scope, cfpLoadingBar)->
     {'engine': 'Encounter', 'title': 'Quest.ua', showLogin: true},
 #    {'engine': 'Lampa', 'title': 'Lampa'},
     {'engine': 'DozorLite', 'title': 'Dozor.Lite', showPin: true},
-    {'engine': 'DozorLite', 'title': 'Экипаж', showPin: true},
-    {'engine': 'Lampa', 'title': 'Лампа (Ведется тестирование!)', showLogin: true},
-    {'engine':'DozorClassic', 'title':'Dozor.Classic', showLogin: true},
+    {'engine': 'Ekipazh', 'title': 'Экипаж', showPin: true},
+#    {'engine': 'Lampa', 'title': 'Лампа (Ведется тестирование!)', showLogin: true},
+#    {'engine':'DozorClassic', 'title':'Dozor.Classic', showLogin: true},
   ]
 
   $scope.showLogin = -> ['RedfoxSafari', 'RedfoxAvangard', 'Encounter', 'QuestUa', 'Lampa', 'DozorClassic'].indexOf($scope.config.project) >= 0
-  $scope.showPin = -> ['DozorLite'].indexOf($scope.config.project) >= 0
+  $scope.showPin = -> ['DozorLite', 'Ekipazh'].indexOf($scope.config.project) >= 0
 
   $scope.config = {
     format: "a-z0-9"
