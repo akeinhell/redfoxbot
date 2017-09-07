@@ -22,9 +22,9 @@ class StartCommand extends AbstractCommand
     public static $description = 'Запуск лисы';
 
     public static $entities = ['/start'];
-    protected $active       = true;
-    protected $visible      = false;
-    protected $patterns     = [
+    protected     $active   = true;
+    protected     $visible  = false;
+    protected     $patterns = [
         '\/start(\s|@redfoxbot\s)',
     ];
 
@@ -66,7 +66,7 @@ class StartCommand extends AbstractCommand
         switch ($data->project) {
             case 'DozorLite':
             case 'Ekipazh':
-                $msg = sprintf('Чат настроен для движка %s (Город: %s)', $data->project, $data->domain);
+                $this->responseText = sprintf('Чат настроен для движка %s (Город: %s)', $data->project, $data->domain);
                 break;
             default:
                 $msg                = <<<'TAG'
@@ -77,11 +77,10 @@ class StartCommand extends AbstractCommand
 Пароль: ******
 Формат кода: %s
 TAG;
+                $this->responseText = sprintf($msg, $data->project, $data->url, $data->login, $data->format);
         }
-        $this->responseText = sprintf($msg, $data->project, $data->url, $data->login, $data->format);
 
         if ($data->project === 'Encounter') {
-            //            $this->responseKeyboard = Bot::getKeyboard();
             Bot::action()->sendMessage($this->chatId, 'keyboard', null, false, null, Bot::getKeyboard());
         } else {
             $this->responseKeyboard = new ReplyKeyboardHide();
