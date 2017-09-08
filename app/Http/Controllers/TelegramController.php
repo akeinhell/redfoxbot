@@ -189,7 +189,7 @@ class TelegramController extends Controller
         if ($text = $command->getResponseText()) {
             $this->parseCoords($chatId, $text);
             $replyTo = $command->getResponseReply() ? $from : null;
-            $this->sendMessage($chatId, $text, $command->getResponseKeyboard(), $replyTo);
+            $this->sendMessage($chatId, $text, $command->getResponseKeyboard(), $replyTo, !$command->isShowPreview());
         }
     }
 
@@ -245,8 +245,9 @@ class TelegramController extends Controller
      * @param                             $message
      * @param ReplyKeyboardMarkup         $keyboard
      * @param int|null                    $replyTo
+     * @param bool                        $disablePreview
      */
-    private function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
+    private function sendMessage($chatId, $message, $keyboard = null, $replyTo = null, $disablePreview = true)
     {
         $cr     = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');
@@ -281,7 +282,7 @@ class TelegramController extends Controller
                 $chatId,
                 mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
                 'HTML',
-                true,
+                $disablePreview,
                 $replyTo, // reply
                 $keyboard
             );

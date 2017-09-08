@@ -17,6 +17,7 @@ class HelpCommand extends AbstractCommand
     public static $entities = ['/help'];
     protected $active       = true;
     protected $visible      = true;
+    protected $showPreview  = true;
 
     protected $patterns = [
         '\/help',

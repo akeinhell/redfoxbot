@@ -36,6 +36,7 @@ abstract class AbstractCommand
     protected $chatId;
     protected $fromId;
     protected $text;
+    protected $showPreview = false;
 
     /**
      * AbstractCommand constructor.
@@ -169,5 +170,9 @@ abstract class AbstractCommand
         if (!$this->config) {
             throw new TelegramCommandException('Cannot get config for chat: ' . $this->chatId);
         }
+    }
+
+    public function isShowPreview() {
+        return $this->showPreview;
     }
 }
