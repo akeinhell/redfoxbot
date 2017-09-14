@@ -9,7 +9,6 @@
 namespace App\Games;
 
 use App\Exceptions\TelegramCommandException;
-use App\Helpers\Cookie\S3CookieJar;
 use App\Telegram\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -111,7 +110,7 @@ class Sender
         try {
             $response = $this->client->post($url, $data);
         } catch (\Exception $e) {
-            throw new TelegramCommandException('Ошибка доступа к движку');
+            throw new TelegramCommandException('Ошибка доступа к движку', $this->chatId);
         }
         $this->lastRequest = $response;
 
@@ -133,7 +132,7 @@ class Sender
             throw new TelegramCommandException(implode(': ', [
                 'Ошибка доступа к движку',
                 $e->getMessage(),
-            ]));
+            ]), $this->chatId);
         }
 
         return $this->formatResponse($response);

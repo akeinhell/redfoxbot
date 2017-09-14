@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: akeinhell/docker-nginx-php7.1
+      - image: akeinhell/docker-nginx-php7.1:latest
         environment:
           - DB_HOST=localhost
           - DB_CONNECTION=pgsql

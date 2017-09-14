@@ -8,6 +8,24 @@
 
 namespace App\Exceptions;
 
+use Throwable;
+
 class TelegramCommandException extends \Exception
 {
+    private $chatid;
+
+    public function __construct($message, $chatId)
+    {
+        $this->message = $message;
+        $this->chatid = $chatId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getChatid(): int
+    {
+        return $this->chatid;
+    }
+
 }

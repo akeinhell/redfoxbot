@@ -13,6 +13,11 @@ services:
     volumes:
       - ./:/var/www/
     restart: always
+    environment:
+      - VIRTUAL_HOST=redfoxbot.dev
+    networks:
+      - dev
+      - rfx
 
   db:
     image: postgres:latest
@@ -20,6 +25,8 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=telegram
       - POSTGRES_USER=root
+    networks:
+      - rfx
     volumes:
       - /usr/local/docker/data/redfoxbot/postgres-data:/var/lib/postgresql/data
 
@@ -29,14 +36,13 @@ services:
       - "63791:6379"
     volumes:
       - /usr/local/docker/data/redfoxbot/redis:/data
+    networks:
+      - rfx
     command: redis-server --appendonly yes
 
-  lb:
-    image: dockercloud/haproxy
-    ports:
-      - 4430:80
-      - 8008:80
-    links:
-      - fpm
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  dev:
+    external:
+      name: dev-services
+  rfx:
+    driver: bridge

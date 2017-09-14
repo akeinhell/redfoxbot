@@ -10,12 +10,13 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\RedfoxBaseEngine;
+use App\Games\Interfaces\LoginPassEngine;
 
-class RedfoxAvangardEngine extends RedfoxBaseEngine
+class RedfoxAvangardEngine extends RedfoxBaseEngine implements LoginPassEngine
 {
     public function getQuestList()
     {
-        throw new TelegramCommandException('У авангарда не предусмотрено получение списка заданий', __LINE__);
+        throw new TelegramCommandException('У авангарда не предусмотрено получение списка заданий', $this->chatId);
     }
 
     protected function getUrl($type)

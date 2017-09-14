@@ -41,7 +41,7 @@ class StartCommand extends AbstractCommand
         $data = Cache::get($key);
         $data = json_decode($data);
         if (!$data) {
-            throw new TelegramCommandException('Не корректный формат данных' . PHP_EOL);
+            throw new TelegramCommandException('Не корректный формат данных' . PHP_EOL, $this->chatId);
         }
 
         Config::set($this->chatId, $data);

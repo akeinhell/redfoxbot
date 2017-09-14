@@ -10,6 +10,7 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\TwoFactorAuthEngine;
 use App\Quests\DozorClassicQuest;
 use App\Telegram\Config;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ use GuzzleHttp\Middleware;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\DomCrawler\Crawler;
 
-class DozorClassicEngine extends AbstractGameEngine
+class DozorClassicEngine extends AbstractGameEngine implements TwoFactorAuthEngine
 {
     /**
      * @var Client
@@ -40,7 +41,7 @@ class DozorClassicEngine extends AbstractGameEngine
         $teamLogin = Config::getValue($chatId, 'teamLogin');
         $teamPass  = Config::getValue($chatId, 'teamPassword');
         if (!$teamLogin || !$teamPass) {
-            throw new TelegramCommandException('team login or password not set');
+            throw new TelegramCommandException('team login or password not set', $this->chatId);
         }
 
         $this->cookieKey = 'CLASSIC_COOKIE:' . $chatId;
@@ -89,7 +90,7 @@ class DozorClassicEngine extends AbstractGameEngine
             $url     = $this->getUrl();
             $crawler = $this->client->request('GET', $url);
         } catch (\Exception $e) {
-            throw new TelegramCommandException('Ошибка авторизации. Неверный логин/пасс команды');
+            throw new TelegramCommandException('Ошибка авторизации. Неверный логин/пасс команды', $this->chatId);
         }
         $form    = $crawler->filter('form')->form();
         $crawler = $this->client->submit($form, [
@@ -98,7 +99,7 @@ class DozorClassicEngine extends AbstractGameEngine
         ]);
 
         if (!$this->checkAuth($crawler)) {
-            throw new TelegramCommandException('Ошибка авторизации. Неверный логин пасс для бота');
+            throw new TelegramCommandException('Ошибка авторизации. Неверный логин пасс для бота', $this->chatId);
         }
 
         return $crawler;
@@ -114,7 +115,7 @@ class DozorClassicEngine extends AbstractGameEngine
         $form = $crawler->filter('form[name=codeform]');
 
         if (!$form->count()) {
-            throw new TelegramCommandException('Не возможно отправить код. Возможно игра не началась или уже закончилась');
+            throw new TelegramCommandException('Не возможно отправить код. Возможно игра не началась или уже закончилась', $this->chatId);
         }
 
         $response = $this->client->submit($form->form(), [
