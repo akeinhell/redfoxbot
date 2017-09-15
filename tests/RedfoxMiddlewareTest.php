@@ -26,7 +26,7 @@ class RedfoxMiddlewareTest extends TestCase
         ]);
 
         $stack = HandlerStack::create($mock);
-        $stack->push(new RedfoxMiddleware());
+        $stack->push(new RedfoxMiddleware([], 0));
         $client = new Client([
             'handler'     => $stack,
             'debug'       => true,
@@ -51,7 +51,7 @@ class RedfoxMiddlewareTest extends TestCase
         ]);
 
         $stack = HandlerStack::create($mock);
-        $stack->push(new RedfoxMiddleware());
+        $stack->push(new RedfoxMiddleware([], 0));
         $client = new Client([
             'handler'     => $stack,
             'http_errors' => false,
