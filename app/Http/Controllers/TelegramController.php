@@ -38,6 +38,12 @@ class TelegramController extends Controller
         return response()->json(['token' => $token]);
     }
 
+    public function healthCheck() {
+        $health = Bot::action()->call('getWebhookInfo');
+
+        return response()->json($health);
+    }
+
     public function newhook()
     {
         header("HTTP/1.1 202");
