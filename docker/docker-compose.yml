@@ -1,16 +1,28 @@
 version: '2'
 
 services:
-  fpm:
-    image: akeinhell/redfoxbot:latest
+  copy:
     links:
       - db
       - redis
-    expose: 
-      - 80
     depends_on:
       - db
       - redis
+    extends:
+      service: fpm
+  main:
+    extends:
+      service: fpm
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
+  fpm:
+    image: akeinhell/redfoxbot:latest
+    expose: 
+      - 80
     volumes:
       - ./shared/.env:/var/www/.env
       - ./shared/storage/logs/:/var/www/storage/logs
