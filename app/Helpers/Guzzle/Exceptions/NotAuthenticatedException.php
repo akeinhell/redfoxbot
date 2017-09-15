@@ -8,7 +8,7 @@ use App\Exceptions\TelegramCommandException;
 
 class NotAuthenticatedException extends TelegramCommandException
 {
-    public function __construct($message = 'Ошибка авторизации', $chatId = 0)
+    public function __construct($chatId = 0, $message = 'Ошибка авторизации')
     {
         parent::__construct($message, $chatId);
     }

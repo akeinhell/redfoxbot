@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Exceptions\NoQuestSelectedException;
 use App\Exceptions\TelegramCommandException;
+use App\Helpers\Guzzle\Exceptions\NotAuthenticatedException;
 use App\Telegram\Bot;
 use Illuminate\Console\Command;
 use Log;
