@@ -86,10 +86,6 @@ class ConfigCommand extends AbstractCommand
             Bot::Button( '🔄 сбросить', ['config', 'clean']),
             Bot::Button( '🆗 Завершить', ['config', 'end']),
         ];
-        $data[] = [
-            Bot::Button( 'Скопировать настройки', null, [
-            'switch_inline_query' => '/start '.$token,
-        ]),];
 
         return new InlineKeyboardMarkup($data);
     }
