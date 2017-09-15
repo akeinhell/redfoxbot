@@ -226,7 +226,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
 
             return html_entity_decode($text, null, 'UTF-8');
         }
-        throw new TelegramCommandException('Не возможно получить текст задания', __LINE__);
+        throw new TelegramCommandException('Не возможно получить текст задания', $this->chatId);
     }
 
     /**

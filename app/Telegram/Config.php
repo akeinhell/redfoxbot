@@ -12,6 +12,8 @@ use Cache;
 
 class Config
 {
+    const STATE_KEY     = 'CHAT_STATE:';
+    const STATE_DEFAULT = 'main';
     public static $KEY_IP;
 
     /**
@@ -81,5 +83,34 @@ class Config
     public static function getCookieFile($chatId)
     {
         return storage_path('cookies/c' . $chatId . '.jar');
+    }
+
+
+    public static function setState($chatId, string $state)
+    {
+        Cache::put(self::STATE_KEY . $chatId, $state, 10);
+    }
+
+    public static function getState($chatId): string
+    {
+        return Cache::get(self::STATE_KEY . $chatId, self::STATE_DEFAULT);
+    }
+
+    public static function toString($chatId)
+    {
+        $msg = 'Нет настроек для данного чата';
+        if ($config = self::get($chatId)) {
+            $ret = [];foreach (get_object_vars($config) as $key => $val) {
+                if (is_array($val)) {
+                    continue;
+                }
+                $line  = sprintf('%s: %s', $key, $val);
+                $ret[] = $line;
+            }
+            if ($ret) {
+                $msg = implode(PHP_EOL, array_merge($ret));
+            }
+        }
+        return $msg;
     }
 }

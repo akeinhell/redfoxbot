@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
 /**
  * App\Quest.
@@ -20,24 +21,24 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereKey($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereTitle($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereLink($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest wherePlacement($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereDescription($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereStart($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereStop($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereUpdatedAt($value)
+ * @method static Builder|Quest whereId($value)
+ * @method static Builder|Quest whereKey($value)
+ * @method static Builder|Quest whereTitle($value)
+ * @method static Builder|Quest whereLink($value)
+ * @method static Builder|Quest wherePlacement($value)
+ * @method static Builder|Quest whereDescription($value)
+ * @method static Builder|Quest whereStart($value)
+ * @method static Builder|Quest whereStop($value)
+ * @method static Builder|Quest whereCreatedAt($value)
+ * @method static Builder|Quest whereUpdatedAt($value)
  *
  * @property int $game_id
  * @property string $html_link
  * @property string $event_id
  *
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereGameId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereHtmlLink($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Quest whereEventId($value)
+ * @method static Builder|Quest whereGameId($value)
+ * @method static Builder|Quest whereHtmlLink($value)
+ * @method static Builder|Quest whereEventId($value)
  */
 class Quest extends Model
 {

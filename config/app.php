@@ -159,7 +159,7 @@ return [
 
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
 
-        Telegram\Bot\Laravel\TelegramServiceProvider::class,
+//        Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\TrackProvider::class,
         \App\Providers\LampaProvider::class,
     ],
@@ -207,7 +207,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
 
-        'Tg'       => Telegram\Bot\Laravel\Facades\Telegram::class,
+//        'Tg'       => Telegram\Bot\Laravel\Facades\Telegram::class,
         'Track' => \App\Services\Tracking\TrackingFacade::class,
         'Lampa'    => LampaFacade::class,
 

@@ -12,9 +12,10 @@ use App\Exceptions\NoQuestSelectedException;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\RedfoxBaseEngine;
 use App\Games\Interfaces\CanTrackingInterface;
+use App\Games\Interfaces\LoginPassEngine;
 use App\Telegram\Config;
 
-class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterface
+class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterface, LoginPassEngine
 {
     public function getQuestList()
     {
@@ -32,7 +33,7 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
             return $questList;
         }
 
-        throw new TelegramCommandException('Не найдено списка заданий', __LINE__);
+        throw new TelegramCommandException('Не найдено списка заданий', $this->chatId);
     }
 
     public function getBaseParams()

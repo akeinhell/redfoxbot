@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
@@ -21,17 +22,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @method static \Illuminate\Database\Query\Builder|\App\User whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereFirstName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereLastName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereNickname($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereEmail($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User wherePhoto($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereAccessToken($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereRememberToken($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\User whereUpdatedAt($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereName($value)
+ * @method static Builder|User whereFirstName($value)
+ * @method static Builder|User whereLastName($value)
+ * @method static Builder|User whereNickname($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User wherePhoto($value)
+ * @method static Builder|User whereAccessToken($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereUpdatedAt($value)
  */
 class User extends Authenticatable
 {

@@ -10,11 +10,12 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\PinEngine;
 use App\Games\Sender;
 use App\Telegram\Config;
 use Illuminate\Support\Collection;
 
-class DozorLiteEngine extends AbstractGameEngine
+class DozorLiteEngine extends AbstractGameEngine implements PinEngine
 {
     /**
      * @param $chatId
@@ -66,7 +67,7 @@ class DozorLiteEngine extends AbstractGameEngine
 
     public function sendSpoiler($spoiler)
     {
-        throw new TelegramCommandException('Временно не доступно', __LINE__);
+        throw new TelegramCommandException('Временно не доступно', $this->chatId);
     }
 
     public function getQuestText($html = null)
@@ -78,7 +79,7 @@ class DozorLiteEngine extends AbstractGameEngine
             if ($info = $this->getInformation($html)) {
                 return $info;
             }
-            throw new TelegramCommandException('Ошибка получения текста задания', __LINE__);
+            throw new TelegramCommandException('Ошибка получения текста задания', $this->chatId);
         }
         $return = $matches[1][0];
 
@@ -87,7 +88,7 @@ class DozorLiteEngine extends AbstractGameEngine
 
     public function getQuestList()
     {
-        throw new TelegramCommandException('Временно не доступно', __LINE__);
+        throw new TelegramCommandException('Временно не доступно', $this->chatId);
     }
 
     /**
@@ -99,7 +100,7 @@ class DozorLiteEngine extends AbstractGameEngine
     {
         return 0;
         if (!preg_match('#<input type=hidden name=lev value=(.*?)>#isu', $html, $m)) {
-            throw new TelegramCommandException('Ошибка получения номера уровня', __LINE__);
+            throw new TelegramCommandException('Ошибка получения номера уровня', $this->chatId);
         }
 
         return $m[1];
