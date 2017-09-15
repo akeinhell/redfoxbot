@@ -12,10 +12,10 @@ services:
       - local
       - main
     volumes:
-      - ./shared/.env:/var/www/.env
-      - ./shared/storage/logs/:/var/www/storage/logs
-      - ./shared/storage/chats/:/var/www/storage/chats
-      - ./shared/storage/cookies/:/var/www/storage/cookies
+      -  ~/projects/shared/.env:/var/www/.env
+      -  ~/projects/shared/storage/logs/:/var/www/storage/logs
+      -  ~/projects/shared/storage/chats/:/var/www/storage/chats
+      -  ~/projects/shared/storage/cookies/:/var/www/storage/cookies
     expose:
       - 80
     extends:
