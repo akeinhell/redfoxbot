@@ -126,8 +126,9 @@ class LampaEngine extends AbstractGameEngine implements TwoFactorAuthEngine
         return $this->getQuest()->getQuests();
     }
 
-    public function getEstCodes()
+    public function getEstimatedCodes()
     {
+        throw new TelegramCommandException('нету возможности получить список кодов для лампы', $this->chatId);
     }
 
     /**

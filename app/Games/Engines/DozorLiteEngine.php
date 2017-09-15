@@ -10,12 +10,13 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\IncludeHints;
 use App\Games\Interfaces\PinEngine;
 use App\Games\Sender;
 use App\Telegram\Config;
 use Illuminate\Support\Collection;
 
-class DozorLiteEngine extends AbstractGameEngine implements PinEngine
+class DozorLiteEngine extends AbstractGameEngine implements PinEngine, IncludeHints
 {
     /**
      * @param $chatId
@@ -38,10 +39,11 @@ class DozorLiteEngine extends AbstractGameEngine implements PinEngine
         throw new \Exception('not implemented');
     }
 
-    private function getInformation($html) {
+    private function getInformation($html)
+    {
         if (preg_match('#<!--errorText-->(.*?)<!--errorTextEnd-->#', $html, $m)) {
             $text = str_replace('<!--', '', $m[1]);
-            $text = str_replace('-->','',  $text);
+            $text = str_replace('-->', '', $text);
 
             return strip_tags($text);
         }
@@ -83,7 +85,7 @@ class DozorLiteEngine extends AbstractGameEngine implements PinEngine
         }
         $return = $matches[1][0];
 
-        return preg_replace('#</p>#isu', PHP_EOL, $return);
+        return preg_replace('#</p>#isu', '<br>', $return);
     }
 
     public function getQuestList()
@@ -144,8 +146,9 @@ class DozorLiteEngine extends AbstractGameEngine implements PinEngine
      *
      * @return string
      */
-    private function getEstimatedCodes($html)
+    public function getEstimatedCodes($html = null)
     {
+        $html = $html ?? $this->getHtml();
         if (preg_match('/<!--difficultyCods(.*?)<\/div>/is', $html, $matches)) {
             $x     = explode('<br>', $matches[1]);
             $codes = explode(':', array_get($x, 1, ''), 2);

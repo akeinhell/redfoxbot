@@ -3,6 +3,7 @@
 
 namespace App\Telegram\Handlers;
 
+use App\Games\Interfaces\IncludeHints;
 use App\Telegram\AbstractCommand;
 use App\Telegram\Bot;
 use TelegramBot\Api\Types\Message;
@@ -41,7 +42,7 @@ class CommandHandler extends BaseHandler
 
         if ($command->getResponseText()) {
             $reply = $command->getResponseReply() ? $message->getMessageId() : null;
-            Bot::sendMessage($chatId, $command->getResponseText(), $command->getResponseKeyboard(), $reply);
+            Bot::sendMessage($chatId, $command->getResponseText(), null, $reply);
         }
     }
 }

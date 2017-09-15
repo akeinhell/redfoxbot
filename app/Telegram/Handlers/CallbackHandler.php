@@ -17,7 +17,7 @@ class CallbackHandler extends BaseHandler
         Bot::action()->sendChatAction($chatId, 'typing');
         $this->callbackQuery = $callbackQuery;
         $callbackData        = $this->callbackQuery->getData();
-        \Log::debug('run CallbackHandler' . implode(':::', [$chatId, $callbackData]));
+        \Log::debug('run CallbackHandler  ' . implode(':::', [$chatId, $callbackData]));
         list($action, $data) = array_pad(explode(':', $callbackData), 3, '');
         $className = sprintf('App\Telegram\Handlers\%sCallbackHandler', ucfirst($action));
         if ($action && class_exists($className)) {

@@ -79,6 +79,8 @@ abstract class AbstractGameEngine
 
     abstract public function getQuestList();
 
+    abstract public function getEstimatedCodes();
+
     public function getSender()
     {
         return new Sender($this->chatId);

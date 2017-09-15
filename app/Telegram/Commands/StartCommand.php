@@ -80,11 +80,8 @@ TAG;
                 $this->responseText = sprintf($msg, $data->project, $data->url, $data->login, $data->format);
         }
 
-        if ($data->project === 'Encounter') {
-            Bot::action()->sendMessage($this->chatId, 'keyboard', null, false, null, Bot::getKeyboard());
-        } else {
-            $this->responseKeyboard = new ReplyKeyboardHide();
-        }
+        $this->responseKeyboard = Bot::getKeyboard($this->chatId);
+
         Sender::getInstance($this->chatId)->updateParams();
     }
 

@@ -178,4 +178,11 @@ class DozorClassicEngine extends AbstractGameEngine implements TwoFactorAuthEngi
     {
         return 'DozorClassik:' . $this->chatId;
     }
+
+    public function getEstimatedCodes()
+    {
+        $quest = $this->getQuest();
+
+        return $quest->getEstimatedCodes();
+    }
 }
