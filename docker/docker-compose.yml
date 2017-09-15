@@ -1,60 +1,38 @@
 version: '2'
 
 services:
-  copy:
-    links:
-      - db
-      - redis
-    depends_on:
-      - db
-      - redis
-    extends:
-      service: fpm
-  main:
-    extends:
-      service: fpm
-    depends_on:
-      - db
-      - redis
-    links:
-      - db
-      - redis
   fpm:
+    container_name: redfoxbot_fpm
     image: akeinhell/redfoxbot:latest
-    expose: 
-      - 80
+    links:
+      - db
+      - redis
+    command: php artisan bot:start
+    networks:
+      - local
+      - main
     volumes:
       - ./shared/.env:/var/www/.env
       - ./shared/storage/logs/:/var/www/storage/logs
       - ./shared/storage/chats/:/var/www/storage/chats
       - ./shared/storage/cookies/:/var/www/storage/cookies
-    restart: always
-    networks:
-      - local
-      - main
-    environment:
-      - VIRTUAL_HOST=x-game.su
+    expose:
+      - 80
+    extends:
+      file: ../docker-compose.base.yml
+      service: fpm
 
   db:
-    image: postgres:latest
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=telegram
-      - POSTGRES_USER=root
-    volumes:
-      - ./data/postgres-fox:/var/lib/postgresql/data:rw
-    networks:
-      - local
+    container_name: redfoxbot_db
+    extends:
+      file: ../docker-compose.base.yml
+      service: db
 
   redis:
-    image: redis:latest
-    volumes:
-      - ./data/redis:/data
-    expose:
-      - 6379
-    command: redis-server --appendonly yes
-    networks:
-      - local
+    container_name: redfoxbot_redis
+    extends:
+      file: ../docker-compose.base.yml
+      service: redis
 
 networks:
   main:
@@ -62,3 +40,6 @@ networks:
       name: main-network
   local:
     driver: bridge
+  dev:
+    external:
+      name: dev-services

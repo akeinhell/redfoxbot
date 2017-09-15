@@ -8,41 +8,31 @@ services:
     links:
       - db
       - redis
-    depends_on:
-      - db
     volumes:
       - ./:/var/www/
     restart: always
     environment:
       - VIRTUAL_HOST=redfoxbot.dev
+    extends:
+      file: docker-compose.base.yml
+      service: fpm
     networks:
       - dev
-      - rfx
+      - local
 
   db:
-    image: postgres:latest
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=telegram
-      - POSTGRES_USER=root
-    networks:
-      - rfx
-    volumes:
-      - /usr/local/docker/data/redfoxbot/postgres-data:/var/lib/postgresql/data
+    extends:
+      file: docker-compose.base.yml
+      service: db
 
   redis:
-    image: redis:latest
-    ports:
-      - "63791:6379"
-    volumes:
-      - /usr/local/docker/data/redfoxbot/redis:/data
-    networks:
-      - rfx
-    command: redis-server --appendonly yes
+    extends:
+      file: docker-compose.base.yml
+      service: redis
 
 networks:
+  local:
+    driver: bridge
   dev:
     external:
       name: dev-services
-  rfx:
-    driver: bridge
