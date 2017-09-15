@@ -3,7 +3,6 @@
 
 namespace App\Telegram\Handlers;
 
-
 use App\Telegram\Bot;
 use App\Telegram\Commands\CodeCommand;
 use TelegramBot\Api\Types\Update;
@@ -16,11 +15,12 @@ class CodeHandler extends BaseHandler
         $message = $update->getMessage();
         $chatId  = $message->getChat()->getId();
         $command = new CodeCommand($chatId);
+        usleep(1);
         $command->execute(ltrim($message->getText(), '!'));
         if ($command->getResponseText()) {
             $reply = $command->getResponseReply() ? $message->getMessageId() : null;
             Bot::sendMessage($chatId, $command->getResponseText(), $command->getResponseKeyboard(), $reply);
         }
-        \Log::debug('Run CodeHandler: ' . microtime(true) - $time);
+        \Log::debug('Run CodeHandler: ' . (microtime(true) - $time));
     }
 }
