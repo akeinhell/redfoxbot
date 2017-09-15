@@ -35,7 +35,7 @@ class TelegramListenerCommand extends Command
         Log::getMonolog()->pushHandler(new StdoutHandler());
         $bot = Bot::getClient();
 
-        $offset = \Cache::get(self::CACHE_KEY) ?? 0;
+        $offset = \Cache::get(self::CACHE_KEY) ?: 0;
         \Log::info('start listen: offset = ' . $offset);
 
         while (true) {

@@ -48,7 +48,7 @@ class ConfigHandler extends BaseHandler
         \Log::debug('parseUrl: ' . $text);
         $chatId = $message->getChat()->getId();
 
-        if (!strpos($text, 'http') === 'false') {
+        if (strpos($text, 'http') === false) {
             $text = 'http://' . $text;
         };
         $uriParser = new Parser();
