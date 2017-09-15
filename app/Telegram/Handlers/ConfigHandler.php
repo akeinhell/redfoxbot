@@ -44,11 +44,11 @@ class ConfigHandler extends BaseHandler
 
     private function parseUrl(Message $message)
     {
-        $text = $message->getText();
+        $text = trim($message->getText());
         \Log::debug('parseUrl: ' . $text);
         $chatId = $message->getChat()->getId();
 
-        if (!strpos($text, 'http')) {
+        if (!strpos($text, 'http') === 'false') {
             $text = 'http://' . $text;
         };
         $uriParser = new Parser();
