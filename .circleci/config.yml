@@ -39,12 +39,6 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              version=$(git describe --tags --abbrev=0)
-              data=(${version//./ })
-              ((data[2]++))
-              ver=${data[0]}.${data[1]}.${data[2]}
-              git tag $ver
-              git push --tags
               ./vendor/bin/dep deploy
               export SENTRY_ORG=akeinhell
               VERSION=$(sentry-cli releases propose-version)
