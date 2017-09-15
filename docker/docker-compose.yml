@@ -6,14 +6,22 @@ services:
     links:
       - db
       - redis
+    expose: 
+      - 80
     depends_on:
       - db
+      - redis
     volumes:
-      - .env:/var/www/.env
-      - ./data/laravel/storage/logs/:/var/www/storage/logs
-      - ./data/laravel/storage/chats/:/var/www/storage/chats
-      - ./data/laravel/storage/cookies/:/var/www/storage/cookies
+      - ./shared/.env:/var/www/.env
+      - ./shared/storage/logs/:/var/www/storage/logs
+      - ./shared/storage/chats/:/var/www/storage/chats
+      - ./shared/storage/cookies/:/var/www/storage/cookies
     restart: always
+    networks:
+      - local
+      - main
+    environment:
+      - VIRTUAL_HOST=x-game.su
 
   db:
     image: postgres:latest
@@ -22,22 +30,23 @@ services:
       - POSTGRES_DB=telegram
       - POSTGRES_USER=root
     volumes:
-      - ./data/postgres-data:/var/lib/postgresql/data
+      - ./data/postgres-fox:/var/lib/postgresql/data:rw
+    networks:
+      - local
 
   redis:
     image: redis:latest
-    ports:
-      - "63791:6379"
     volumes:
       - ./data/redis:/data
+    expose:
+      - 6379
     command: redis-server --appendonly yes
+    networks:
+      - local
 
-  lb:
-    image: dockercloud/haproxy
-    ports:
-      - 4430:80
-      - 8008:80
-    links:
-      - fpm
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  main:
+    external:
+      name: main-network
+  local:
+    driver: bridge
