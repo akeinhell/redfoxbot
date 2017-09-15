@@ -15,7 +15,6 @@ class RedfoxMiddlewareTest extends TestCase
      */
     public function testRedfoxSuccessAuth()
     {
-        return $this->assertTrue(true, 'temporaly disabled');;
         $this->createApplication();
         $html = View::make('mocks.redfox.login')->render();
 
@@ -42,7 +41,6 @@ class RedfoxMiddlewareTest extends TestCase
      */
     public function testRedfoxFailAuth()
     {
-        return $this->assertTrue(true, 'temporaly disabled');;
         $this->createApplication();
         $html = View::make('mocks.redfox.login')->render();
 
