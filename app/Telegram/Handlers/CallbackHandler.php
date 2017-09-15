@@ -17,8 +17,9 @@ class CallbackHandler extends BaseHandler
         Bot::action()->sendChatAction($chatId, 'typing');
         $this->callbackQuery = $callbackQuery;
         $callbackData        = $this->callbackQuery->getData();
+        \Log::debug('run CallbackHandler' . implode(':::', [$chatId, $callbackData]));
         list($action, $data) = array_pad(explode(':', $callbackData), 3, '');
-        $className    = sprintf('App\Telegram\Handlers\%sCallbackHandler', ucfirst($action));
+        $className = sprintf('App\Telegram\Handlers\%sCallbackHandler', ucfirst($action));
         if ($action && class_exists($className)) {
             /** @var CallbackInterface $handler */
             $handler = new $className();
@@ -28,7 +29,8 @@ class CallbackHandler extends BaseHandler
         }
 
         $messageId = $this->callbackQuery->getMessage()->getMessageId();
-        $msg       = sprintf('Действие не найдено (%s) [%s]', $action, $callbackData);
+        \Log::debug('NotFound callback action: ' . implode(PHP_EOL, [$action, $callbackData]));
+        $msg = sprintf('Действие не найдено (%s) [%s]', $action, $callbackData);
 
         return Bot::action()->editMessageText($chatId, $messageId, $msg);
     }

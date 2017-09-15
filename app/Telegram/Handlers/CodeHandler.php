@@ -11,6 +11,7 @@ use TelegramBot\Api\Types\Update;
 class CodeHandler extends BaseHandler
 {
     public function run(Update $update) {
+        \Log::debug('Run CodeHandler');
         $message = $update->getMessage();
         $chatId = $message->getChat()->getId();
         $command = new CodeCommand($chatId);

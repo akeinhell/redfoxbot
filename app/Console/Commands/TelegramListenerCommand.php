@@ -4,10 +4,9 @@ namespace App\Console\Commands;
 
 use App\Exceptions\TelegramCommandException;
 use App\Telegram\Bot;
-use App\Telegram\Events\CallbackEvent;
 use Illuminate\Console\Command;
-use TelegramBot\Api\BotApi;
-use TelegramBot\Api\Types\Message;
+use Log;
+use Monolog\Handler\StdoutHandler;
 
 class TelegramListenerCommand extends Command
 {
@@ -33,33 +32,38 @@ class TelegramListenerCommand extends Command
      */
     public function handle()
     {
+        Log::getMonolog()->pushHandler(new StdoutHandler());
         $bot = Bot::getClient();
 
-        $offset = \Cache::get(self::CACHE_KEY);
-        $this->info('start listen: ' . $offset);
+        $offset = \Cache::get(self::CACHE_KEY) ?? 0;
+        \Log::info('start listen: offset = ' . $offset);
 
         while (true) {
             $updates = Bot::action()->getUpdates($offset, 5, 30);
-            if ($updates) {
-                $lastUpdate = end($updates);
-                $offset = $lastUpdate->getUpdateId() + 1;
-                \Cache::put(self::CACHE_KEY, $offset);
-                try {
-                    $bot->handle($updates);
-                } catch (TelegramCommandException $e) {
-                    Bot::sendMessage($e->getChatid(), $e->getMessage());
-                    $this->warn(sprintf('#%s - %s', $e->getChatid(), $e->getMessage()));
-                } catch (\Exception $e) {
-                    app('sentry')->captureException($e);
-                    $message = sprintf('%s (%s)'.PHP_EOL. '%s:%s',
-                        get_class($e),
-                        $e->getMessage(),
-                        $e->getFile(),
-                        $e->getLine()
-                    );
+            if (!$updates) {
+                continue;
+            }
 
-                    $this->error($message);
-                }
+            Log::debug('handled new updates: ' . count($updates));
+            $lastUpdate = end($updates);
+            $offset     = $lastUpdate->getUpdateId() + 1;
+            \Cache::put(self::CACHE_KEY, $offset);
+            try {
+                $bot->handle($updates);
+            } catch (TelegramCommandException $e) {
+                Log::error(get_class($e) . implode(PHP_EOL, [
+                        'message' => $e->getMessage(),
+                        'file'    => $e->getFile(),
+                        'line'    => $e->getLine(),
+                    ]));
+                Bot::sendMessage($e->getChatid(), $e->getMessage());
+            } catch (\Exception $e) {
+                Log::critical(get_class($e) . implode(PHP_EOL, [
+                        'message' => $e->getMessage(),
+                        'file'    => $e->getFile(),
+                        'line'    => $e->getLine(),
+                    ]));
+                app('sentry')->captureException($e);
             }
         }
     }

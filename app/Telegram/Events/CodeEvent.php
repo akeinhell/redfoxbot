@@ -20,7 +20,7 @@ class CodeEvent implements BotEvent
                 return false;
             }
             $chatId = $update->getMessage()->getChat()->getId();
-            $auto = Config::getValue($chatId, 'auto', 'true') === 'true';
+            $auto = filter_var(Config::getValue($chatId, 'auto', 'true'), FILTER_VALIDATE_BOOLEAN);
             $pattern = Config::getValue($chatId, 'format');
 
             return $pattern && (preg_match('/^[' . $pattern . ']+$/i', $message->getText()) && $auto) || preg_match('/^!(.*?)$/i', $message->getText());

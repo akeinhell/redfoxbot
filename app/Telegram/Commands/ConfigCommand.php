@@ -97,6 +97,6 @@ class ConfigCommand extends AbstractCommand
     private static function getInput($chatId, $param, $text)
     {
         $label = $text . ': ' . Config::getValue($chatId, $param, 'Не указан');
-        return Bot::Button($chatId, $label, ['config', 'input', $param]);
+        return Bot::Button($label, ['config', 'input', $param]);
     }
 }

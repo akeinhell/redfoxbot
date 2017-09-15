@@ -19,6 +19,7 @@ class CommandHandler extends BaseHandler
 
     public function run(Message $message)
     {
+        \Log::debug('run CommandHandler: ' . $this->commandClass);
         $chatId = $message->getChat()->getId();
         /** @var AbstractCommand $command */
         $command = new $this->commandClass($chatId, $message->getFrom()->getId(), $message->getText());
@@ -35,10 +36,8 @@ class CommandHandler extends BaseHandler
         ;
 
         $command->execute($payload);
-        \Log::debug('Execution time', [
-            'type' => $this->commandClass,
-            'time' => microtime(true) - $time
-        ]);
+
+        \Log::debug(sprintf('[%s] Execution time: %s', $this->commandClass, microtime(true) - $time));
 
         if ($command->getResponseText()) {
             $reply = $command->getResponseReply() ? $message->getMessageId() : null;
