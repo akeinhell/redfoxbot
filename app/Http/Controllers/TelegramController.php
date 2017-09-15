@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NoQuestSelectedException;
+use App\Exceptions\TelegramCommandException;
 use App\Telegram\Bot;
 use App\Telegram\Commands\StartCommand;
 use Illuminate\Http\Request;
+use Log;
 
 class TelegramController extends Controller
 {
@@ -43,7 +46,25 @@ class TelegramController extends Controller
 
         $bot = Bot::getClient();
 
-        $bot->run();
+        try {
+            $bot->run();
+        } catch (NoQuestSelectedException $e) {
+                Bot::sendMessage($e->getChatid(), 'Не выбрано задание. Выберите его с помощью команды /select');
+        } catch (TelegramCommandException $e) {
+            Log::error(get_class($e) . implode(PHP_EOL, [
+                    'message' => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'    => $e->getLine(),
+                ]));
+            Bot::sendMessage($e->getChatid(), $e->getMessage());
+        } catch (\Exception $e) {
+            Log::critical(get_class($e) . implode(PHP_EOL, [
+                    'message' => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'    => $e->getLine(),
+                ]));
+            app('sentry')->captureException($e);
+        }
 
         return response('ok', 200);
     }

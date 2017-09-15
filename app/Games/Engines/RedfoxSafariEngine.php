@@ -41,7 +41,7 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
         $this->checkQuestSelected();
         $taskId = Config::getValue($this->chatId, self::QUEST_ID);
         if (!$taskId) {
-            throw new NoQuestSelectedException();
+            throw new NoQuestSelectedException('Не выбрано задание', $this->chatId);
         }
 
         return ['task_id' => $taskId];

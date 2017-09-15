@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Exceptions\NoQuestSelectedException;
 use App\Exceptions\TelegramCommandException;
 use App\Telegram\Bot;
 use Illuminate\Console\Command;
@@ -50,6 +51,8 @@ class TelegramListenerCommand extends Command
             \Cache::put(self::CACHE_KEY, $offset);
             try {
                 $bot->handle($updates);
+            } catch (NoQuestSelectedException $e) {
+                Bot::sendMessage($e->getChatid(), 'Не выбрано задание. Выберите его с помощью команды /select');
             } catch (TelegramCommandException $e) {
                 Log::error(get_class($e) . implode(PHP_EOL, [
                         'message' => $e->getMessage(),

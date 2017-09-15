@@ -8,8 +8,6 @@
 
 namespace App\Exceptions;
 
-use Throwable;
-
 class TelegramCommandException extends \Exception
 {
     private $chatid;
@@ -27,5 +25,4 @@ class TelegramCommandException extends \Exception
     {
         return $this->chatid;
     }
-
 }

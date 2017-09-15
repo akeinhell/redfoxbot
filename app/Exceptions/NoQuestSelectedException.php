@@ -8,6 +8,6 @@
 
 namespace App\Exceptions;
 
-class NoQuestSelectedException extends \Exception
+class NoQuestSelectedException extends TelegramCommandException
 {
 }
