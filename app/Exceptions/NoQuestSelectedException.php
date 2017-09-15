@@ -10,4 +10,8 @@ namespace App\Exceptions;
 
 class NoQuestSelectedException extends TelegramCommandException
 {
+    public function __construct($message = 'Не выбрано задание. Выберите с помощью команды /config', $chatId)
+    {
+        parent::__construct($message, $chatId);
+    }
 }

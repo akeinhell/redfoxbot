@@ -31,7 +31,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             'email' => Config::getValue($chatId, 'login'),
             'pass'  => Config::getValue($chatId, 'password'),
         ];
-        $this->stack->push(new RedfoxMiddleware($authParams), 'engine:redfox');
+        $this->stack->push(new RedfoxMiddleware($authParams, $chatId), 'engine:redfox');
     }
 
     /**

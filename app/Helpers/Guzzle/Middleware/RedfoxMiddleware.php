@@ -22,7 +22,7 @@ class RedfoxMiddleware extends AbstractMiddleware
         }
 
         if (!$this->isAuthenticated($response)) {
-            throw new NotAuthenticatedException();
+            throw new NotAuthenticatedException($this->chatId);
         }
 
         return false;
@@ -63,7 +63,7 @@ class RedfoxMiddleware extends AbstractMiddleware
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withHeader(self::HEADER_KEY, $this->baseUrl), $options);
         if (!$this->isAuthenticated($promise->wait())) {
-            throw new NotAuthenticatedException();
+            throw new NotAuthenticatedException($this->chatId);
         };
 
 

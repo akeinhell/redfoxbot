@@ -20,10 +20,12 @@ abstract class AbstractMiddleware
      */
     protected $params;
     protected $handler;
+    protected $chatId;
 
-    public function __construct(array $params = [])
+    public function __construct(array $params = [], $chatId)
     {
         $this->params = $params;
+        $this->chatId = $chatId;
     }
 
     /**

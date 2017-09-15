@@ -51,14 +51,7 @@ class TelegramListenerCommand extends Command
             \Cache::put(self::CACHE_KEY, $offset);
             try {
                 $bot->handle($updates);
-            } catch (NoQuestSelectedException $e) {
-                Bot::sendMessage($e->getChatid(), 'Не выбрано задание. Выберите его с помощью команды /select');
-            } catch (TelegramCommandException $e) {
-                Log::error(get_class($e) . implode(PHP_EOL, [
-                        'message' => $e->getMessage(),
-                        'file'    => $e->getFile(),
-                        'line'    => $e->getLine(),
-                    ]));
+            } catch (NoQuestSelectedException|NotAuthenticatedException|TelegramCommandException $e) {
                 Bot::sendMessage($e->getChatid(), $e->getMessage());
             } catch (\Exception $e) {
                 Log::critical(get_class($e) . implode(PHP_EOL, [

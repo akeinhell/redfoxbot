@@ -4,7 +4,12 @@
 namespace App\Helpers\Guzzle\Exceptions;
 
 
-class NotAuthenticatedException extends \Exception
-{
+use App\Exceptions\TelegramCommandException;
 
+class NotAuthenticatedException extends TelegramCommandException
+{
+    public function __construct($message = 'Ошибка авторизации', $chatId)
+    {
+        parent::__construct($message, $chatId);
+    }
 }
