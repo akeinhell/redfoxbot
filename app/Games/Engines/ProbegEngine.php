@@ -27,6 +27,7 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
 
     public function sendCode($code)
     {
+        \Log::debug('send code: '. $code);
         $crawler = $this->getCrawler();
         $inputs = $crawler->filter('input[name=tn]')->each(function (Crawler $c) {
             return $c->attr('value');
@@ -43,6 +44,8 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         $result = $crawler->filter('p font')->each(function (Crawler $c) {
             return $c->parents()->text();
         });
+        \Log::debug('response', [$crawler->filter('p font')->html()]);
+        \Log::debug('result', [$result]);
 
         return implode(PHP_EOL, $result);
     }
