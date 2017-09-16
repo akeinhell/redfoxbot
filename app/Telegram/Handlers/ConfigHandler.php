@@ -29,7 +29,7 @@ class ConfigHandler extends BaseHandler
             case 'gameId':
                 Config::setValue($chatId, $type, $update->getMessage()->getText());
                 if ($update->getMessage()->getChat()->getType() !== 'private') {
-                    Bot::action()->deleteMessage($chatId, $update->getMessage()->getMessageId());
+                    @Bot::action()->deleteMessage($chatId, $update->getMessage()->getMessageId());
                 }
                 Bot::sendMessage($chatId, 'Настройки обновлены', ConfigCommand::getConfigKeyboard($chatId));
                 break;
