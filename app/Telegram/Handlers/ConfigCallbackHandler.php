@@ -31,6 +31,24 @@ class ConfigCallbackHandler implements CallbackInterface
         throw new \Exception('cannot parse callback data: ' . $callbackQuery->getData());
     }
 
+    public function level(CallbackQuery $callbackQuery)
+    {
+        $chatId = Bot::getChatIdfromCallback($callbackQuery);
+        list(, , $levelId, $levelName) = array_pad(explode(':', $callbackQuery->getData()), 4, '');
+        Config::setValue($chatId, 'level', $levelId);
+        $engine = Bot::getEngineFromChatId($chatId);
+        $response = $engine->getQuestText();
+        $response = is_array($response) ? array_pad($response, 2, null) : [$response, null];
+        list($text, $keyboard) = $response;
+
+        $text = $text. PHP_EOL . 'Выбрано задание: '. $levelName;
+        if ($text == $callbackQuery->getMessage()->getText()) {
+            $text .= '.';
+        }
+        $messageId = $callbackQuery->getMessage()->getMessageId();
+        return Bot::action()->editMessageText($chatId, $messageId, $text, 'HTML', false, $keyboard);
+    }
+
     public function select(CallbackQuery $callbackQuery)
     {
         $chatId = Bot::getChatIdfromCallback($callbackQuery);
@@ -52,7 +70,6 @@ class ConfigCallbackHandler implements CallbackInterface
             null,
             false,
             ConfigCommand::getConfigKeyboard($chatId));
-
     }
 
     public function project(CallbackQuery $callbackQuery)

@@ -114,6 +114,19 @@ class ConfigHandler extends BaseHandler
                 Config::setValue($chatId, 'gameId', $query->getParam('gid'));
                 $msg = 'настройки установлены. Не забудьте указать логин/пароль';
                 break;
+            case 'probeg.net.ua':
+                if (!$city) {
+                    \Log::error('invalidCity: ' . $text);
+                    Bot::sendMessage($chatId, 'не удалось распознать ID игры');
+
+                    return false;
+                }
+                Config::setValue($chatId, 'url', $patchedUrl . $city . '/');
+                Config::setValue($chatId, 'project', 'Probeg');
+                Config::setValue($chatId, 'pin', $query->getParam('p'));
+
+                $msg = 'настройки установлены. Не забудьте указать пин-код';
+                break;
             default:
                 \Log::error('invalidURL: ' . $text);
                 $msg = 'Не удалось распознать присланный адрес. ' . PHP_EOL . 'Пришлите ссылку еще раз';

@@ -15,9 +15,9 @@ class QuestCommand extends AbstractCommand
     public static $description = 'Получение текста текущего задания';
 
     public static $entities = ['/q', '/quest'];
-    protected $active       = true;
-    protected $visible      = true;
-    protected $patterns     = [
+    protected $active = true;
+    protected $visible = true;
+    protected $patterns = [
         '\/q',
         '\/quest',
     ];
@@ -29,6 +29,10 @@ class QuestCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        $this->responseText = $this->getEngine()->getQuestText();
+        $response = $this->getEngine()->getQuestText();
+        $response = is_array($response) ? array_pad($response, 2, null) : [$response, null];
+        list($text, $keyboard) = $response;
+        $this->responseText = $text;
+        $this->responseKeyboard = $keyboard;
     }
 }
