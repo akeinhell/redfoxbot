@@ -13,33 +13,45 @@ use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Interfaces\IncludeHints;
 use App\Games\Interfaces\PinEngine;
 use App\Games\Sender;
+use App\Helpers\Guzzle\Middleware\EncodingMiddleware;
 use App\Telegram\Config;
 use Illuminate\Support\Collection;
 
 class ProbegEngine extends AbstractGameEngine implements PinEngine
 {
+    public function __construct($chatId)
+    {
+        parent::__construct($chatId);
+        $this->stack->push(new EncodingMiddleware());
+    }
+
     public function sendCode($code)
     {
-        // TODO: Implement sendCode() method.
+        return 'отправка кода';
     }
 
     public function sendSpoiler($spoiler)
     {
-        // TODO: Implement sendSpoiler() method.
+        return 'отправка спойлера';
     }
 
     public function getQuestText()
     {
-        // TODO: Implement getQuestText() method.
+        return 'получение текста';
     }
 
     public function getQuestList()
     {
-        // TODO: Implement getQuestList() method.
+        return 'получение spisok';
     }
 
     public function getEstimatedCodes()
     {
-        // TODO: Implement getEstimatedCodes() method.
+        return 'getCodes';
+    }
+
+    private function getHtml()
+    {
+        return 111;
     }
 }
