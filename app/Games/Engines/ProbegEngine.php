@@ -43,11 +43,19 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         $crawler = new Crawler($response);
         $result = $crawler->filter('p font')->each(function (Crawler $c) {
             return $c->parents()->text();
-        });
-        \Log::debug('response', [$crawler->filter('p font')->html()]);
+        })?: ['не удалось узнать статус отправки'];
+
+        /**
+         *
+
+        $html = iconv('cp1251', 'utf8', $response);
+        if (preg_match('/Найдите\s(\d+).*?Всего верных: (\d+)/isu', $html, $matches)) {
+            list(, $total, $now) = $matches;
+        }
+         * */
         \Log::debug('result', [$result]);
 
-        return implode(PHP_EOL, $result);
+        return implode(PHP_EOL, $result?:['не удалось узнать статус отправки']);
     }
 
     public function sendSpoiler($spoiler)
