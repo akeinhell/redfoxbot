@@ -12,7 +12,6 @@ use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Interfaces\PinEngine;
 use App\Helpers\Guzzle\Middleware\ProbegMiddleware;
 use App\Telegram\Bot;
-use App\Telegram\Config;
 use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
@@ -28,12 +27,28 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
 
     public function sendCode($code)
     {
-        return 'отправка кода';
+        $crawler = $this->getCrawler();
+        $inputs = $crawler->filter('input[name=tn]')->each(function (Crawler $c) {
+            return $c->attr('value');
+        });
+
+        $response = (string) $this->client->get('play', [
+            'query' => [
+                'tn' => array_get($inputs, 0, ''),
+                'bb' => [$code]
+            ],
+        ])->getBody();
+
+        $crawler = new Crawler($response);
+        $result = $crawler->filter('p font')->each(function (Crawler $c) {
+            return $c->parents()->text();
+        });
+
+        return implode(PHP_EOL, $result);
     }
 
     public function sendSpoiler($spoiler)
     {
-        return 'отправка спойлера';
     }
 
     public function getQuestText()
@@ -61,7 +76,7 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         });
 
 
-        $response = trim(preg_replace('/[\n\s]{3,}/', PHP_EOL.PHP_EOL, $form->text()));
+        $response = trim(preg_replace('/[\n\s]{3,}/', PHP_EOL . PHP_EOL, $form->text()));
         $keyboard = $this->getInlineKeyboard($questList);
 
         return [$response, $keyboard];
@@ -77,7 +92,7 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
                 $href = array_get(explode('#', $href), 0, '');
                 $href = \GuzzleHttp\Psr7\parse_query($href);
 
-                $questList[$c->text()] = (int) array_get($href, 'o', 0);
+                $questList[$c->text()] = (int)array_get($href, 'o', 0);
             });
         return array_filter($questList);
     }

@@ -15,7 +15,6 @@ class CodeHandler extends BaseHandler
         $message = $update->getMessage();
         $chatId  = $message->getChat()->getId();
         $command = new CodeCommand($chatId);
-        usleep(1);
         $command->execute(ltrim($message->getText(), '!'));
         if ($command->getResponseText()) {
             $reply = $command->getResponseReply() ? $message->getMessageId() : null;
