@@ -28,9 +28,8 @@ class ConfigHandler extends BaseHandler
             case 'password':
             case 'gameId':
                 Config::setValue($chatId, $type, $update->getMessage()->getText());
-                try {
+                if ($update->getMessage()->getChat()->getType() !== 'private') {
                     Bot::action()->deleteMessage($chatId, $update->getMessage()->getMessageId());
-                } catch (\Exception $e) {
                 }
                 Bot::sendMessage($chatId, 'Настройки обновлены', ConfigCommand::getConfigKeyboard($chatId));
                 break;
@@ -53,7 +52,6 @@ class ConfigHandler extends BaseHandler
         };
         $uriParser = new Parser();
         try {
-
             $uri          = $uriParser($text);
             $query        = new Query(array_get($uri, 'query', ''));
             $parsedDomain = array_get($uri, 'host', '');

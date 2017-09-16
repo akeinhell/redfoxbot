@@ -179,7 +179,8 @@ class Bot
         ], $custom));
     }
 
-    public static function getChatIdfromCallback(CallbackQuery $callbackQuery) {
+    public static function getChatIdfromCallback(CallbackQuery $callbackQuery)
+    {
         return $callbackQuery->getMessage()->getChat()->getId();
     }
 }
