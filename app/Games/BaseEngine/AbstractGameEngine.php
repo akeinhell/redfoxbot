@@ -39,6 +39,7 @@ abstract class AbstractGameEngine
      */
     protected $userId;
     protected $stack;
+    protected $client;
 
     public function __construct($chatId)
     {
