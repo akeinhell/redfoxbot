@@ -122,6 +122,7 @@ class Bot
 
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
+        $message = is_array($message)?array_get($message, 0):$message;
         self::detectCoords($chatId, $message);
         $cr = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');

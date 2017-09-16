@@ -17,6 +17,7 @@ class EmojiHandler extends BaseHandler
         $chatId = $update->getMessage()->getChat()->getId();
         $text   = $update->getMessage()->getText();
         $key    = Bot::getEmoji($text);
+        Log::debug('Emoji: ' . $key);
         $engine = Bot::getEngineFromChatId($chatId);
 
         if (!$key || !$engine) {
