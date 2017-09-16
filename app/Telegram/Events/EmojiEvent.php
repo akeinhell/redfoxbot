@@ -16,8 +16,13 @@ class EmojiEvent implements BotEvent
     {
         return function (Update $update) {
             $message = $update->getMessage();
+
+            if (is_null($message)) {
+                return false;
+            }
+
             $text    = $update->getMessage()->getText();
-            if (is_null($message) || is_null($text)) {
+            if (is_null($text)) {
                 return false;
             }
 
