@@ -25,11 +25,8 @@ class KeyboardCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        if (Config::getValue($this->chatId, 'project') === 'Encounter') {
-            Bot::action()->sendMessage($this->chatId, '---', null, false, null, Bot::getKeyboard());
-        }
-        if (Config::getValue($this->chatId, 'project') === 'RedfoxSafari') {
-            Bot::action()->sendMessage($this->chatId, '---', null, false, null, Bot::getSafariKeyboard());
+        if ($keyboard = Bot::getKeyboard($this->chatId)) {
+            Bot::sendMessage($this->chatId, 'Вот ваша клавиатура', $keyboard);
         }
     }
 

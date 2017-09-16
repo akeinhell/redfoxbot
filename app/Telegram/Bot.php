@@ -8,8 +8,12 @@
 
 namespace App\Telegram;
 
+use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\IncludeHints;
+use App\Games\Interfaces\IncludeTime;
 use App\Telegram\Events\CodeEvent;
 use App\Telegram\Events\ConfigEvent;
+use App\Telegram\Events\EmojiEvent;
 use App\Telegram\Handlers\CallbackHandler;
 use App\Telegram\Handlers\CommandHandler;
 use DOMElement;
@@ -32,7 +36,7 @@ class Bot
         'time'     => 'time',
         'text'     => 'questText',
         'hints'    => 'hints',
-        'estCodes' => 'sectors',
+        'estCodes' => 'estimatedCodes',
     ];
 
     /**
@@ -42,14 +46,27 @@ class Bot
     private static $instance;
     private static $clientInstance;
 
-    public static function getKeyboard()
+    public static function getKeyboard($chatId)
     {
+        $engine = self::getEngineFromChatId($chatId);
         $keyboard = [
-            [self::formatButton('time', 'Время до слива'), self::formatButton('text', 'Текст задания')],
-            [self::formatButton('hints', 'Подсказки'), self::formatButton('estCodes', 'Ост. коды')],
+            self::formatButton('text', 'Текст задания'),
+            self::formatButton('estCodes', 'Ост. коды'),
         ];
 
-        return new ReplyKeyboardMarkup($keyboard, null, true);
+        $map = [
+            IncludeHints::class => self::formatButton('hints', 'Подсказки'),
+            IncludeTime::class  => self::formatButton('time', 'Время до слива'),
+        ];
+
+        foreach ($map as $interface => $button) {
+            if ($engine instanceof $button) {
+                $keyboard[] = $button;
+            }
+        }
+        $keyboard = array_chunk($keyboard, 2);
+
+        return $keyboard ? new ReplyKeyboardMarkup($keyboard, null, true) : null;
     }
 
     public static function getSafariKeyboard()
@@ -86,6 +103,7 @@ class Bot
         if (self::$clientInstance === null) {
             $bot = new Client(env('TELEGRAM_KEY'));
             $bot->on(ConfigEvent::handle(), ConfigEvent::validator());
+            $bot->on(EmojiEvent::handle(), EmojiEvent::validator());
             /** @var AbstractCommand $commandClass */
             foreach (CommandParser::$commands as $commandClass) {
                 foreach ($commandClass::$entities as $entity) {
@@ -105,9 +123,9 @@ class Bot
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
         self::detectCoords($chatId, $message);
-        $cr     = new Crawler($message);
+        $cr = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');
-        $links  = [];
+        $links = [];
         $cr->filter('img')
             ->each(function (Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
@@ -121,7 +139,8 @@ class Bot
                 }
             });
 
-        $tags     = ['b', 'strong', 'i', 'code', 'a', 'pre'];
+        $message = preg_replace('/<br\s*?\/?>/s', PHP_EOL, $message);
+        $tags = ['b', 'strong', 'i', 'code', 'a', 'pre'];
         $response = strip_tags($message, implode(array_map(function ($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
@@ -179,8 +198,46 @@ class Bot
         ], $custom));
     }
 
+    /**
+     * @param CallbackQuery $callbackQuery
+     * @return int|string
+     */
     public static function getChatIdfromCallback(CallbackQuery $callbackQuery)
     {
         return $callbackQuery->getMessage()->getChat()->getId();
+    }
+
+    /**
+     * @param $str
+     * @return null|string
+     */
+    public static function getEmoji($str): ?string
+    {
+        $array = Bot::$emoji;
+        foreach ($array as $key => $icon) {
+            $pattern = '/' . $icon . '/u';
+            if (preg_match($pattern, $str)) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $name
+     * @param $chatId
+     * @return AbstractGameEngine|null
+     */
+    public static function getEngineFromString($name, $chatId): ?AbstractGameEngine
+    {
+        $projectClass = '\\App\\Games\\Engines\\' . $name . 'Engine';
+
+        return class_exists($projectClass) ? new  $projectClass($chatId) : null;
+    }
+
+    public static function getEngineFromChatId($chatId)
+    {
+        return self::getEngineFromString(Config::getValue($chatId, 'project'), $chatId);
     }
 }

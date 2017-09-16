@@ -53,7 +53,7 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
         $status = $quest->getCodeStatus($code) ?: 'Ошибка определения статуса отправки кода';
 
         if ($lastLevel === $quest->getId()) {
-            return $status . PHP_EOL . $this->getSectors($quest);
+            return $status . PHP_EOL . $this->getEstimatedCodes($quest);
         }
 
         return $status . PHP_EOL . '<b>Внимание! Получено новое задание.</b>' . PHP_EOL . $this->getQuestText($quest);
@@ -162,7 +162,7 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
      *
      * @return string
      */
-    public function getSectors($quest = null)
+    public function getEstimatedCodes($quest = null)
     {
         $quest = $quest ?: $this->getQuest();
         $this->checkRunnigGame($quest);
