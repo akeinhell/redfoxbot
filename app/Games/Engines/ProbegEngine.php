@@ -35,7 +35,7 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         $response = (string) $this->client->get('play', [
             'query' => [
                 'tn' => array_get($inputs, 0, ''),
-                'bb' => [$code]
+                'bb[]' => iconv('utf8', 'cp1251', $code),
             ],
         ])->getBody();
 
@@ -56,14 +56,9 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         $crawler = $this->getCrawler();
         $questList = $this->getQuestList($crawler);
         $form = $crawler->filter('form');
-        $filterFunction = function (Crawler $c) {
-            foreach ($c as $node) {
-                /* @var DOMElement $node */
-                $node->parentNode->removeChild($node);
-            }
-        };
-        foreach (['i', 'a'] as $tag) {
-            $form->filter($tag)->each($filterFunction);
+
+        foreach (['i', 'a', 'span.drw'] as $tag) {
+            $form->filter($tag)->each($this->removeChilds());
         }
 
         $form->filter('br')->each(function (Crawler $c) {
@@ -76,7 +71,9 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         });
 
 
-        $response = trim(preg_replace('/[\n\s]{3,}/', PHP_EOL . PHP_EOL, $form->text()));
+        $response = trim($form->text());
+        $response = trim(preg_replace('/(  )/isu', '', $response));
+        $response = trim(preg_replace('/[\s]{3,}/iu', PHP_EOL, $response));
         $keyboard = $this->getInlineKeyboard($questList);
 
         return [$response, $keyboard];
@@ -125,5 +122,15 @@ class ProbegEngine extends AbstractGameEngine implements PinEngine
         })->values()->toArray();
 
         return new InlineKeyboardMarkup(array_chunk($data, 2));
+    }
+
+    private function removeChilds()
+    {
+        return function (Crawler $c) {
+            foreach ($c as $node) {
+                /* @var DOMElement $node */
+                $node->parentNode->removeChild($node);
+            }
+        };
     }
 }
