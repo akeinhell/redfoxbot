@@ -42,7 +42,7 @@ class CommandHandler extends BaseHandler
 
         if ($command->getResponseText()) {
             $reply = $command->getResponseReply() ? $message->getMessageId() : null;
-            Bot::sendMessage($chatId, $command->getResponseText(), null, $reply);
+            Bot::sendMessage($chatId, $command->getResponseText(), $command->getResponseKeyboard(), $reply);
         }
     }
 }
