@@ -4,15 +4,17 @@ services:
   fpm:
     container_name: redfoxbot_fpm
     image: akeinhell/redfoxbot:latest
+    restart: always
+    environment:
+      - VIRTUAL_HOST=x-game.su
     links:
       - db
       - redis
-    command: php artisan bot:start
     networks:
       - local
       - main
     volumes:
-      -  ~/projects/shared/.env:/var/www/.env
+      -  ~/projects/shared/redfoxbot/.env:/var/www/.env
       -  ~/projects/shared/storage/logs/:/var/www/storage/logs
       -  ~/projects/shared/storage/chats/:/var/www/storage/chats
       -  ~/projects/shared/storage/cookies/:/var/www/storage/cookies
