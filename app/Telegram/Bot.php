@@ -145,6 +145,11 @@ class Bot
         $response = strip_tags($message, implode(array_map(function ($tag) {
             return sprintf('<%s>', $tag);
         }, $tags)));
+
+        // https://stackoverflow.com/questions/317053
+        $magicRegex = '/(\S+)=["\']?((?:.(?!["\']?\s+(?:\S+)=|[>"\']))+.)["\']?/isu';
+        $response = preg_replace($magicRegex, '$1=\'$2\'', $response);
+
         foreach (str_split($response, 3600) as $string) {
             foreach ($tags as $tag) {
                 $tagPattern = '<' . $tag . '>';
