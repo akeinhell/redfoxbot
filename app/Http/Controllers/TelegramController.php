@@ -21,7 +21,7 @@ class TelegramController extends Controller
             $result['status'] = Bot::action()->call('setWebhook', [
                 'url'             => \URL::to('hook'),
                 'max_connections' => 100,
-                'allowed_updates' => ['message', 'callback_query'],
+                'allowed_updates' => json_encode(['message', 'callback_query']),
             ]);
         } catch (\Exception $e) {
             $result['message'] = $e->getMessage();
