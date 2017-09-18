@@ -7,6 +7,7 @@ use App\Exceptions\TelegramCommandException;
 use App\Helpers\Guzzle\Exceptions\NotAuthenticatedException;
 use App\Telegram\Bot;
 use App\Telegram\Commands\StartCommand;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Log;
 
@@ -41,15 +42,18 @@ class TelegramController extends Controller
 
     public function healthCheck() {
         $health = Bot::action()->call('getWebhookInfo');
+        if ($errorDate = array_get($health, 'last_error_date')) {
+            $health['last_error_date'] = Carbon::createFromTimestamp($errorDate)->toAtomString();
+        }
 
         return response()->json($health);
     }
 
     public function newhook()
     {
-        header("HTTP/1.1 202");
-        ob_flush();
-        flush();
+//        header("HTTP/1.1 202");
+//        ob_flush();
+//        flush();
 
         $bot = Bot::getClient();
 
