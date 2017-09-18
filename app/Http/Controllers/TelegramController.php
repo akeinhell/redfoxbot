@@ -19,7 +19,7 @@ class TelegramController extends Controller
         $result = [];
         try {
             $result['status'] = Bot::action()->call('setWebhook', [
-                'url'             => \Url::to('hook'),
+                'url'             => \URL::to('hook'),
                 'max_connections' => 100,
                 'allowed_updates' => ['message', 'callback_query'],
             ]);
