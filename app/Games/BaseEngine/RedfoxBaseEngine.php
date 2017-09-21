@@ -10,8 +10,10 @@ namespace App\Games\BaseEngine;
 
 use App\Exceptions\TelegramCommandException;
 use App\Helpers\Guzzle\Middleware\RedfoxMiddleware;
+use App\Telegram\Bot;
 use App\Telegram\Config;
 use Illuminate\Support\Collection;
+use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 
 abstract class RedfoxBaseEngine extends AbstractGameEngine
 {
@@ -47,6 +49,20 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         ]);
 
         return $this->parseResponse((string)$response->getBody(), $code);
+    }
+
+    public function getKeyboard() {
+        $questList = $this->getQuestList()?:[];
+
+        if (!$questList) {
+            return null;
+        }
+
+        $data = collect($questList)->map(function ($k, $v) {
+            return Bot::Button($k, ['config', 'level', $v, $k]);
+        })->values()->toArray();
+
+        return new InlineKeyboardMarkup(array_chunk($data, 2));
     }
 
     /**
@@ -224,7 +240,8 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             $text = preg_replace('/\s+/', ' ', $text);
             $text = str_replace('</p>', PHP_EOL, $text);
 
-            return html_entity_decode($text, null, 'UTF-8');
+            $response =  html_entity_decode($text, null, 'UTF-8');
+            return [$response, $this->getKeyboard()];
         }
         throw new TelegramCommandException('Не возможно получить текст задания', $this->chatId);
     }

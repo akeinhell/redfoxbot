@@ -12,10 +12,11 @@ use App\Exceptions\NoQuestSelectedException;
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\RedfoxBaseEngine;
 use App\Games\Interfaces\CanTrackingInterface;
+use App\Games\Interfaces\IncludeSectors;
 use App\Games\Interfaces\LoginPassEngine;
 use App\Telegram\Config;
 
-class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterface, LoginPassEngine
+class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterface, LoginPassEngine, IncludeSectors
 {
     public function getQuestList()
     {

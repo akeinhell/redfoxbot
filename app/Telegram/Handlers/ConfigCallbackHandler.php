@@ -36,12 +36,17 @@ class ConfigCallbackHandler implements CallbackInterface
         $chatId = Bot::getChatIdfromCallback($callbackQuery);
         list(, , $levelId, $levelName) = array_pad(explode(':', $callbackQuery->getData()), 4, '');
         Config::setValue($chatId, 'level', $levelId);
+        Config::setValue($chatId, 'questId', $levelId);
         $engine = Bot::getEngineFromChatId($chatId);
         $response = $engine->getQuestText();
+
         $response = is_array($response) ? array_pad($response, 2, null) : [$response, null];
         list($text, $keyboard) = $response;
 
-        $text = $text. PHP_EOL . 'Выбрано задание: '. $levelName;
+        $codes = $engine->getEstimatedCodes();
+        $text = strip_tags(implode(PHP_EOL, [
+            $text, $codes, 'Выбрано задание: '. $levelName
+        ]));
         if ($text == $callbackQuery->getMessage()->getText()) {
             $text .= '.';
         }

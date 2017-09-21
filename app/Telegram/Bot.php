@@ -10,6 +10,7 @@ namespace App\Telegram;
 
 use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Interfaces\IncludeHints;
+use App\Games\Interfaces\IncludeSectors;
 use App\Games\Interfaces\IncludeTime;
 use App\Telegram\Events\CodeEvent;
 use App\Telegram\Events\ConfigEvent;
@@ -57,6 +58,7 @@ class Bot
         $map = [
             IncludeHints::class => self::formatButton('hints', 'Подсказки'),
             IncludeTime::class  => self::formatButton('time', 'Время до слива'),
+            IncludeSectors::class  => self::formatButton('time', 'Время до слива'),
         ];
 
         foreach ($map as $interface => $button) {
