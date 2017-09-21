@@ -22,18 +22,16 @@ class RedfoxSafariEngine extends RedfoxBaseEngine implements CanTrackingInterfac
         $html = $this->client->get('/play/safari');
 
         $pattern = '#a href="\/play\/safari\/([0-9]+)">(.*?)<#isu';
+        $questList = [];
         if (preg_match_all($pattern, (string)$html->getBody(), $matches)) {
-            $questList = [];
             for ($i = 0; $i < count($matches[0]); ++$i) {
                 $questId             = $matches[1][$i];
                 $questText           = $matches[2][$i];
                 $questList[$questId] = $questText;
             }
-
-            return $questList;
         }
 
-        throw new TelegramCommandException('Не найдено списка заданий', $this->chatId);
+        return $questList;
     }
 
     public function getBaseParams()

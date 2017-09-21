@@ -9,7 +9,9 @@
 namespace App\Telegram\Commands;
 
 use App\Telegram\AbstractCommand;
+use App\Telegram\Bot;
 use App\Telegram\Config;
+use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardHide;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -26,26 +28,17 @@ class SelectQuestCommand extends AbstractCommand
 
     public function execute($payload)
     {
-        if (!empty($payload)) {
-            $params                = explode(' ', $payload, 2);
-            $questId               = $params[0];
-            $questText             = count($params) === 2 ? $params[1] : 'Задание №' . $questId;
-            $this->responseText    = sprintf('Для данного чата выбрано задание %s [%s]', $questText, $questId);
-            $this->config->questId = $questId;
-            Config::setValue($this->chatId, 'questId', $questId);
+        $questList = $this->getEngine()->getQuestList()?:[];
 
-            $this->responseKeyboard = new ReplyKeyboardHide();
-
-            return;
+        if (!$questList) {
+            return $this->responseReply = 'Не найдено списка заданий';
         }
 
-        $questList = $this->getEngine()->getQuestList();
-        $reply     = [];
-        foreach ($questList as $id => $text) {
-            $reply[][] = sprintf('/select %d [%s]', $id, $text);
-        }
+        $data = collect($questList)->map(function ($v, $k) {
+            return Bot::Button($k, ['config', 'level', $v, $k]);
+        })->values()->toArray();
 
-        $this->responseKeyboard = new ReplyKeyboardMarkup($reply, true);
+        $this->responseKeyboard = new InlineKeyboardMarkup(array_chunk($data, 2));
         $this->responseText     = 'Выберите задание из списка';
     }
 }
