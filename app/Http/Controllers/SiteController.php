@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Games\Engines\EncounterEngine;
+use App\Telegram\Bot;
 use Auth;
 use Cache;
 use Carbon\Carbon;
@@ -117,5 +119,17 @@ class SiteController extends Controller
     public function profile()
     {
         return view('profile')->with('title', 'Профиль');
+    }
+
+    public function test($chatId) {
+        /** @var EncounterEngine $engine */
+        $engine = Bot::getEngineFromChatId($chatId);
+
+        $data = $engine->checkAuth();
+        if (!$data) {
+            $engine->doAuth();
+        }
+
+        return $engine->getRawHtml();
     }
 }

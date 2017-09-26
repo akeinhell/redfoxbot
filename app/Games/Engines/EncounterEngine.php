@@ -211,4 +211,8 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
     {
         return '/gameengines/encounter/play/' . Config::getValue($this->chatId, 'gameId');
     }
+
+    public function getRawHtml() {
+        return (string) $this->client->get($this->getUrl())->getBody();
+    }
 }
