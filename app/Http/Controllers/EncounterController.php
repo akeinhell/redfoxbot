@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Games\Engines\EncounterEngine;
+use App\Telegram\Bot;
 use Cache;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use Symfony\Component\DomCrawler\Crawler;
 
 class EncounterController extends Controller
@@ -90,6 +93,8 @@ class EncounterController extends Controller
 
     /**
      * @param string $url
+     *
+     * @return mixed
      */
     private function get($url, $params)
     {
@@ -133,4 +138,25 @@ class EncounterController extends Controller
 
         return $return;
     }
+
+    public function game($chatId) {
+        /** @var EncounterEngine $engine */
+        $engine = Bot::getEngineFromChatId($chatId);
+
+        return $engine->getRawHtml();
+    }
+
+    public function sendCode(Request $request, $chatId) {
+
+        $form = [];
+        foreach ($request->all() as $key => $value) {
+            $form[str_replace('_', '.', $key)] = $value;
+        }
+
+        /** @var EncounterEngine $engine */
+        $engine = Bot::getEngineFromChatId($chatId);
+
+        return $engine->sendRawCode($form);
+    }
+
 }

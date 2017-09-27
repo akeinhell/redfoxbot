@@ -49,4 +49,6 @@ Route::group(['prefix' => 'api'], function() {
 Route::any('hook', 'TelegramController@newhook');
 Route::get('setup', 'TelegramController@setup');
 Route::get('status', 'TelegramController@healthCheck');
-Route::get('/en/{chatId}/', 'SiteController@test');
+
+Route::get('/en/{chatId}/', 'EncounterController@game');
+Route::post('/en/{chatId}/', 'EncounterController@sendCode');
