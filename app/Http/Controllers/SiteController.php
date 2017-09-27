@@ -125,18 +125,16 @@ class SiteController extends Controller
 
     public function staticAction(...$args)
     {
+        $disk = \Storage::disk('s3');
         $fileName = implode('/', $args);
         try {
-            return \Storage::disk('s3')->get($fileName);
+            return $disk->get($fileName);
         } catch (FileNotFoundException $e) {
             $url = sprintf('http://%s', implode('/', $args));
             $content = file_get_contents($url);
-            \Storage::put($fileName, $content, 'public');
+            $disk->put($fileName, $content, 'public');
 
             return $content;
         }
-
-
-        dd($fileName, \Storage::disk('s3')->allFiles());
     }
 }
