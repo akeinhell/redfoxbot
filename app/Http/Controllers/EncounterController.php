@@ -173,8 +173,15 @@ class EncounterController extends Controller
             $form[str_replace('_', '.', $key)] = $value;
         }
 
+        $html =$engine->sendRawCode($form);
+        ;
 
-
-        return $engine->sendRawCode($form);
+        $pattern = '/(http:\/\/)([a-z0-9_\-]+(\.en|\.endata)\.cx)\/(.*?")/';
+        preg_match_all($pattern, $html, $m);
+        $fixed = preg_replace($pattern, getenv('APP_URL'). '/static/$2/$4', $html);
+        if (getenv('APP_ENV') === 'production') {
+            $fixed = preg_replace('/http:/', 'https:', $fixed);
+        }
+        return $fixed;
     }
 }
