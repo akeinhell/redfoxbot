@@ -9,6 +9,7 @@ use Cache;
 use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
+use \Symfony\Component\HttpFoundation\Response;
 use View;
 
 class SiteController extends Controller
@@ -128,13 +129,17 @@ class SiteController extends Controller
         $disk = \Storage::disk('s3');
         $fileName = implode('/', $args);
         try {
-            return $disk->get($fileName);
+            return response($disk->get($fileName), 200, [
+                'Content-type' => $disk->mimeType($fileName)
+            ]);
         } catch (FileNotFoundException $e) {
             $url = sprintf('http://%s', implode('/', $args));
             $content = file_get_contents($url);
             $disk->put($fileName, $content, 'public');
 
-            return $content;
+            return response($content, 200, [
+                'Content-type' => $disk->mimeType($fileName)
+            ]);
         }
     }
 }
