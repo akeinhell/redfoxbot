@@ -7,6 +7,7 @@ use App\Telegram\Bot;
 use Auth;
 use Cache;
 use Carbon\Carbon;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use View;
 
@@ -120,5 +121,20 @@ class SiteController extends Controller
     public function profile()
     {
         return view('profile')->with('title', 'Профиль');
+    }
+
+    public function staticAction(...$args)
+    {
+        $disk = \Storage::disk('s3');
+        $fileName = implode('/', $args);
+        try {
+            return $disk->get($fileName);
+        } catch (FileNotFoundException $e) {
+            $url = sprintf('http://%s', implode('/', $args));
+            $content = file_get_contents($url);
+            $disk->put($fileName, $content, 'public');
+
+            return $content;
+        }
     }
 }
