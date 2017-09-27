@@ -6,6 +6,7 @@ use App\Games\Engines\EncounterEngine;
 use App\Telegram\Bot;
 use Cache;
 use Carbon\Carbon;
+use DOMElement;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\DomCrawler\Crawler;
@@ -141,20 +142,31 @@ class EncounterController extends Controller
 
     public function game($chatId) {
         /** @var EncounterEngine $engine */
-        $engine = Bot::getEngineFromChatId($chatId);
+        $engine = Bot::getEngineFromChatId(94986676);
+        if (!$engine) {
+            return response('', 403);
+        }
 
-        return $engine->getRawHtml();
+        $html =$engine->getRawHtml();
+
+        $fixed = preg_replace('/(http:\/\/)([a-z0-9_\-]+)\.en\.cx\/(.*?")/', 'https://redfoxbot.ru/static/en/$2/$3', $html);
+        return $fixed;
     }
 
     public function sendCode(Request $request, $chatId) {
+
+        /** @var EncounterEngine $engine */
+        $engine = Bot::getEngineFromChatId(94986676);
+        if (!$engine) {
+            return response('', 403);
+        }
 
         $form = [];
         foreach ($request->all() as $key => $value) {
             $form[str_replace('_', '.', $key)] = $value;
         }
 
-        /** @var EncounterEngine $engine */
-        $engine = Bot::getEngineFromChatId($chatId);
+
 
         return $engine->sendRawCode($form);
     }
