@@ -52,12 +52,12 @@ class EncounterController extends Controller
 
             $games = $crawler
                 ->filter('tr.infoRow')
-                ->reduce(function(Crawler $node, $i) use ($domain) {
+                ->reduce(function (Crawler $node, $i) use ($domain) {
                     $gameDomain = $node->filter('td')->eq(3)->text();
 
                     return preg_match('#^' . $domain . '$#', $gameDomain) === 1;
                 })
-                ->each(function(Crawler $node, $i) use ($params) {
+                ->each(function (Crawler $node, $i) use ($params) {
                     $startText = $node->filter('td')->eq(4)->filter('script')->text();
                     $startText = preg_replace('#.*?String\(\'(.*?)\'\).*#', '$1', $startText);
                     $start      = new Carbon($startText);
@@ -107,7 +107,7 @@ class EncounterController extends Controller
         }
         $response = (string) $this->client->get($url, ['query' => $params])->getBody();
 
-        return Cache::remember($cacheKey, 10, function() use ($response) {
+        return Cache::remember($cacheKey, 10, function () use ($response) {
             return $response;
         });
     }
@@ -140,20 +140,22 @@ class EncounterController extends Controller
         return $return;
     }
 
-    public function game($chatId) {
+    public function game($chatId)
+    {
         /** @var EncounterEngine $engine */
         $engine = Bot::getEngineFromChatId(94986676);
-        if (!$engine) {
+        if (!$engine || !method_exists($engine, 'getRawHtml')) {
             return response('', 403);
         }
 
         $html =$engine->getRawHtml();
 
-        $fixed = preg_replace('/(http:\/\/)([a-z0-9_\-]+)\.en\.cx\/(.*?")/', 'https://redfoxbot.ru/static/en/$2/$3', $html);
+        $fixed = preg_replace('/(http:\/\/)([a-z0-9_\-]+\.en\.cx\/.*?")/', getenv('APP_URL'). '/static/$2', $html);
         return $fixed;
     }
 
-    public function sendCode(Request $request, $chatId) {
+    public function sendCode(Request $request, $chatId)
+    {
 
         /** @var EncounterEngine $engine */
         $engine = Bot::getEngineFromChatId(94986676);
@@ -170,5 +172,4 @@ class EncounterController extends Controller
 
         return $engine->sendRawCode($form);
     }
-
 }

@@ -56,6 +56,8 @@ return [
 
         's3' => [
             'driver' => 's3',
+            'endpoint' => env('S3_ENDPOINT', 'http://127.0.0.1:9000'),
+            'use_path_style_endpoint' => true,
             'key'    => env('S3_KEY'),
             'secret' => env('S3_SECRET'),
             'region' => env('S3_REGION'),
