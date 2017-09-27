@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Games\Engines\EncounterEngine;
+use App\Telegram\Bot;
 use Auth;
 use Cache;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use View;
 
 class SiteController extends Controller

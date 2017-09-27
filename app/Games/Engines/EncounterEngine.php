@@ -211,4 +211,22 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
     {
         return '/gameengines/encounter/play/' . Config::getValue($this->chatId, 'gameId');
     }
+
+    public function getRawHtml() {
+        $data = $this->checkAuth();
+        if (!$data) {
+            $this->doAuth();
+        }
+
+        return (string) $this->client->get($this->getUrl())->getBody();
+    }
+
+    public function sendRawCode(array $data) {
+        $auth = $this->checkAuth();
+        if (!$auth) {
+            $this->doAuth();
+        }
+
+        return (string) $this->client->post($this->getUrl(), ['form_params' => $data])->getBody();
+    }
 }
