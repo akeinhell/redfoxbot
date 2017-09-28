@@ -1,13 +1,10 @@
-const path = require('path');
-const glob = require('glob');
 const webpack = require('webpack');
-const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const mainConfig = {
     name: 'main',
     entry: {
-        application: glob.sync('./resources/assets/coffee/**/*.coffee'),
+        index: './',
         styles: './resources/assets/sass/main.scss',
     },
     output: {
@@ -18,11 +15,6 @@ const mainConfig = {
     },
     module: {
         loaders: [
-            {test: /\.coffee$/, use: 'coffee-loader'},
-            {
-                test: /\.(eot|svg|ttf|woff|woff2)$/,
-                use: 'file-loader?name=../fonts/[name].[ext]&outputPath=../dist/fonts/'
-            },
             {
                 test: /\.scss$/,
                 use: ExtractTextPlugin.extract({
@@ -38,11 +30,10 @@ const mainConfig = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.coffee']
+        extensions: ['.js', '.jsx']
     },
     devtool: '#cheap-module-source-map',
     plugins: [
-        new ngAnnotatePlugin({add: true}),
         new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
