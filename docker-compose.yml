@@ -10,6 +10,8 @@ services:
     volumes:
       - './:/var/www/'
     restart: always
+    ports:
+      - 8080:80
     environment:
       - VIRTUAL_HOST=redfoxbot.dev
     extends:

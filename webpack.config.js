@@ -28,12 +28,13 @@ const mainConfig = {
         vendor: [
             'react',
             'react-dom',
-            'grommet',
+            // 'grommet',
         ]
     },
     output: {
         path: __dirname + '/public/dist/',
-        filename: 'js/[name]_[chunkhash:4].js',
+        // filename: 'js/[name]_[chunkhash:4].js',
+        filename: 'js/[name].js',
         sourceMapFilename: 'js/[name].[chunkhash:4].map',
         publicPath: '/dist/'
     },
@@ -59,6 +60,13 @@ const mainConfig = {
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: 'css-loader!sass-loader',
+                }),
+            },
+            {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader',
                 }),
             },
             {
@@ -122,7 +130,7 @@ const mainConfig = {
             minChunks: Infinity
         }),
         new ExtractTextPlugin('css/style.css'),
-        uglifyPlugin
+        //uglifyPlugin
     ]
 };
 
