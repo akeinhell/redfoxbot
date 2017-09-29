@@ -2,8 +2,8 @@ import React from 'react'
 import {Form, TextField, PasswordField, NumberField, DateField} from 'react-forms-ui'
 import {Grid, Panel} from 'react-bootstrap'
 // import PropTypes from 'prop-types';
-//import styles from './style.less';
-// import classNames from 'classnames';
+import styles from './style.less';
+import classNames from 'classnames';
 
 const validations = {
     myText: {
@@ -33,7 +33,7 @@ class SettingsForm extends React.Component {
     render() {
         const fieldClasses = 'col-sm-2,col-sm-6,col-sm-4';
         return (
-          <Grid fluid>
+          <Grid fluid className={classNames(styles.form)}>
               <Form state={this.state} setState={this.setState.bind(this)} validations={validations}
                     onSubmit={this.onSubmit}>
                   <Panel header={<h3>My form</h3>}>

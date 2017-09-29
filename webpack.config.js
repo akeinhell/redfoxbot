@@ -56,6 +56,14 @@ const mainConfig = {
                 }]
             },
             {
+                test: /\.(less$)$/,
+                use: [
+                    'style-loader',
+                    'css-loader?importLoaders=1&modules&localIdentName=[hash:base64:5]',
+                    'less-loader'
+                ]
+            },
+            {
                 test: /\.scss$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
@@ -69,6 +77,13 @@ const mainConfig = {
                     use: 'css-loader',
                 }),
             },
+            // {
+            //     test: /\.less$/,
+            //     use: ExtractTextPlugin.extract({
+            //         fallback: 'style-loader',
+            //         use: 'css-loader!less-loader'
+            //     })
+            // },
             {
                 test: /\.(jpe?g|png|gif)$/i,
                 use: 'file-loader?name=images/[name].[ext]'
@@ -76,13 +91,6 @@ const mainConfig = {
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
                 loader: 'file-loader?name=/fonts/[name].[ext]'
-            },
-            {
-                test: /\.less$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader!less-loader'
-                })
             },
         ]
     },
