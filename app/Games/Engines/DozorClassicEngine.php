@@ -26,7 +26,7 @@ class DozorClassicEngine extends AbstractGameEngine implements TwoFactorAuthEngi
     /**
      * @var Client
      */
-    private $client;
+    protected $client;
     private $cookie;
     private $cookieKey;
 
