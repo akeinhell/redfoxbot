@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractMiddleware
 {
+    const HEADER_KEY = 'X_REDFOX_AUTH';
     /**
      * @var Client
      */

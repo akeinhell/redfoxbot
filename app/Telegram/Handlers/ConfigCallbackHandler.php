@@ -26,6 +26,10 @@ class ConfigCallbackHandler implements CallbackInterface
         'pin'      => 'pin код',
     ];
 
+    /**
+     * @param CallbackQuery $callbackQuery
+     * @throws \Exception
+     */
     public function run(CallbackQuery $callbackQuery)
     {
         throw new \Exception('cannot parse callback data: ' . $callbackQuery->getData());

@@ -90,6 +90,12 @@ class ConfigHandler extends BaseHandler
             }
         }
         switch ($domain) {
+            case 'autoquest73.ru':
+                Config::setValue($chatId, 'project', 'Autoquest73');
+                Config::setValue($chatId, 'url', $patchedUrl);
+                $msg = 'настройки установлены. Не забудьте указать пин-код';
+                Config::setState($chatId, '');
+                break;
             case 'dzzzr.ru':
             case 'ekipazh.org':
                 if (!$city) {
