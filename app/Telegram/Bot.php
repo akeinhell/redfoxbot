@@ -21,8 +21,6 @@ use DOMElement;
 use Symfony\Component\DomCrawler\Crawler;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Client;
-use TelegramBot\Api\Exception;
-use TelegramBot\Api\InvalidArgumentException;
 use TelegramBot\Api\Types\CallbackQuery;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -163,31 +161,23 @@ class Bot
                 }
             }
 
-            try {
-                self::action()->sendMessage(
-                    $chatId,
-                    mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
-                    'HTML',
-                    true,
-                    $replyTo, // reply
-                    $keyboard
-                );
-            } catch (InvalidArgumentException $e) {
-            } catch (Exception $e) {
-            }
+            self::action()->sendMessage(
+                $chatId,
+                mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
+                'HTML',
+                true,
+                $replyTo, // reply
+                $keyboard
+            );
         }
 
         foreach ($links as $link) {
-            try {
-                self::action()->sendMessage(
-                    $chatId,
-                    $link,
-                    'HTML',
-                    false
-                );
-            } catch (InvalidArgumentException $e) {
-            } catch (Exception $e) {
-            }
+            self::action()->sendMessage(
+                $chatId,
+                $link,
+                'HTML',
+                false
+            );
         }
     }
 
@@ -195,10 +185,7 @@ class Bot
     {
         if ($coords = getCoordinates($text)) {
             list($lon, $lat) = $coords;
-            try {
-                Bot::action()->sendLocation($chatId, $lon, $lat);
-            } catch (Exception $e) {
-            }
+            Bot::action()->sendLocation($chatId, $lon, $lat);
         }
     }
 
