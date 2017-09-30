@@ -33,8 +33,8 @@ const mainConfig = {
     },
     output: {
         path: __dirname + '/public/dist/',
-        // filename: 'js/[name]_[chunkhash:4].js',
-        filename: 'js/[name].js',
+        filename: 'js/[name]_[chunkhash:8].js',
+        // filename: 'js/[name].js',
         sourceMapFilename: 'js/[name].[chunkhash:4].map',
         publicPath: '/dist/'
     },
@@ -107,7 +107,7 @@ const mainConfig = {
                     let files = Array.isArray(data[current]) ? data[current] : [data[current]];
                     prev[current] = files.reduce((res, current) => {
                         let ext = path.extname(current).slice(1);
-                        res[ext] = '/' + ext + '/' + current.replace(`/${ext}`, '').replace('../', '');
+                        res[ext] = 'dist/' + current.replace(`/${ext}`, '').replace('../', '');
                         return res;
                     }, {});
 
@@ -116,7 +116,7 @@ const mainConfig = {
                 }, {});
                 require('fs').writeFileSync(
                   path.join(__dirname, 'stats.json'),
-                  JSON.stringify(out));
+                  JSON.stringify(out, null, 2));
             });
         },
         new CleanWebpackPlugin(['public/dist/*'], {

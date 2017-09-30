@@ -122,6 +122,14 @@ class Bot
         return self::$clientInstance;
     }
 
+    /**
+     * @param $chatId
+     * @param $message
+     * @param null $keyboard
+     * @param null $replyTo
+     * @throws \TelegramBot\Api\Exception
+     * @throws \TelegramBot\Api\InvalidArgumentException
+     */
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
         $message = is_array($message)?array_get($message, 0):$message;

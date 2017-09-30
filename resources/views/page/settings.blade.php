@@ -9,6 +9,8 @@
             @include('partials.donate')
         </div>
     </div>
-    <script src="/dist/js/index.js"></script>
 @endsection
 
+@section('footer')
+    @asset(index, js)
+@endsection

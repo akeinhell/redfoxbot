@@ -4,7 +4,8 @@
     <title>Проект Лиса | @yield('title') </title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="/dist/css/style.css"/>
+    @asset(vendor, js)
+    @asset(styles, css)
     <link rel="apple-touch-icon" sizes="57x57" href="/ico/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/ico/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/ico/apple-icon-72x72.png">
@@ -22,8 +23,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#364050">
-    <script src="/dist/js/vendor.js"></script>
-    
+    @yield('header')
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -120,7 +120,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="/dist/js/application.js"></script>
 <script type="text/javascript">
     var reformalOptions = {
         project_id: 975735,
