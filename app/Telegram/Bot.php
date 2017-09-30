@@ -132,7 +132,7 @@ class Bot
         $cr->filter('img')
             ->each(function (Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
-                if (!strpos('http', $link)) {
+                if (strpos($link, 'http') === false) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
                 }
                 $links[] = utf8_decode($link);

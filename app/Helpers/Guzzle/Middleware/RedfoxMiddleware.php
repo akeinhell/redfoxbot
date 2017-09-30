@@ -39,14 +39,15 @@ class RedfoxMiddleware extends AbstractMiddleware
 
     /**
      * @param RequestInterface $request
-     * @param array            $options
+     * @param array $options
      *
      * @return ResponseInterface
      * @throws NotAuthenticatedException
+     * @throws \Throwable
      */
     public function retry(RequestInterface $request, array $options = []): ResponseInterface
     {
-        $oldRequest = $request;
+        $oldRequest = clone $request;
         $authParams = $this->params;
 
         /** @var Promise $promise */

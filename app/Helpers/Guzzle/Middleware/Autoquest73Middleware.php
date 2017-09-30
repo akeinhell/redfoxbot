@@ -13,7 +13,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class Autoquest73Middleware extends AbstractMiddleware implements PinEngine
 {
-    private $handler;
+    protected $handler;
+    private $baseUrl;
 
     /**
      * @param RequestInterface $request
@@ -43,13 +44,18 @@ class Autoquest73Middleware extends AbstractMiddleware implements PinEngine
      */
     public function retry(RequestInterface $request, array $options = []): ResponseInterface
     {
+        $oldRequest = clone $request;
         $authParams = [
             'pinn' => Config::getValue($this->chatId, 'pin')
         ];
 
+        if (!$this->baseUrl) {
+            $this->baseUrl = $request->getUri()->getPath();
+        }
+
         $handler = $this->handler;
 
-        $data = http_build_query($authParams,'', '&');
+        $data = http_build_query($authParams, '', '&');
         /** @var Promise $promise */
         $promise = $handler($request
             ->withUri($request->getUri()->withPath('/go/'))
@@ -59,13 +65,13 @@ class Autoquest73Middleware extends AbstractMiddleware implements PinEngine
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withHeader(self::HEADER_KEY, 'redfoxbot'), $options);
 
-        $response = $promise->wait();
-        if (!$this->isAuthenticated($response)) {
+        if (!$this->isAuthenticated($promise->wait())) {
             throw new NotAuthenticatedException($this->chatId);
         };
 
+        $oldUri = $oldRequest->getUri()->withPath($this->baseUrl);
 
-        return $response;
+        return $handler($oldRequest->withUri($oldUri), $options)->wait();
     }
 
     /**
@@ -75,8 +81,9 @@ class Autoquest73Middleware extends AbstractMiddleware implements PinEngine
     private function isAuthenticated($response)
     {
         $html = (string)$response->getBody();
+        $rus = iconv('cp1251', 'utf8', $html);
         $searchValue = 'name="pinn"';
 
-        return strpos($html, $searchValue) === false;
+        return strpos($html, $searchValue) === false || strpos($html, 'index.php') !== false;
     }
 }

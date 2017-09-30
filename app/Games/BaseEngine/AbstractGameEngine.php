@@ -50,7 +50,7 @@ abstract class AbstractGameEngine
         $this->stack->push(
             Middleware::log(
                 \Log::getMonolog(),
-                new MessageFormatter('[{code}] {method} {uri}')
+                new MessageFormatter(MessageFormatter::SHORT)
             ), 'logger'
         );
         $params = [
@@ -65,11 +65,13 @@ abstract class AbstractGameEngine
         $this->client = new Client($params);
     }
 
-    public function checkAuth() {
+    public function checkAuth()
+    {
         throw new \Exception('not implemented');
     }
 
-    public function doAuth(){
+    public function doAuth()
+    {
         throw new \Exception('not implemented');
     }
 
