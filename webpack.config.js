@@ -45,14 +45,17 @@ const mainConfig = {
                 exclude: /node_modules/,
                 use: [{
                     loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            'es2015',
-                            'stage-2',
-                            'react',
-                        ],
-                        plugins: ["transform-es2015-destructuring", "transform-object-rest-spread"],
-                    }
+                    // options: {
+                    //     presets: [
+                    //         'es2015',
+                    //         'stage-2',
+                    //         'react',
+                    //     ],
+                    //     plugins: [
+                    //         "transform-es2015-destructuring",
+                    //         "transform-object-rest-spread"
+                    //     ],
+                    // }
                 }]
             },
             {

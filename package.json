@@ -26,7 +26,6 @@
     "react-bootstrap": "^0.31.3",
     "react-dom": "^15.0.0",
     "react-forms-ui": "^0.8.1",
-    "select2": "^4.0.3",
     "uglifyjs-webpack-plugin": "^0.4.6"
   },
   "name": "telegram",

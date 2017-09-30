@@ -42,7 +42,6 @@ class AppServiceProvider extends ServiceProvider
                 return "<?php echo \"$string\"; ?>";
             }
 
-            dd(get_defined_vars(), public_path($fileName));
             return null;
         });
     }
