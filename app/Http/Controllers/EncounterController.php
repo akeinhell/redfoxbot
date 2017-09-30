@@ -154,6 +154,7 @@ class EncounterController extends Controller
         $pattern = '/(http:\/\/)([a-z0-9_\-]+(\.en|\.endata)\.cx)\/(.*?")/';
         preg_match_all($pattern, $html, $m);
         $fixed = preg_replace($pattern, getenv('APP_URL'). '/static/$2/$4', $html);
+        $fixed = preg_replace('/<iframe.*?\/iframe>/isu', '', $fixed);
         if (getenv('APP_ENV') === 'production') {
             $fixed = preg_replace('/http:/', 'https:', $fixed);
         }
@@ -162,9 +163,9 @@ class EncounterController extends Controller
 
     public function sendCode(Request $request, $chatId)
     {
-
+        $chatId = getenv('APP_ENV') === 'production' ? -1001129535107 :94986676;
         /** @var EncounterEngine $engine */
-        $engine = Bot::getEngineFromChatId(94986676);
+        $engine = Bot::getEngineFromChatId($chatId);
         if (!$engine) {
             return response('', 403);
         }
