@@ -142,8 +142,9 @@ class EncounterController extends Controller
 
     public function game($chatId)
     {
+        $chatId = getenv('APP_ENV') === 'production' ? -1001129535107 :94986676;
         /** @var EncounterEngine $engine */
-        $engine = Bot::getEngineFromChatId(94986676);
+        $engine = Bot::getEngineFromChatId($chatId);
         if (!$engine || !method_exists($engine, 'getRawHtml')) {
             return response('', 403);
         }
