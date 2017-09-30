@@ -10,6 +10,7 @@ use App\Telegram\Commands\StartCommand;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Log;
+use TelegramBot\Api\HttpException;
 
 class TelegramController extends Controller
 {
@@ -44,7 +45,8 @@ class TelegramController extends Controller
         return response()->json(['token' => $token]);
     }
 
-    public function healthCheck() {
+    public function healthCheck()
+    {
         $health = Bot::action()->call('getWebhookInfo');
         if ($errorDate = array_get($health, 'last_error_date')) {
             $health['last_error_date'] = Carbon::createFromTimestamp($errorDate)->toAtomString();
@@ -55,7 +57,7 @@ class TelegramController extends Controller
 
     public function newhook()
     {
-//        header("HTTP/1.1 202");
+        //        header("HTTP/1.1 202");
 //        ob_flush();
 //        flush();
 
@@ -64,7 +66,14 @@ class TelegramController extends Controller
         try {
             $bot->run();
         } catch (NoQuestSelectedException|NotAuthenticatedException|TelegramCommandException $e) {
-                Bot::sendMessage($e->getChatid(), $e->getMessage());
+            Bot::sendMessage($e->getChatid(), $e->getMessage());
+        } catch (HttpException $e) {
+            Log::warning(get_class($e) . implode(PHP_EOL, [
+                    'message' => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'    => $e->getLine(),
+                ]));
+            app('sentry')->captureException($e);
         } catch (\Exception $e) {
             Log::critical(get_class($e) . implode(PHP_EOL, [
                     'message' => $e->getMessage(),
