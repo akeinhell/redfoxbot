@@ -18,4 +18,5 @@ storage/client_secret.json
 _ide_helper_models.php
 .phpstorm.meta.php
 coverage.xml
+cleanup/
 docker/data/

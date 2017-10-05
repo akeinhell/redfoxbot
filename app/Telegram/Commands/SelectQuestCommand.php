@@ -41,7 +41,7 @@ class SelectQuestCommand extends AbstractCommand
         }
 
         $data = collect($questList)->map(function ($k, $v) {
-            return Bot::Button($k, ['config', 'level', $v, $k]);
+            return Bot::Button($k, ['config', 'level', $v, 'null']);
         })->values()->toArray();
 
         $this->responseKeyboard = new InlineKeyboardMarkup(array_chunk($data, 2));

@@ -59,7 +59,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         }
 
         $data = collect($questList)->map(function ($k, $v) {
-            return Bot::Button($k, ['config', 'level', $v, $k]);
+            return Bot::Button($k, ['config', 'level', $v, 'null']);
         })->values()->toArray();
 
         return new InlineKeyboardMarkup(array_chunk($data, 2));
