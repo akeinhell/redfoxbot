@@ -4,6 +4,27 @@ use Carbon\Carbon;
 
 const TRACKING_KEY = 'tracking_chats';
 
+function webpack_asset($type, $file): string
+{
+    $map = [
+        'script' => '<script src="%s"></script>',
+        'style' => '<link rel="stylesheet" href="%s"/>',
+    ];
+    try {
+        $manifest = Storage::drive('public')->get('manifest.json');
+    } catch (\Illuminate\Contracts\Filesystem\FileNotFoundException $e) {
+        return '';
+    }
+    $files = json_decode($manifest, true);
+    $template = array_get($map, $type, $map['script']);
+
+    $realName = array_get($files, $file);
+    if ($realName) {
+        return sprintf($template, ('/dist/' . $realName));
+    }
+    return '';
+}
+
 if (!function_exists('format_time')) {
     /**
      * @param $time

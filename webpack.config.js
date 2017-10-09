@@ -1,24 +1,15 @@
-let path = require('path');
+const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJSPlugin      = require('uglifyjs-webpack-plugin');
-let CleanWebpackPlugin = require('clean-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var ManifestPlugin = require('webpack-manifest-plugin');
 
-const uglifyPlugin = new UglifyJSPlugin({
-    // beautify: true,
-    // comments: true,
-    compress: {
-        // sequences: isProduction,
-        // booleans: isProduction,
-        // loops: isProduction,
-        unused: true,
-        warnings: true,
-        drop_console: true,
-        //     unsafe: false
-    },
-    warnings: true,
-    mangle: false,
-});
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+const uglifyPlugin = require('./webpack/uglifyPlugin');
+
+console.log(`process.env.NODE_ENV = ${process.env.NODE_ENV}`);
+const isProduction = (process.env.NODE_ENV === 'production');
 
 const mainConfig = {
     name: 'main',
@@ -28,14 +19,12 @@ const mainConfig = {
         vendor: [
             'react',
             'react-dom',
-            // 'grommet',
         ]
     },
     output: {
         path: __dirname + '/public/dist/',
-        filename: 'js/[name]_[chunkhash:8].js',
-        // filename: 'js/[name].js',
-        sourceMapFilename: 'js/[name].[chunkhash:4].map',
+        filename: 'js/[name].[chunkhash].js',
+        sourceMapFilename: 'js/[name].[chunkhash].map',
         publicPath: '/dist/'
     },
     module: {
@@ -45,24 +34,31 @@ const mainConfig = {
                 exclude: /node_modules/,
                 use: [{
                     loader: 'babel-loader',
-                    // options: {
-                    //     presets: [
-                    //         'es2015',
-                    //         'stage-2',
-                    //         'react',
-                    //     ],
-                    //     plugins: [
-                    //         "transform-es2015-destructuring",
-                    //         "transform-object-rest-spread"
-                    //     ],
-                    // }
+                    options: {
+                        presets: [
+                            'es2015',
+                            'stage-2',
+                            'react',
+                        ],
+                        plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
+                    }
                 }]
             },
             {
                 test: /\.(less$)$/,
+                include: /resources\/assets\/js\/src/,
                 use: [
                     'style-loader',
                     'css-loader?importLoaders=1&modules&localIdentName=[hash:base64:5]',
+                    'less-loader'
+                ]
+            },
+            {
+                test: /\.(less$)$/,
+                exclude: /resources\/assets\/js\/src/,
+                use: [
+                    'style-loader',
+                    'css-loader',
                     'less-loader'
                 ]
             },
@@ -80,70 +76,50 @@ const mainConfig = {
                     use: 'css-loader',
                 }),
             },
-            // {
-            //     test: /\.less$/,
-            //     use: ExtractTextPlugin.extract({
-            //         fallback: 'style-loader',
-            //         use: 'css-loader!less-loader'
-            //     })
-            // },
             {
                 test: /\.(jpe?g|png|gif)$/i,
-                use: 'file-loader?name=images/[name].[ext]'
+                use: 'file-loader?name=images/[sha512:hash:base64].[ext]'
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                loader: 'file-loader?name=/fonts/[name].[ext]'
+                loader: 'file-loader?name=/fonts/[sha512:hash:base64].[ext]'
             },
         ]
     },
     resolve: {
         extensions: ['.js', '.jsx']
     },
-    devtool: '#cheap-module-source-map',
+    devtool: false,
     plugins: [
-        function () {
-            this.plugin('done', function (stats) {
-                let data = stats.toJson().assetsByChunkName;
-
-                let out = Object.keys(data).reduce((prev, current) => {
-                    let files = Array.isArray(data[current]) ? data[current] : [data[current]];
-                    prev[current] = files.reduce((res, current) => {
-                        let ext = path.extname(current).slice(1);
-                        res[ext] = 'dist/' + current.replace(`/${ext}`, '').replace('../', '');
-                        return res;
-                    }, {});
-
-
-                    return prev;
-                }, {});
-                require('fs').writeFileSync(
-                  path.join(__dirname, 'stats.json'),
-                  JSON.stringify(out, null, 2));
-            });
-        },
         new CleanWebpackPlugin(['public/dist/*'], {
             root: __dirname,
             verbose: true,
             // dry: false,
         }),
-        // extractVersions.bind(this),
-        new webpack.optimize.CommonsChunkPlugin({
-            names: [
-                'vendor',
-            ],
-            async: true,
-            minChunks: Infinity
-        }),
-        new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: Infinity
         }),
-        new ExtractTextPlugin('css/style.css'),
-        //uglifyPlugin
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'runtime'
+        }),
+        new webpack.HashedModuleIdsPlugin(),
+        new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
+        new ExtractTextPlugin('css/[contenthash].css'),
+        //new BundleAnalyzerPlugin(),
+        new ManifestPlugin(),
+        new webpack.ContextReplacementPlugin(
+          /moment[\/\\]locale$/,
+          /ru/
+        )
     ]
 };
+
+if (isProduction) {
+    console.log('webpack in production mode');
+    mainConfig.plugins.push(uglifyPlugin);
+    mainConfig.devtool = false;
+}
 
 module.exports = [
     mainConfig

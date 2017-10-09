@@ -20,3 +20,4 @@ _ide_helper_models.php
 coverage.xml
 docker/data/
 stats.json
+cleanup/

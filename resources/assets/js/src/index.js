@@ -1,8 +1,7 @@
-import {initialize} from 'react-forms-ui'
-import SettingsForm from './components/settings-form';
 import React from 'react';
 import ReactDOM from 'react-dom';
-initialize();
+import SettingsForm from './components/settings-form';
+
 
 
 const element = document.getElementById('root');

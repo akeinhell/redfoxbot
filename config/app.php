@@ -158,6 +158,8 @@ return [
         Illuminate\Redis\RedisServiceProvider::class,
 
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
+        //\Malyusha\WebpackAssets\WebpackAssetsServiceProvider::class
+
 
 //        Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\TrackProvider::class,
