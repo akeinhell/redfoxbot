@@ -11,6 +11,12 @@ const uglifyPlugin = require('./webpack/uglifyPlugin');
 console.log(`process.env.NODE_ENV = ${process.env.NODE_ENV}`);
 const isProduction = (process.env.NODE_ENV === 'production');
 
+const hash = {
+    js: '[name].[chunkhash:8].js',
+    css: '[contenthash:8]',
+    files: '[sha512:hash:base64:8]',
+}
+
 const mainConfig = {
     name: 'main',
     entry: {
@@ -23,7 +29,7 @@ const mainConfig = {
     },
     output: {
         path: __dirname + '/public/dist/',
-        filename: 'js/[name].[chunkhash].js',
+        filename: 'js/' + hash.js,
         sourceMapFilename: 'js/[name].[chunkhash].map',
         publicPath: '/dist/'
     },
@@ -77,12 +83,23 @@ const mainConfig = {
                 }),
             },
             {
-                test: /\.(jpe?g|png|gif)$/i,
-                use: 'file-loader?name=images/[sha512:hash:base64].[ext]'
+                test: /\.(jpe?g|png|gif|ico)$/i,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name : `images/${hash.files}.[ext]`
+                    }
+                },
+
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
-                loader: 'file-loader?name=/fonts/[sha512:hash:base64].[ext]'
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name : `fonts/${hash.files}.[ext]`
+                    }
+                },
             },
         ]
     },
@@ -91,11 +108,11 @@ const mainConfig = {
     },
     devtool: false,
     plugins: [
-        new CleanWebpackPlugin(['public/dist/*'], {
-            root: __dirname,
-            verbose: true,
-            // dry: false,
-        }),
+        // new CleanWebpackPlugin(['public/dist/*'], {
+        //     root: __dirname,
+        //     verbose: true,
+        //     // dry: false,
+        // }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: Infinity
@@ -105,7 +122,7 @@ const mainConfig = {
         }),
         new webpack.HashedModuleIdsPlugin(),
         new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
-        new ExtractTextPlugin('css/[contenthash].css'),
+        new ExtractTextPlugin(`css/${hash.css}.css`),
         //new BundleAnalyzerPlugin(),
         new ManifestPlugin(),
         new webpack.ContextReplacementPlugin(

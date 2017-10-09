@@ -4,11 +4,11 @@ WORKDIR /var/www
 ADD composer.json /var/www
 ADD composer.lock /var/www
 ADD package.json /var/www
-ADD package-lock.json /var/www
+ADD yarn.lock /var/www
 
 RUN composer install --no-scripts --no-autoloader
 
-RUN npm install --ignore-scripts
+RUN yarn install
 
 COPY . ./
 

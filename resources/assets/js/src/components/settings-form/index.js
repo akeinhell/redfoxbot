@@ -1,8 +1,37 @@
 import escapeRegExp from 'lodash/escapeRegExp';
 import filter from 'lodash/filter';
 import React, {Component} from 'react';
-import {Grid, Header, Search} from 'semantic-ui-react';
+import {Grid, Header, Search, Container, Form, Button, Checkbox, Dropdown} from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.css';
+import styles from './style.less';
+
+const projects = [
+    {
+        text: 'Redfox Авангард',
+        value: 'RedfoxAvangard',
+        image: {avatar: false, src: require('./icons/redfoxkrsk.ico')},
+    },
+    {
+        text: 'Redfox Сафари/Штурм',
+        value: 'RedfoxSafari',
+        image: {avatar: false, src: require('./icons/redfoxkrsk.ico')},
+    },
+    {
+        text: 'Dozor.Lite',
+        value: 'DozorLite',
+        image: {avatar: false, src: require('./icons/dozor.ico')},
+    },
+    {
+        text: 'Экипаж',
+        value: 'Ekipazh',
+        image: {avatar: false, src: require('./icons/dozor.ico')},
+    },
+    {
+        text: 'encounter',
+        value: 'Encounter',
+        image: {avatar: false, src: require('./icons/encounter.ico')},
+    },
+];
 
 const source = [
     {
@@ -15,13 +44,13 @@ const source = [
         'title': 'Labadie - Moore',
         'description': 'Distributed 4th generation moratorium',
         'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/lonesomelemon/128.jpg',
-        'price': '$$50.81'
+        'price': '$5.8 1'
     },
     {
         'title': 'Hirthe LLC',
         'description': 'Synergized 6th generation product',
         'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/danro/128.jpg',
-        'price': '$$14.47'
+        'price': '$14.47'
     },
     {
         'title': 'Wolff - Ritchie',
@@ -37,7 +66,7 @@ const source = [
     }
 ];
 
-export default class SearchExampleStandard extends Component {
+export default class SettingsForm extends Component {
     componentWillMount() {
         this.resetComponent();
     }
@@ -66,22 +95,64 @@ export default class SearchExampleStandard extends Component {
         const {isLoading, value, results} = this.state;
 
         return (
-          <Grid>
-              <Grid.Column width={8}>
-                  <Search
-                    loading={isLoading}
-                    onResultSelect={this.handleResultSelect}
-                    onSearchChange={this.handleSearchChange}
-                    results={results}
-                    value={value}
-                    {...this.props}
-                  />
-              </Grid.Column>
-              <Grid.Column width={8}>
-                  <Header>State</Header>
-                  <pre>{JSON.stringify(this.state, null, 2)}</pre>
-                  <Header>Options</Header>
-                  <pre>{JSON.stringify(source, null, 2)}</pre>
+          <Grid verticalAlign={'center'}>
+              <Grid.Column width={12}>
+                  <Container fluid>
+                      <Header as='h2'>Настройки</Header>
+                      <Button.Group fluid>
+                          <Button>Ручная настройка</Button>
+                          <Button.Or/>
+                          <Button positive>Автоматическая настройка</Button>
+                      </Button.Group>
+                      <Form className={styles.form}>
+                          <Form.Field>
+                              <label>Выбири движочек</label>
+                              <Dropdown placeholder='Выберите движок' fluid selection options={projects}/>
+                          </Form.Field>
+
+                          <Form.Field>
+                              <label>Выбери игру</label>
+                              <Search
+                                input={{fluid: true}}
+                                loading={isLoading}
+                                onResultSelect={this.handleResultSelect}
+                                onSearchChange={this.handleSearchChange}
+                                results={results}
+                                value={value}
+                                {...this.props}
+                              />
+                              <Dropdown placeholder='Выберите движок' fluid selection options={projects}/>
+                          </Form.Field>
+                          <Form.Field>
+                              <label>Выбери город</label>
+                              <Search
+                                input={{fluid: true}}
+                                loading={isLoading}
+                                onResultSelect={this.handleResultSelect}
+                                onSearchChange={this.handleSearchChange}
+                                results={results}
+                                value={value}
+                                {...this.props}
+                              />
+                          </Form.Field>
+                          <Form.Field>
+                              <label>Логин</label>
+                              <input placeholder='логин'/>
+                          </Form.Field>
+                          <Form.Field>
+                              <label>Пароль</label>
+                              <input placeholder='Пароль'/>
+                          </Form.Field>
+                          <Form.Field>
+                              <label>Пин</label>
+                              <input placeholder='Пин'/>
+                          </Form.Field>
+                          <Form.Field>
+                              <Checkbox label='Автоматическая отправка кода'/>
+                          </Form.Field>
+                          <Button type='submit'>Получить ссылку</Button>
+                      </Form>
+                  </Container>
               </Grid.Column>
           </Grid>
         );
