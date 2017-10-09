@@ -41,7 +41,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "webpack -p",
+    "build": "NODE_ENV=produiction webpack -p",
     "dev": "webpack -w --watch --progress"
   },
   "engines": {
