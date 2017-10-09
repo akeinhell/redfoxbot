@@ -21,8 +21,6 @@ RUN composer install --no-scripts --no-autoloader
 ADD package.json /tmp
 ADD webpack.config.js /tmp
 ADD yarn.lock /tmp
-RUN nvm install 8.0.0
-RUN nvm use 8.0.0
 RUN yarn install
 
 
