@@ -24,6 +24,28 @@ services:
       file: ../docker-compose.base.yml
       service: fpm
 
+  fallback:
+    container_name: redfoxbot_fallback
+    image: akeinhell/redfoxbot:latest
+    restart: always
+    environment:
+      - VIRTUAL_HOST=x-game.su
+    links:
+      - db
+      - redis
+    networks:
+      - local
+      - main
+    volumes:
+      -  ~/projects/shared/redfoxbot/.env:/var/www/.env
+      -  ~/projects/shared/storage/logs/:/var/www/storage/logs
+      -  ~/projects/shared/storage/chats/:/var/www/storage/chats
+      -  ~/projects/shared/storage/cookies/:/var/www/storage/cookies
+    expose:
+      - 80
+    extends:
+      file: ../docker-compose.base.yml
+      service: fpm
   db:
     container_name: redfoxbot_db
     extends:
