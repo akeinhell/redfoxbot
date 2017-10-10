@@ -1,37 +1,10 @@
-import escapeRegExp from 'lodash/escapeRegExp';
-import filter from 'lodash/filter';
 import React, {Component} from 'react';
-import {Grid, Header, Search, Container, Form, Button, Checkbox, Dropdown} from 'semantic-ui-react';
+import {Button, Checkbox, Container, Form, Grid, Header} from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.css';
 import styles from './style.less';
+import AutoConfig from './auto-config';
+import ManualConfig from './manual-config';
 
-const projects = [
-    {
-        text: 'Redfox Авангард',
-        value: 'RedfoxAvangard',
-        image: {avatar: false, src: require('./icons/redfoxkrsk.ico')},
-    },
-    {
-        text: 'Redfox Сафари/Штурм',
-        value: 'RedfoxSafari',
-        image: {avatar: false, src: require('./icons/redfoxkrsk.ico')},
-    },
-    {
-        text: 'Dozor.Lite',
-        value: 'DozorLite',
-        image: {avatar: false, src: require('./icons/dozor.ico')},
-    },
-    {
-        text: 'Экипаж',
-        value: 'Ekipazh',
-        image: {avatar: false, src: require('./icons/dozor.ico')},
-    },
-    {
-        text: 'encounter',
-        value: 'Encounter',
-        image: {avatar: false, src: require('./icons/encounter.ico')},
-    },
-];
 
 const source = [
     {
@@ -66,87 +39,53 @@ const source = [
     }
 ];
 
+const defaultState = {
+    isAuto: false,
+};
+
 export default class SettingsForm extends Component {
-    componentWillMount() {
-        this.resetComponent();
+
+    constructor(props) {
+        super(props);
+        this.state = Object.assign({}, defaultState, props);
     }
 
-    resetComponent = () => this.setState({isLoading: false, results: [], value: ''});
+    handleAutoClick(event, t) {
+        const isAuto = t.checked;
+        this.setState({isAuto});
+    }
 
-    handleResultSelect = (e, {result}) => this.setState({value: result.title});
-
-    handleSearchChange = (e, {value}) => {
-        this.setState({isLoading: true, value});
-
-        setTimeout(() => {
-            if (this.state.value.length < 1) return this.resetComponent();
-
-            const re = new RegExp(escapeRegExp(this.state.value), 'i');
-            const isMatch = result => re.test(result.title);
-
+    handleChangeState(name) {
+        return (event, target) => {
+            const value = (target || event.target).value;
+            console.log('handleChangeState', name, value);
             this.setState({
-                isLoading: false,
-                results: filter(source, isMatch),
+                form: {
+                    ...this.state.form || {},
+                    [name]: value
+                }
             });
-        }, 5000);
-    };
+        };
+    }
 
     render() {
-        const {isLoading, value, results} = this.state;
-
         return (
-          <Grid verticalAlign={'center'}>
-              <Grid.Column width={12}>
+          <Grid>
+              <Grid.Column width={12} verticalAlign={'middle'}>
                   <Container fluid>
                       <Header as='h2'>Настройки</Header>
-                      <Button.Group fluid>
-                          <Button>Ручная настройка</Button>
-                          <Button.Or/>
-                          <Button positive>Автоматическая настройка</Button>
-                      </Button.Group>
                       <Form className={styles.form}>
                           <Form.Field>
-                              <label>Выбири движочек</label>
-                              <Dropdown placeholder='Выберите движок' fluid selection options={projects}/>
+                              <label>Автоматическая настройка</label>
+                              <Checkbox toggle onChange={() => this.handleAutoClick.bind(this)}/>
                           </Form.Field>
 
-                          <Form.Field>
-                              <label>Выбери игру</label>
-                              <Search
-                                input={{fluid: true}}
-                                loading={isLoading}
-                                onResultSelect={this.handleResultSelect}
-                                onSearchChange={this.handleSearchChange}
-                                results={results}
-                                value={value}
-                                {...this.props}
-                              />
-                              <Dropdown placeholder='Выберите движок' fluid selection options={projects}/>
-                          </Form.Field>
-                          <Form.Field>
-                              <label>Выбери город</label>
-                              <Search
-                                input={{fluid: true}}
-                                loading={isLoading}
-                                onResultSelect={this.handleResultSelect}
-                                onSearchChange={this.handleSearchChange}
-                                results={results}
-                                value={value}
-                                {...this.props}
-                              />
-                          </Form.Field>
-                          <Form.Field>
-                              <label>Логин</label>
-                              <input placeholder='логин'/>
-                          </Form.Field>
-                          <Form.Field>
-                              <label>Пароль</label>
-                              <input placeholder='Пароль'/>
-                          </Form.Field>
-                          <Form.Field>
-                              <label>Пин</label>
-                              <input placeholder='Пин'/>
-                          </Form.Field>
+                          {
+                              this.state.isAuto &&
+                              <AutoConfig onChange={this.handleChangeState.bind(this)}/> ||
+                              <ManualConfig onChange={this.handleChangeState.bind(this)}/>
+                          }
+
                           <Form.Field>
                               <Checkbox label='Автоматическая отправка кода'/>
                           </Form.Field>
