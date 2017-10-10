@@ -36,6 +36,10 @@ Route::group(['middleware' => ['web']], function () {
 });
 
 Route::group(['prefix' => 'api'], function () {
+    Route::get('projects', 'ApiController@projects');
+    Route::get('cities', 'ApiController@cities');
+    Route::get('games', 'ApiController@games');
+    Route::get('create', 'ApiController@create');
     Route::get('generateToken', 'TelegramController@generateToken');
     Route::group(['prefix' => 'en'], function () {
         Route::get('games/{domain}', 'EncounterController@parse');

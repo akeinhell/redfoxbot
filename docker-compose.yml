@@ -21,6 +21,8 @@ services:
       - dev
       - local
   db:
+    ports:
+      - 5431:5432
     extends:
       file: docker-compose.base.yml
       service: db

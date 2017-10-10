@@ -47,7 +47,7 @@ export default class SettingsForm extends Component {
                       <Form className={styles.form}>
                           <Form.Field>
                               <label>Автоматическая настройка</label>
-                              <Checkbox toggle onChange={() => this.handleAutoClick.bind(this)}/>
+                              <Checkbox toggle onChange={this.handleAutoClick.bind(this)}/>
                           </Form.Field>
 
                           {
