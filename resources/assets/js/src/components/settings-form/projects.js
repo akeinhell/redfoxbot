@@ -1,4 +1,4 @@
-const AUTH_TYPE = {
+export const AUTH_TYPE = {
     pin: 'pin',
     password: 'password'
 };

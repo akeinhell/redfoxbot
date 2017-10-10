@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Search, Form, Dropdown} from 'semantic-ui-react';
+import {Dropdown, Form, Search} from 'semantic-ui-react';
+
 
 import * as projects from './projects';
 import escapeRegExp from 'lodash/escapeRegExp';
 import filter from 'lodash/filter';
+
 const projectList = [
     projects.RedfoxAvangard,
     projects.RedfoxSafari,
@@ -14,6 +16,40 @@ const projectList = [
     projects.Ekipazh,
 ];
 
+const searchSource = [
+    {
+        'title': 'Jacobson, Connelly and Pagac',
+        'description': 'Distributed leading edge firmware',
+        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/elisabethkjaer/128.jpg',
+        'price': '$$44.45'
+    },
+    {
+        'title': 'Labadie - Moore',
+        'description': 'Distributed 4th generation moratorium',
+        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/lonesomelemon/128.jpg',
+        'price': '$5.8 1'
+    },
+    {
+        'title': 'Hirthe LLC',
+        'description': 'Synergized 6th generation product',
+        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/danro/128.jpg',
+        'price': '$14.47'
+    },
+    {
+        'title': 'Wolff - Ritchie',
+        'description': 'Horizontal discrete pricing structure',
+        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/mirfanqureshi/128.jpg',
+        'price': '$$80.97'
+    },
+    {
+        'title': 'Terry Inc',
+        'description': 'Switchable zero tolerance knowledge user',
+        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/hiemil/128.jpg',
+        'price': '$$4.47'
+    }
+];
+
+
 
 export default class ManualConfig extends Component {
     static propTypes = {
@@ -22,16 +58,13 @@ export default class ManualConfig extends Component {
 
     constructor(props) {
         super(props);
-        console.log({
-            ConfigProps: props
-        });
+        this.state = {};
     }
 
     handleProjectSelect(event, target) {
-        debugger;
         const {value} = target;
         const authType = projectList.find(e => value === e.value)['data-auth-type'];
-        this.props.onChange('auth')(event, {value:authType});
+        this.setState({'auth': authType});
         this.props.onChange('project')(event, target)
     };
 
@@ -48,9 +81,9 @@ export default class ManualConfig extends Component {
 
             this.setState({
                 isLoading: false,
-                results: filter(source, isMatch),
+                results: filter(searchSource, isMatch),
             });
-        }, 5000);
+        }, 50);
     };
 
     componentWillMount() {
@@ -69,7 +102,8 @@ export default class ManualConfig extends Component {
                   onChange={this.handleProjectSelect.bind(this)}
                 />
             </Form.Field>
-            <Form.Field>
+
+            { this.state.auth && <Form.Field>
                 <label>Выбери город</label>
                 <Search
                   input={{fluid: true}}
@@ -81,18 +115,32 @@ export default class ManualConfig extends Component {
                   {...this.props}
                 />
             </Form.Field>
-            <Form.Field>
-                <label> Логин </label>
-                <input placeholder='логин' onChange={this.props.onChange('login')}/>
-            </Form.Field>;
-            <Form.Field>
-                <label>Пароль</label>
-                <input placeholder='Пароль' onChange={this.props.onChange('password')}/>
-            </Form.Field>
-            < Form.Field>
-                <label> Пин </label>
-                <input placeholder='Пин' onChange={this.props.onChange('pin')}/>
-            </Form.Field>
+            }
+
+            {
+                this.state.auth === projects.AUTH_TYPE.password && (
+                  <div>
+                      <Form.Field>
+                          <label> Логин </label>
+                          <input placeholder='логин' onChange={this.props.onChange('login')}/>
+                      </Form.Field>
+                      <Form.Field>
+                          <label>Пароль</label>
+                          <input placeholder='Пароль' onChange={this.props.onChange('password')}/>
+                      </Form.Field>
+                  </div>
+                )
+            }
+            {
+                this.state.auth === projects.AUTH_TYPE.pin && (
+                  <Form.Field>
+                      <label> Пин </label>
+                      <input placeholder='Пин' onChange={this.props.onChange('pin')}/>
+                  </Form.Field>
+                )
+            }
+
+
         </div>;
     }
 }

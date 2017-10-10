@@ -9,6 +9,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const uglifyPlugin = require('./webpack/uglifyPlugin');
 
 console.log(`process.env.NODE_ENV = ${process.env.NODE_ENV}`);
+
+
 const isProduction = (process.env.NODE_ENV === 'production');
 
 const hash = {
@@ -104,7 +106,8 @@ const mainConfig = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        modules: ['node_modules', path.resolve(__dirname, 'resources/assets/js/src/')]
     },
     devtool: false,
     plugins: [
