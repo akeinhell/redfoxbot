@@ -57,7 +57,7 @@ export default class SettingsForm extends Component {
 
     handleChangeState(name) {
         return (event, target) => {
-            const value = (target || event.target).value;
+            const {value} = target || event.target;
             console.log('handleChangeState', name, value);
             this.setState({
                 form: {
@@ -67,6 +67,8 @@ export default class SettingsForm extends Component {
             });
         };
     }
+
+
 
     render() {
         return (
@@ -83,7 +85,8 @@ export default class SettingsForm extends Component {
                           {
                               this.state.isAuto &&
                               <AutoConfig onChange={this.handleChangeState.bind(this)}/> ||
-                              <ManualConfig onChange={this.handleChangeState.bind(this)}/>
+                              <ManualConfig
+                                onChange={this.handleChangeState.bind(this)}/>
                           }
 
                           <Form.Field>

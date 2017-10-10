@@ -20,6 +20,21 @@ export default class ManualConfig extends Component {
         onChange: PropTypes.func.isRequired,
     };
 
+    constructor(props) {
+        super(props);
+        console.log({
+            ConfigProps: props
+        });
+    }
+
+    handleProjectSelect(event, target) {
+        debugger;
+        const {value} = target;
+        const authType = projectList.find(e => value === e.value)['data-auth-type'];
+        this.props.onChange('auth')(event, {value:authType});
+        this.props.onChange('project')(event, target)
+    };
+
     handleResultSelect = (e, {result}) => this.setState({value: result.title});
 
     handleSearchChange = (e, {value}) => {
@@ -48,6 +63,13 @@ export default class ManualConfig extends Component {
         const {isLoading, value, results} = this.state;
         return <div>
             <Form.Field>
+                <label>Выберите движок</label>
+                <Dropdown
+                  placeholder='Выберите движок' fluid selection options={projectList}
+                  onChange={this.handleProjectSelect.bind(this)}
+                />
+            </Form.Field>
+            <Form.Field>
                 <label>Выбери город</label>
                 <Search
                   input={{fluid: true}}
@@ -58,13 +80,6 @@ export default class ManualConfig extends Component {
                   value={value}
                   {...this.props}
                 />
-            <Form.Field>
-                <label>Выберите движок</label>
-                <Dropdown
-                  placeholder='Выберите движок' fluid selection options={projectList}
-                  onChange={this.props.onChange('project')}
-                />
-            </Form.Field>
             </Form.Field>
             <Form.Field>
                 <label> Логин </label>
