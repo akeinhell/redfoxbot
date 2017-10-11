@@ -1,35 +1,50 @@
-version: '2'
+version: '3.2'
+
 services:
   fpm:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    links:
-      - db
-      - redis
     volumes:
-      - './:/var/www/'
+      - ./:/var/www/
     restart: always
-    ports:
-      - 8080:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/status"]
+      interval: 1m
+      timeout: 10s
     environment:
       - VIRTUAL_HOST=redfoxbot.dev
-    extends:
-      file: docker-compose.base.yml
-      service: fpm
     networks:
       - dev
       - local
+
   db:
+    image: postgres:latest
     ports:
       - 5431:5432
-    extends:
-      file: docker-compose.base.yml
-      service: db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 1m30s
+      timeout: 10s
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=telegram
+      - POSTGRES_USER=root
+    networks:
+      - local
+    volumes:
+      - /usr/local/docker/data/redfoxbot/postgres-data:/var/lib/postgresql/data
+
   redis:
-    extends:
-      file: docker-compose.base.yml
-      service: redis
+    image: redis:latest
+    expose:
+      - 6379
+    volumes:
+      - /usr/local/docker/data/redfoxbot/redis:/data
+    networks:
+      - local
+    command: redis-server --appendonly yes
+
 networks:
   local:
     driver: bridge

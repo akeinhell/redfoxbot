@@ -16,40 +16,6 @@ const projectList = [
     projects.Ekipazh,
 ];
 
-const searchSource = [
-    {
-        'title': 'Jacobson, Connelly and Pagac',
-        'description': 'Distributed leading edge firmware',
-        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/elisabethkjaer/128.jpg',
-        'price': '$$44.45'
-    },
-    {
-        'title': 'Labadie - Moore',
-        'description': 'Distributed 4th generation moratorium',
-        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/lonesomelemon/128.jpg',
-        'price': '$5.8 1'
-    },
-    {
-        'title': 'Hirthe LLC',
-        'description': 'Synergized 6th generation product',
-        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/danro/128.jpg',
-        'price': '$14.47'
-    },
-    {
-        'title': 'Wolff - Ritchie',
-        'description': 'Horizontal discrete pricing structure',
-        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/mirfanqureshi/128.jpg',
-        'price': '$$80.97'
-    },
-    {
-        'title': 'Terry Inc',
-        'description': 'Switchable zero tolerance knowledge user',
-        'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/hiemil/128.jpg',
-        'price': '$$4.47'
-    }
-];
-
-
 export default class ManualConfig extends Component {
     static propTypes = {
         onChange: PropTypes.func.isRequired,

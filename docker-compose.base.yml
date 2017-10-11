@@ -1,4 +1,4 @@
-version: '2'
+version: '3.2'
 
 services:
   fpm:
@@ -8,6 +8,10 @@ services:
     volumes:
       - ./:/var/www/
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/status"]
+      interval: 1m
+      timeout: 10s
     environment:
       - VIRTUAL_HOST=redfoxbot.dev
     networks:
@@ -16,6 +20,10 @@ services:
 
   db:
     image: postgres:latest
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 1m30s
+      timeout: 10s
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=telegram
