@@ -6,6 +6,7 @@ use App\City;
 use App\Game;
 use App\Project;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
@@ -19,9 +20,18 @@ class ApiController extends Controller
         return response()->json(City::with('project')->get());
     }
 
-    public function games()
+    public function games(Request $request)
     {
-        return response()->json(Game::with(['city', 'city.project'])->get());
+        $search = $request->get('q');
+        $query = Game::limit(10)->with(['city', 'city.project']);
+        if ($search) {
+            $query->where('title', 'ILIKE', '%'. $search.'%');
+            $query->orWhereHas('city', function ($query) use ($search) {
+                $query->where('title',  'ILIKE', '%'. $search.'%');
+                $query->orWhere('url',  'ILIKE', '%'. $search.'%');
+            });
+        }
+        return response()->json($query->get());
     }
 
     public function create()

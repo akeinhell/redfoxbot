@@ -9,7 +9,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
-use Illuminate\Support\Collection;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\Storage\LaravelCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\GreedyCacheStrategy;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -40,6 +42,15 @@ class EncounterService
                     new MessageFormatter('[{code}] {method} {uri}')
                 ), 'logger'
             );
+            $stack->push(
+                new CacheMiddleware(
+                    new GreedyCacheStrategy(
+                        new LaravelCacheStorage(
+                            Cache::store('redis')
+                        ),
+                        1800
+                    )
+            ), 'cache');
             $uri = $demoSite ? 'demo.en.cx' : 'msk.en.cx';
             $params                        = [
                 'base_uri' => 'http://' . $uri,
@@ -113,36 +124,7 @@ class EncounterService
         });
     }
 
-    private function permutate(Collection $available, $result = []):array
-    {
-        if ($available->count() == 0) {
-            return $result;
-        }
-        if ($available->count() == 1) {
-            $key = $available->keys()->first();
-            $res = [];
-            foreach ($available->first() as $first) {
-                foreach ($result as $k => $values) {
-                    dd(get_defined_vars());
-                }
-            }
-            dd(get_defined_vars());
-            return $result;
-        }
-        if ($available->count() > 1) {
-            $key = $available->keys()->first();
-            $value = $available->shift();
-            $mutations = $this->permutate($available, [
-                $key => $value
-            ]);
-            dd('big then one', $mutations);
-        }
-        print_r(['printr', $available->toArray(), $result]);
-        dd();
-        return [];
-    }
-
-    public function getPermutations($includeFinished = false)
+    public function getPermutations()
     {
         $zones = [
             'Real',
@@ -157,9 +139,6 @@ class EncounterService
         ];
         $types  = ['single', 'Team'];
         $statuses = ['Active', 'Coming'];
-        if (!$includeFinished) {
-            //            $statuses[] = 'Finished';
-        }
 
         $return = [];
         foreach ($zones as $zone) {

@@ -50,7 +50,6 @@ const searchSource = [
 ];
 
 
-
 export default class ManualConfig extends Component {
     static propTypes = {
         onChange: PropTypes.func.isRequired,
@@ -65,7 +64,8 @@ export default class ManualConfig extends Component {
         const {value} = target;
         const authType = projectList.find(e => value === e.value)['data-auth-type'];
         this.setState({'auth': authType});
-        this.props.onChange('project')(event, target)
+        this.setState({'project': target.value});
+        this.props.onChange('project')(event, target);
     };
 
     handleResultSelect = (e, {result}) => this.setState({value: result.title});
@@ -73,17 +73,25 @@ export default class ManualConfig extends Component {
     handleSearchChange = (e, {value}) => {
         this.setState({isLoading: true, value});
 
-        setTimeout(() => {
-            if (this.state.value.length < 1) return this.resetComponent();
-
-            const re = new RegExp(escapeRegExp(this.state.value), 'i');
-            const isMatch = result => re.test(result.title);
-
-            this.setState({
-                isLoading: false,
-                results: filter(searchSource, isMatch),
-            });
-        }, 50);
+        fetch(`/api/games/?q=${value}`)
+          .then(r => r.json())
+          .then(results => {
+              return  this.setState({
+                  results: results.map(game => ({
+                          key: game.gid,
+                          title: game.title,
+                          description: game.city.title
+                  })),
+                  isLoading: false,
+              });
+          })
+          .catch(e => {
+              console.error(e);
+              this.setState({
+                  results: [],
+                  isLoading: false,
+              });
+          });
     };
 
     componentWillMount() {
@@ -103,18 +111,19 @@ export default class ManualConfig extends Component {
                 />
             </Form.Field>
 
-            { this.state.auth && <Form.Field>
-                <label>Выбери город</label>
-                <Search
-                  input={{fluid: true}}
-                  loading={isLoading}
-                  onResultSelect={this.handleResultSelect}
-                  onSearchChange={this.handleSearchChange}
-                  results={results}
-                  value={value}
-                  {...this.props}
-                />
-            </Form.Field>
+            {(this.state.project === 'Encounter') &&
+                <Form.Field>
+                    <label>Выбери игру</label>
+                    <Search
+                    input={{fluid: true}}
+                    loading={isLoading}
+                    onResultSelect={this.handleResultSelect}
+                    onSearchChange={this.handleSearchChange}
+                    results={results}
+                    value={value}
+                    {...this.props}
+                    />
+                </Form.Field>
             }
 
             {
