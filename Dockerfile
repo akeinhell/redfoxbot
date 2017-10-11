@@ -1,4 +1,4 @@
-FROM akeinhell/docker-nginx-php7.1
+FROM akeinhell/docker-nginx-php7.1:latest
 
 WORKDIR /tmp
 ADD composer.json /tmp
