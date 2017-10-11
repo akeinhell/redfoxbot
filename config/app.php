@@ -213,6 +213,8 @@ return [
         'Track' => \App\Services\Tracking\TrackingFacade::class,
         'Lampa'    => LampaFacade::class,
 
+        'Encounter' => \App\Services\Encounter\EncounterFacade::class,
+
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
     ],
 ];

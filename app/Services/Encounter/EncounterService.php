@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Lampa;
+namespace App\Services\Encounter;
 
 use App\Games\Sender;
 use Cache;
@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
+use Illuminate\Support\Collection;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -18,7 +19,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class EncounterService
 {
-    const CACHE_KEY = 'EN_SERVICE:%s:%s';
+    const CACHE_KEY = 'EN_SERVICE:';
     private $crawler;
     private $clients = [];
 
@@ -30,7 +31,8 @@ class EncounterService
 
     private function getClient($demoSite)
     {
-        if (!$this->clients[(int)$demoSite]) {
+        $id = (int) $demoSite;
+        if (!array_get($this->clients, $id)) {
             $stack = HandlerStack::create();
             $stack->push(
                 Middleware::log(
@@ -38,31 +40,38 @@ class EncounterService
                     new MessageFormatter('[{code}] {method} {uri}')
                 ), 'logger'
             );
+            $uri = $demoSite ? 'demo.en.cx' : 'msk.en.cx';
             $params                        = [
-                'base_uri' => $demoSite ? 'demo.en.cx' : 'msk.en.cx',
+                'base_uri' => 'http://' . $uri,
                 'cookies'  => Sender::getCookieFile('encounter_parser'),
                 'headers'  => [
                     'User-Agent' => Sender::getUserAgent(),
                 ],
                 'handler'  => $stack,
             ];
-            $this->clients[(int)$demoSite] = new Client($params);
+            $this->clients[$id] = new Client($params);
         }
 
-        return $this->clients[(int)$demoSite];
+        return array_get($this->clients, $id);
     }
 
     public function getGames($params, $page = 1, $demoSite = false)
     {
         $params['page'] = $page;
-        $crawler        = new Crawler($this->get('GameCalendar.aspx', $params, getGames));
+        $crawler        = new Crawler($this->get('GameCalendar.aspx', $params, $demoSite));
 
         $games = $crawler
             ->filter('tr.infoRow')
             ->each(function (Crawler $node, $i) use ($params) {
-                $startText  = $node->filter('td')->eq(4)->filter('script')->text();
+                $start  = $node->filter('td')->eq(4)->filter('script');
+                $startText = $start->count()?$start->text(): null;
                 $startText  = preg_replace('#.*?String\(\'(.*?)\'\).*#', '$1', $startText);
-                $start      = new Carbon($startText);
+                if (!$start->count()) {
+                    \Log::info('start not  found', array_merge($params, [
+                        'title' => $node->filter('td')->eq(5)->text()
+                    ]));
+                }
+                $start      = $start?new Carbon($startText):Carbon::now();
                 $gameDomain = $node->filter('td')->eq(3)->text();
 
                 return [
@@ -76,7 +85,7 @@ class EncounterService
 
         $pages = $crawler->filter('table')->last()->filter('tr')->first()->filter('a');
 
-        $lastPage = $pages->count() === 0 ? (int)$pages->last()->text(): null;
+        $lastPage = $pages->count() > 0 ? (int)$pages->last()->text(): null;
 
         return compact('lastPage', 'games');
     }
@@ -99,9 +108,68 @@ class EncounterService
         }
         $response = (string)$this->getClient($demoSite)->get($url, ['query' => $params])->getBody();
 
-        return Cache::remember($cacheKey, 10, function () use ($response) {
+        return Cache::remember($cacheKey, 60, function () use ($response) {
             return $response;
         });
     }
 
+    private function permutate(Collection $available, $result = []):array
+    {
+        if ($available->count() == 0) {
+            return $result;
+        }
+        if ($available->count() == 1) {
+            $key = $available->keys()->first();
+            $res = [];
+            foreach ($available->first() as $first) {
+                foreach ($result as $k => $values) {
+                    dd(get_defined_vars());
+                }
+            }
+            dd(get_defined_vars());
+            return $result;
+        }
+        if ($available->count() > 1) {
+            $key = $available->keys()->first();
+            $value = $available->shift();
+            $mutations = $this->permutate($available, [
+                $key => $value
+            ]);
+            dd('big then one', $mutations);
+        }
+        print_r(['printr', $available->toArray(), $result]);
+        dd();
+        return [];
+    }
+
+    public function getPermutations($includeFinished = false)
+    {
+        $zones = [
+            'Real',
+            'Points',
+            'Virtual',
+            'Quiz',
+            'PhotoHunt',
+            'PhotoExtreme',
+            'Caching',
+            'WetWars',
+            'Competition',
+        ];
+        $types  = ['single', 'Team'];
+        $statuses = ['Active', 'Coming'];
+        if (!$includeFinished) {
+            //            $statuses[] = 'Finished';
+        }
+
+        $return = [];
+        foreach ($zones as $zone) {
+            foreach ($types as $type) {
+                foreach ($statuses as $status) {
+                    $return[] = compact('status', 'type', 'zone');
+                }
+            }
+        }
+
+        return $return;
+    }
 }

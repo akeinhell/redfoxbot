@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Lampa;
+namespace App\Services\Encounter;
 
 
 use Illuminate\Support\Facades\Facade;

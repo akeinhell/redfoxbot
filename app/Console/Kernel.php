@@ -16,5 +16,6 @@ class Kernel extends ConsoleKernel
         Commands\TrackingCommand::class,
         Commands\TestAlerts::class,
         Commands\TelegramListenerCommand::class,
+        Commands\ParseGamesCommand::class
     ];
 }
