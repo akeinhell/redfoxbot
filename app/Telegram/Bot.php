@@ -14,6 +14,7 @@ use App\Games\Interfaces\IncludeSectors;
 use App\Games\Interfaces\IncludeTime;
 use App\Telegram\Events\CodeEvent;
 use App\Telegram\Events\ConfigEvent;
+use App\Telegram\Events\CoordsEvent;
 use App\Telegram\Events\EmojiEvent;
 use App\Telegram\Handlers\CallbackHandler;
 use App\Telegram\Handlers\CommandHandler;
@@ -106,6 +107,7 @@ class Bot
             $bot = new Client(env('TELEGRAM_KEY'));
             $bot->on(ConfigEvent::handle(), ConfigEvent::validator());
             $bot->on(EmojiEvent::handle(), EmojiEvent::validator());
+            $bot->on(CoordsEvent::handle(), CoordsEvent::validator());
             /** @var AbstractCommand $commandClass */
             foreach (CommandParser::$commands as $commandClass) {
                 foreach ($commandClass::$entities as $entity) {
@@ -132,8 +134,11 @@ class Bot
         $cr->filter('img')
             ->each(function (Crawler $crawler) use (&$links, $domain) {
                 $link = sprintf('%s', $crawler->attr('src'));
+                $link = preg_replace('/\.\.\//', '', $link);
                 if (!strpos($link, 'http') === false) {
                     $link = $domain . preg_replace('/\.\.\//is', '', $link);
+                } else {
+                    $link = $domain . $link;
                 }
                 $links[] = utf8_decode($link);
                 foreach ($crawler as $node) {
