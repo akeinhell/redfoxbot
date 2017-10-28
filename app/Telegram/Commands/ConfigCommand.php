@@ -12,6 +12,7 @@ use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Engines\EncounterEngine;
 use App\Games\Interfaces\LoginPassEngine;
 use App\Games\Interfaces\PinEngine;
+use App\Games\Interfaces\TwoFactorAuthEngine;
 use App\Telegram\AbstractCommand;
 use App\Telegram\Bot;
 use App\Telegram\Config;
@@ -56,9 +57,9 @@ class ConfigCommand extends AbstractCommand
             $engine = Config::getValue($chatId, 'project', 'Не указан');
             if ($engine == 'DozorLite') {
                 $domain = Config::getValue($chatId, 'domain', 'не указан');
-                $data[] = [Bot::Button( 'Город: '. $domain, ['config', 'input', 'url'])];
+                $data[] = [Bot::Button('Город: '. $domain, ['config', 'input', 'url'])];
             }
-            $data[] = [Bot::Button( 'Движок: ' . $engine, ['config', 'project'])];
+            $data[] = [Bot::Button('Движок: ' . $engine, ['config', 'project'])];
 
             $projectClass = '\\App\\Games\\Engines\\' . $project . 'Engine';
             /* @var AbstractGameEngine $engine */
@@ -66,6 +67,14 @@ class ConfigCommand extends AbstractCommand
             if ($engine instanceof LoginPassEngine) {
                 $data[] = [self::getInput($chatId, 'login', 'login')];
                 $data[] = [self::getInput($chatId, 'password', 'password')];
+            }
+
+            if ($engine instanceof TwoFactorAuthEngine) {
+                $data[] = [self::getInput($chatId, 'teamLogin', 'логин от движка')];
+                $data[] = [self::getInput($chatId, 'teamPassword', 'пароль движка')];
+
+                $data[] = [self::getInput($chatId, 'login', 'логин пользователя')];
+                $data[] = [self::getInput($chatId, 'password', 'пароль пользователя')];
             }
 
             if ($engine instanceof PinEngine) {
@@ -83,8 +92,8 @@ class ConfigCommand extends AbstractCommand
         \Cache::put(StartCommand::CACHE_KEY_START . $token, json_encode($export), $expire);
 
         $data[] = [
-            Bot::Button( '🔄 сбросить', ['config', 'clean']),
-            Bot::Button( '🆗 Завершить', ['config', 'end']),
+            Bot::Button('🔄 сбросить', ['config', 'clean']),
+            Bot::Button('🆗 Завершить', ['config', 'end']),
         ];
 
         return new InlineKeyboardMarkup($data);
@@ -92,7 +101,11 @@ class ConfigCommand extends AbstractCommand
 
     private static function getInput($chatId, $param, $text)
     {
-        $label = $text . ': ' . Config::getValue($chatId, $param, 'Не указан');
+        $label = $text . ': ' . (
+            strpos($param, 'pass') === false ?
+                Config::getValue($chatId, $param, 'Не указан')
+                : str_pad('', 8, '*')
+            );
         return Bot::Button($label, ['config', 'input', $param]);
     }
 }

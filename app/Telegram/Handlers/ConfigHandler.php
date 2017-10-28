@@ -24,6 +24,8 @@ class ConfigHandler extends BaseHandler
             case 'url':
                 return $this->parseUrl($update->getMessage());
             case 'pin':
+            case 'teamPassword':
+            case 'teamLogin':
             case 'login':
             case 'password':
             case 'gameId':
@@ -74,7 +76,7 @@ class ConfigHandler extends BaseHandler
         if (!$domain) {
             \Log::error('invalidDomain: ' . $text);
             Bot::sendMessage($chatId, 'Ошибка парсинга URL (не правильный домен)');
-
+            Config::setState($message->getChat()->getId(), '');
             return false;
         }
 
@@ -89,6 +91,8 @@ class ConfigHandler extends BaseHandler
                 Config::setValue($chatId, $param, $value);
             }
         }
+        Config::setState($message->getChat()->getId(), '');
+
         switch ($domain) {
             case 'dzzzr.ru':
             case 'ekipazh.org':
@@ -98,7 +102,17 @@ class ConfigHandler extends BaseHandler
 
                     return false;
                 }
-                $project = $domain == 'dzzzr.ru' ? 'DozorLite' : 'EkipazhEngine';
+                switch (true) {
+                    case $host->getSubdomain() === 'classic':
+                        $project = 'DozorClassic';
+                        break;
+                    case $domain == 'dzzzr.ru':
+                        $project = 'DozorLite';
+                        break;
+                    default:
+                        $project = 'EkipazhEngine';
+                        break;
+                }
                 Config::setValue($chatId, 'project', $project);
                 Config::setValue($chatId, 'domain', $city);
                 Config::setValue($chatId, 'url', $patchedUrl);
@@ -122,7 +136,7 @@ class ConfigHandler extends BaseHandler
                 if (!$city) {
                     \Log::error('invalidCity: ' . $text);
                     Bot::sendMessage($chatId, 'не удалось распознать ID игры');
-
+                    Config::setState($message->getChat()->getId(), '');
                     return false;
                 }
                 Config::setValue($chatId, 'url', $patchedUrl . $city . '/');
@@ -133,9 +147,8 @@ class ConfigHandler extends BaseHandler
                 break;
             default:
                 \Log::error('invalidURL: ' . $text);
-                $msg = 'Не удалось распознать присланный адрес. ' . PHP_EOL . 'Пришлите ссылку еще раз';
+                $msg = 'Не удалось распознать присланный адрес. ' . PHP_EOL . 'выберите пункт url заново';
                 Bot::action()->sendMessage($chatId, $msg);
-
                 return false;
         }
         Bot::action()->sendMessage($chatId, $msg, null, false, null, ConfigCommand::getConfigKeyboard($chatId));

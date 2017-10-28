@@ -10,6 +10,7 @@ namespace App\Games\Engines;
 
 use App\Exceptions\TelegramCommandException;
 use App\Games\BaseEngine\AbstractGameEngine;
+use App\Games\Interfaces\IncludeSectors;
 use App\Games\Interfaces\TwoFactorAuthEngine;
 use App\Quests\DozorClassicQuest;
 use App\Telegram\Config;
@@ -21,7 +22,7 @@ use GuzzleHttp\Middleware;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\DomCrawler\Crawler;
 
-class DozorClassicEngine extends AbstractGameEngine implements TwoFactorAuthEngine
+class DozorClassicEngine extends AbstractGameEngine implements TwoFactorAuthEngine, IncludeSectors
 {
     /**
      * @var Client
