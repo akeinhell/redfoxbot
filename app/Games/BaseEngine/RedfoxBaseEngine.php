@@ -51,7 +51,8 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
         return $this->parseResponse((string)$response->getBody(), $code);
     }
 
-    public function getKeyboard() {
+    public function getKeyboard()
+    {
         $questList = $this->getQuestList()?:[];
 
         if (!$questList) {
@@ -241,7 +242,7 @@ abstract class RedfoxBaseEngine extends AbstractGameEngine
             $text = str_replace('</p>', PHP_EOL, $text);
 
             $response =  html_entity_decode($text, null, 'UTF-8');
-            return [$response, $this->getKeyboard()];
+            return [$response];
         }
         throw new TelegramCommandException('Не возможно получить текст задания', $this->chatId);
     }

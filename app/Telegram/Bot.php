@@ -59,7 +59,7 @@ class Bot
         $map = [
             IncludeHints::class => self::formatButton('hints', 'Подсказки'),
             IncludeTime::class  => self::formatButton('time', 'Время до слива'),
-            IncludeSectors::class  => self::formatButton('time', 'Время до слива'),
+//            IncludeSectors::class  => self::formatButton('time', 'Время до слива'),
         ];
 
         foreach ($map as $interface => $button) {

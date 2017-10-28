@@ -40,6 +40,7 @@ class TelegramListenerCommand extends Command
         $offset = \Cache::get(self::CACHE_KEY) ?: 0;
         \Log::info('start listen: offset = ' . $offset);
 
+        $this->info(Bot::action()->getMe()->getUsername());
         while (true) {
             $updates = Bot::action()->getUpdates($offset, 5, 30);
             if (!$updates) {
