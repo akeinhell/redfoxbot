@@ -1,22 +1,24 @@
-FROM akeinhell/docker-nginx-php7.1
-WORKDIR /var/www
+FROM akeinhell/docker-nginx-php7.1:latest
 
-ADD composer.json /var/www
-ADD composer.lock /var/www
-ADD package.json /var/www
-ADD package-lock.json /var/www
-
+WORKDIR /tmp
+ADD composer.json /tmp
+ADD composer.lock /tmp
 RUN composer install --no-scripts --no-autoloader
 
-RUN npm install --ignore-scripts
+ADD package.json /tmp
+ADD yarn.lock /tmp
+RUN yarn install
 
-COPY . ./
 
-RUN composer dump-autoload --optimize && \
-    composer run-script post-install-cmd
+WORKDIR /var/www
+COPY . /var/www/
+RUN cp -a /tmp/node_modules /var/www/
+RUN cp -a /tmp/vendor /var/www/
 
 RUN npm run build
 
-COPY public/dist ./public/dist
+RUN composer dump-autoload --optimize
+
+#COPY public/dist ./public/dist
 
 

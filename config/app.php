@@ -158,6 +158,8 @@ return [
         Illuminate\Redis\RedisServiceProvider::class,
 
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
+        //\Malyusha\WebpackAssets\WebpackAssetsServiceProvider::class
+
 
 //        Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\TrackProvider::class,
@@ -210,6 +212,8 @@ return [
 //        'Tg'       => Telegram\Bot\Laravel\Facades\Telegram::class,
         'Track' => \App\Services\Tracking\TrackingFacade::class,
         'Lampa'    => LampaFacade::class,
+
+        'Encounter' => \App\Services\Encounter\EncounterFacade::class,
 
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
     ],

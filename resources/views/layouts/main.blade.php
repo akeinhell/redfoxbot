@@ -4,7 +4,7 @@
     <title>Проект Лиса | @yield('title') </title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="/dist/css/style.css"/>
+    {!! webpack_asset('style', 'styles.css') !!}
     <link rel="apple-touch-icon" sizes="57x57" href="/ico/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/ico/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/ico/apple-icon-72x72.png">
@@ -22,21 +22,12 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#364050">
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-M5WRBJ3');</script>
-    <!-- End Google Tag Manager -->
-    <script src="/dist/js/vendor.js"></script>
-    
+    {!! webpack_asset('js', 'runtime.js') !!}
+    {!! webpack_asset('js', 'vendor.js') !!}
+    @yield('header_block')
+
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M5WRBJ3"
-                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 
 <!-- Content -->
 <div id="content">
@@ -127,7 +118,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="/dist/js/application.js"></script>
 <script type="text/javascript">
     var reformalOptions = {
         project_id: 975735,
@@ -147,7 +137,6 @@
         document.getElementsByTagName('head')[0].appendChild(script);
     })();
 </script><noscript><a href="http://reformal.ru"><img src="http://media.reformal.ru/reformal.png" /></a><a href="http://redfoxbot.reformal.ru">Oтзывы и предложения для Телеграмм-бот &quot;Лиса&quot;</a></noscript>
-
 @yield('footer')
 
 </body>

@@ -1,27 +1,74 @@
 const path = require('path');
-const glob = require('glob');
 const webpack = require('webpack');
-const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var ManifestPlugin = require('webpack-manifest-plugin');
+
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+const uglifyPlugin = require('./webpack/uglifyPlugin');
+
+console.log(`process.env.NODE_ENV = ${process.env.NODE_ENV}`);
+
+
+const isProduction = (process.env.NODE_ENV === 'production');
+
+const hash = {
+    js: '[name].[chunkhash:8].js',
+    css: '[contenthash:8]',
+    files: '[sha512:hash:base64:8]',
+}
 
 const mainConfig = {
     name: 'main',
     entry: {
-        application: glob.sync('./resources/assets/coffee/**/*.coffee'),
+        index: './resources/assets/js/src/index.js',
         styles: './resources/assets/sass/main.scss',
+        vendor: [
+            'react',
+            'react-dom',
+        ]
     },
     output: {
         path: __dirname + '/public/dist/',
-        filename: "js/[name].js",
-        sourceMapFilename: "js/[name].map",
+        filename: 'js/' + hash.js,
+        sourceMapFilename: 'js/[name].[chunkhash].map',
         publicPath: '/dist/'
     },
     module: {
         loaders: [
-            {test: /\.coffee$/, use: 'coffee-loader'},
             {
-                test: /\.(eot|svg|ttf|woff|woff2)$/,
-                use: 'file-loader?name=../fonts/[name].[ext]&outputPath=../dist/fonts/'
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            'es2015',
+                            'stage-2',
+                            'react',
+                        ],
+                        plugins: ['transform-es2015-destructuring', 'transform-object-rest-spread'],
+                    }
+                }]
+            },
+            {
+                test: /\.(less$)$/,
+                include: /resources\/assets\/js\/src/,
+                use: [
+                    'style-loader',
+                    'css-loader?importLoaders=1&modules&localIdentName=[hash:base64:5]',
+                    'less-loader'
+                ]
+            },
+            {
+                test: /\.(less$)$/,
+                exclude: /resources\/assets\/js\/src/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'less-loader'
+                ]
             },
             {
                 test: /\.scss$/,
@@ -31,26 +78,68 @@ const mainConfig = {
                 }),
             },
             {
-                test: /\.(jpe?g|png|gif)$/i,
-                use: 'file-loader?name=images/[name].[ext]'
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader',
+                }),
             },
+            {
+                test: /\.(jpe?g|png|gif|ico)$/i,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name : `images/${hash.files}.[ext]`
+                    }
+                },
 
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2)$/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name : `fonts/${hash.files}.[ext]`
+                    }
+                },
+            },
         ]
     },
     resolve: {
-        extensions: ['.js', '.coffee']
+        extensions: ['.js', '.jsx'],
+        modules: ['node_modules', path.resolve(__dirname, 'resources/assets/js/src/')]
     },
-    devtool: '#cheap-module-source-map',
+    devtool: false,
     plugins: [
-        new ngAnnotatePlugin({add: true}),
-        new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
+        // new CleanWebpackPlugin(['public/dist/*'], {
+        //     root: __dirname,
+        //     verbose: true,
+        //     // dry: false,
+        // }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: Infinity
         }),
-        new ExtractTextPlugin('css/style.css')
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'runtime'
+        }),
+        new webpack.HashedModuleIdsPlugin(),
+        new webpack.DefinePlugin({DEBUG: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))}),
+        new ExtractTextPlugin(`css/${hash.css}.css`),
+        //new BundleAnalyzerPlugin(),
+        new ManifestPlugin(),
+        new webpack.ContextReplacementPlugin(
+          /moment[\/\\]locale$/,
+          /ru/
+        )
     ]
 };
+
+if (isProduction) {
+    console.log('webpack in production mode');
+    mainConfig.plugins.push(uglifyPlugin);
+    mainConfig.devtool = false;
+}
 
 module.exports = [
     mainConfig

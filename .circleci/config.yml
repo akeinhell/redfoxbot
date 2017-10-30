@@ -1,6 +1,27 @@
 version: 2
 
 jobs:
+  build_docker:
+    machine: true
+    working_directory: /tmp/build
+    steps:
+      - checkout
+      - setup_remote_docker
+          docker_layer_caching: true
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+
+      - run: |
+          TAG=1.1.$CIRCLE_BUILD_NUM
+          docker build -t akeinhell/redfoxbot:$TAG .
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker push akeinhell/redfoxbot:$TAG
   build:
     docker:
       - image: akeinhell/docker-nginx-php7.1:latest
@@ -48,4 +69,5 @@ workflows:
   build_and_test:
       jobs:
         - build
+        - build_docker
 
