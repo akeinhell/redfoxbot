@@ -163,7 +163,6 @@ return [
         \App\Providers\TrackProvider::class,
         \App\Providers\LampaProvider::class,
 
-        Hedii\LaravelGelfLogger\LaravelGelfLoggerServiceProvider::class,
     ],
 
     /*
@@ -215,6 +214,5 @@ return [
 
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
 
-        'GelfLogger' => \Hedii\LaravelGelfLogger\Facades\GelfLogger::class,
     ],
 ];

@@ -52,17 +52,6 @@ abstract class AbstractGameEngine
 
         $this->jar = Sender::getCookieFile($this->chatId);
         $this->stack = HandlerStack::create();
-        $monolog = \Log::getMonolog();
-        $monolog_handler =new GelfHandler(
-            new Publisher(
-                new UdpTransport('log.redfoxbot.ru')
-            )
-        );
-        $monolog_handler->setFormatter(
-            new GelfMessageFormatter()
-        );
-        $monolog->pushHandler($monolog_handler);
-
 
         $this->stack->push(
             Middleware::log(
@@ -70,7 +59,6 @@ abstract class AbstractGameEngine
                 new MessageFormatter('[{code}] {method} {uri}')
             ), 'logger'
         );
-
 
         $params = [
             'base_uri'    => Config::getValue($chatId, 'url'),

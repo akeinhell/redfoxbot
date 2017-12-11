@@ -126,7 +126,6 @@ class Bot
 
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
-        gelf()->debug('response', compact('chatId', 'message'));
         $message = is_array($message)?array_get($message, 0):$message;
         self::detectCoords($chatId, $message);
         $cr = new Crawler($message);
@@ -167,7 +166,6 @@ class Bot
                 }
             }
 
-            gelf()->debug('sendMessage', compact('chatId', 'string'));
             self::action()->sendMessage(
                 $chatId,
                 mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
@@ -179,7 +177,6 @@ class Bot
         }
 
         foreach ($links as $link) {
-            gelf()->debug('sendLink', compact('chatId', 'link'));
             self::action()->sendMessage(
                 $chatId,
                 $link,
@@ -193,7 +190,6 @@ class Bot
     {
         if ($coords = getCoordinates($text)) {
             list($lon, $lat) = $coords;
-            gelf()->debug('sendLocation', compact('chatId', 'lon', 'lat'));
             Bot::action()->sendLocation($chatId, $lon, $lat);
         }
     }
