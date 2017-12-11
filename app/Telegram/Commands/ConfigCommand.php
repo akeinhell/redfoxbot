@@ -62,8 +62,15 @@ class ConfigCommand extends AbstractCommand
             $data[] = [Bot::Button('Движок: ' . $engine, ['config', 'project'])];
 
             $projectClass = '\\App\\Games\\Engines\\' . $project . 'Engine';
+
+            try{
+                $engine = new $projectClass($chatId);
+            }catch (\Exception $e){
+
+                return null;
+            }
             /* @var AbstractGameEngine $engine */
-            $engine = new $projectClass($chatId);
+
             if ($engine instanceof LoginPassEngine) {
                 $data[] = [self::getInput($chatId, 'login', 'login')];
                 $data[] = [self::getInput($chatId, 'password', 'password')];

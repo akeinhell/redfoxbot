@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d0b90c507dee2709d29a35f596f2c71d",
-    "content-hash": "472c3f6f9f6777e3f52906a901b9d78c",
+    "hash": "4dc13152086d3d57ca13dedceb550db3",
+    "content-hash": "01cc0a8e7a9b00b508569ea3d135ac8f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1011,6 +1011,62 @@
             "time": "2016-06-06 21:22:48"
         },
         {
+            "name": "graylog2/gelf-php",
+            "version": "1.5.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bzikarsky/gelf-php.git",
+                "reference": "c4e0743ba323459b6e62222107a0898e77d2fd6e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bzikarsky/gelf-php/zipball/c4e0743ba323459b6e62222107a0898e77d2fd6e",
+                "reference": "c4e0743ba323459b6e62222107a0898e77d2fd6e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9",
+                "psr/log": "~1.0"
+            },
+            "provide": {
+                "psr/log-implementation": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Gelf\\": "src/Gelf"
+                },
+                "files": [
+                    "src/check_technical_requirements.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Zikarsky",
+                    "email": "benjamin@zikarsky.de"
+                },
+                {
+                    "name": "gelf-php contributors",
+                    "homepage": "https://github.com/bzikarsky/gelf-php/contributors"
+                }
+            ],
+            "description": "A php implementation to send log-messages to a GELF compatible backend like Graylog2.",
+            "time": "2017-06-24 10:38:25"
+        },
+        {
             "name": "guzzlehttp/guzzle",
             "version": "6.3.0",
             "source": {
@@ -1190,6 +1246,67 @@
                 "url"
             ],
             "time": "2017-03-20 17:10:46"
+        },
+        {
+            "name": "hedii/laravel-gelf-logger",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hedii/laravel-gelf-logger.git",
+                "reference": "6a4ba80996e7daa715d11a8d64a6e5bbd39f63df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hedii/laravel-gelf-logger/zipball/6a4ba80996e7daa715d11a8d64a6e5bbd39f63df",
+                "reference": "6a4ba80996e7daa715d11a8d64a6e5bbd39f63df",
+                "shasum": ""
+            },
+            "require": {
+                "graylog2/gelf-php": "^1.5",
+                "illuminate/support": "~5.2.0|~5.3.0|~5.4.0|~5.5.0",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.3",
+                "phpunit/phpunit": "^5.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hedii\\LaravelGelfLogger\\LaravelGelfLoggerServiceProvider"
+                    ],
+                    "aliases": {
+                        "GelfLogger": "Hedii\\LaravelGelfLogger\\Facades\\GelfLogger"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hedii\\LaravelGelfLogger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "hedii",
+                    "email": "hedi.chaibs@gmail.com",
+                    "homepage": "https://hedichaibi.com"
+                }
+            ],
+            "description": "A package to send logs to a gelf compatible backend like graylog",
+            "keywords": [
+                "gelf",
+                "graylog",
+                "hedii",
+                "laravel",
+                "laravel-gelf",
+                "php"
+            ],
+            "time": "2017-07-11 07:28:46"
         },
         {
             "name": "jakub-onderka/php-console-color",

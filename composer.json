@@ -24,7 +24,8 @@
         "chrisbarr/amazon-sns-php-api": "^1.7",
         "league/uri": "^5.0",
         "sentry/sentry-laravel": "^0.8.0",
-        "kmelia/monolog-stdout-handler": "^1.2"
+        "kmelia/monolog-stdout-handler": "^1.2",
+        "hedii/laravel-gelf-logger": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",

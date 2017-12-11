@@ -10,10 +10,15 @@ namespace App\Games\BaseEngine;
 
 use App\Games\Sender;
 use App\Telegram\Config;
+use Gelf\Publisher;
+use Gelf\Transport\HttpTransport;
+use Gelf\Transport\UdpTransport;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
+use Monolog\Formatter\GelfMessageFormatter;
+use Monolog\Handler\GelfHandler;
 
 abstract class AbstractGameEngine
 {
@@ -47,12 +52,26 @@ abstract class AbstractGameEngine
 
         $this->jar = Sender::getCookieFile($this->chatId);
         $this->stack = HandlerStack::create();
+        $monolog = \Log::getMonolog();
+        $monolog_handler =new GelfHandler(
+            new Publisher(
+                new UdpTransport('log.redfoxbot.ru')
+            )
+        );
+        $monolog_handler->setFormatter(
+            new GelfMessageFormatter()
+        );
+        $monolog->pushHandler($monolog_handler);
+
+
         $this->stack->push(
             Middleware::log(
                 \Log::getMonolog(),
                 new MessageFormatter('[{code}] {method} {uri}')
             ), 'logger'
         );
+
+
         $params = [
             'base_uri'    => Config::getValue($chatId, 'url'),
             'cookies'     => $this->jar,

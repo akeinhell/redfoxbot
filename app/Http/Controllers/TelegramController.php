@@ -57,17 +57,24 @@ class TelegramController extends Controller
 
     public function newhook()
     {
-        //        header("HTTP/1.1 202");
-//        ob_flush();
-//        flush();
-
         $bot = Bot::getClient();
 
         try {
+            gelf()->info('update', [
+                'custom' => json_decode($bot->getRawBody(), true)
+            ]);
             $bot->run();
         } catch (NoQuestSelectedException|NotAuthenticatedException|TelegramCommandException $e) {
+            gelf()->error('exception', [
+                'message' => $e->getMessage(),
+                'type' => get_class($e)
+            ]);
             Bot::sendMessage($e->getChatid(), $e->getMessage());
         } catch (HttpException $e) {
+            gelf()->error('exception', [
+                'message' => $e->getMessage(),
+                'type' => get_class($e)
+            ]);
             Log::warning(get_class($e) . implode(PHP_EOL, [
                     'message' => $e->getMessage(),
                     'file'    => $e->getFile(),
@@ -75,6 +82,10 @@ class TelegramController extends Controller
                 ]));
             app('sentry')->captureException($e);
         } catch (\Exception $e) {
+            gelf()->critical('exception', [
+                'message' => $e->getMessage(),
+                'type' => get_class($e)
+            ]);
             Log::critical(get_class($e) . implode(PHP_EOL, [
                     'message' => $e->getMessage(),
                     'file'    => $e->getFile(),

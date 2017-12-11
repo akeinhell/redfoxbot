@@ -110,7 +110,7 @@ class ConfigHandler extends BaseHandler
                         $project = 'DozorLite';
                         break;
                     default:
-                        $project = 'EkipazhEngine';
+                        $project = 'Ekipazh';
                         break;
                 }
                 Config::setValue($chatId, 'project', $project);

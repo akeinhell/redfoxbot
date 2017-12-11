@@ -46,6 +46,12 @@ class TelegramListenerCommand extends Command
             if (!$updates) {
                 continue;
             }
+            foreach ($updates as $update) {
+                $data = $update->toJson(true);
+                gelf()->info('update', [
+                    'custom' => $data
+                ]);
+            }
 
             Log::debug('handled new updates: ' . count($updates));
             $lastUpdate = end($updates);
@@ -54,8 +60,16 @@ class TelegramListenerCommand extends Command
             try {
                 $bot->handle($updates);
             } catch (NoQuestSelectedException|NotAuthenticatedException|TelegramCommandException $e) {
+                gelf()->error('exception', [
+                    'message' => $e->getMessage(),
+                    'type' => get_class($e)
+                ]);
                 Bot::sendMessage($e->getChatid(), $e->getMessage());
             } catch (\Exception $e) {
+                gelf()->critical('exception', [
+                    'message' => $e->getMessage(),
+                    'type' => get_class($e)
+                ]);
                 Log::critical(get_class($e) . implode(PHP_EOL, [
                         'message' => $e->getMessage(),
                         'file'    => $e->getFile(),

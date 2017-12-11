@@ -162,6 +162,8 @@ return [
 //        Telegram\Bot\Laravel\TelegramServiceProvider::class,
         \App\Providers\TrackProvider::class,
         \App\Providers\LampaProvider::class,
+
+        Hedii\LaravelGelfLogger\LaravelGelfLoggerServiceProvider::class,
     ],
 
     /*
@@ -212,5 +214,7 @@ return [
         'Lampa'    => LampaFacade::class,
 
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
+
+        'GelfLogger' => \Hedii\LaravelGelfLogger\Facades\GelfLogger::class,
     ],
 ];
