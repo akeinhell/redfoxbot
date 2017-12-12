@@ -10,7 +10,6 @@ namespace App\Telegram;
 
 use App\Games\BaseEngine\AbstractGameEngine;
 use App\Games\Interfaces\IncludeHints;
-use App\Games\Interfaces\IncludeSectors;
 use App\Games\Interfaces\IncludeTime;
 use App\Telegram\Events\CodeEvent;
 use App\Telegram\Events\ConfigEvent;
@@ -19,10 +18,11 @@ use App\Telegram\Events\EmojiEvent;
 use App\Telegram\Handlers\CallbackHandler;
 use App\Telegram\Handlers\CommandHandler;
 use DOMElement;
-use Sentry\SentryLaravel\SentryLaravel;
 use Symfony\Component\DomCrawler\Crawler;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Client;
+use TelegramBot\Api\Exception;
+use TelegramBot\Api\InvalidArgumentException;
 use TelegramBot\Api\Types\CallbackQuery;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -125,11 +125,19 @@ class Bot
         return self::$clientInstance;
     }
 
+    /**
+     * @param      $chatId
+     * @param      $message
+     * @param null $keyboard
+     * @param null $replyTo
+     *
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
         /** @var \Raven_Client $sentry */
         $sentry = app('sentry');
-        $sentry->captureMessage('sendMessage', compact('chatId', 'message', 'keyboard'));
 
         $message = is_array($message)?array_get($message, 0):$message;
         self::detectCoords($chatId, $message);
@@ -172,20 +180,20 @@ class Bot
                 }
             }
 
-            $sentry->captureMessage('forEachSendMessage', compact('chatId', 'string'));
+            try {
+                self::action()->sendMessage(
+                    $chatId,
+                    mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
+                    'HTML',
+                    true,
+                    $replyTo, // reply
+                    $keyboard
+                );
+            } catch (Exception $e) {
+                $sentry->captureException($e, compact('chatId', 'string', 'message', 'keyboard'));
 
-            self::action()->sendMessage(
-                $chatId,
-                mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
-                'HTML',
-                true,
-                $replyTo, // reply
-                $keyboard
-            );
-        }
-
-        if ($links) {
-            $sentry->captureMessage('sendMessageLinks', compact('links'));
+                throw $e;
+            }
         }
 
         foreach ($links as $link) {
@@ -198,13 +206,24 @@ class Bot
         }
     }
 
+    /**
+     * @param $chatId
+     * @param $text
+     *
+     * @throws Exception
+     */
     public static function detectCoords($chatId, $text)
     {
         if ($coords = getCoordinates($text)) {
             list($lon, $lat) = $coords;
-            app('sentry')->captureMessage('detectCoords', compact('lon', 'lat', 'text'));
 
-            Bot::action()->sendLocation($chatId, $lon, $lat);
+            try {
+                Bot::action()->sendLocation($chatId, $lon, $lat);
+            } catch (Exception $e) {
+                app('sentry')->captureException($e, compact('lon', 'lat', 'text'));
+
+                throw  $e;
+            }
         }
     }
 
