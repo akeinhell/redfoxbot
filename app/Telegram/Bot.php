@@ -19,6 +19,7 @@ use App\Telegram\Events\EmojiEvent;
 use App\Telegram\Handlers\CallbackHandler;
 use App\Telegram\Handlers\CommandHandler;
 use DOMElement;
+use Sentry\SentryLaravel\SentryLaravel;
 use Symfony\Component\DomCrawler\Crawler;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Client;
@@ -126,8 +127,13 @@ class Bot
 
     public static function sendMessage($chatId, $message, $keyboard = null, $replyTo = null)
     {
+        /** @var \Raven_Client $sentry */
+        $sentry = app('sentry');
+        $sentry->captureMessage('sendMessage', compact('chatId', 'message', 'keyboard'));
+
         $message = is_array($message)?array_get($message, 0):$message;
         self::detectCoords($chatId, $message);
+
         $cr = new Crawler($message);
         $domain = Config::getValue($chatId, 'url', '');
         $links = [];
@@ -166,6 +172,8 @@ class Bot
                 }
             }
 
+            $sentry->captureMessage('forEachSendMessage', compact('chatId', 'string'));
+
             self::action()->sendMessage(
                 $chatId,
                 mb_convert_encoding($string, 'UTF-8', 'UTF-8'),
@@ -174,6 +182,10 @@ class Bot
                 $replyTo, // reply
                 $keyboard
             );
+        }
+
+        if ($links) {
+            $sentry->captureMessage('sendMessageLinks', compact('links'));
         }
 
         foreach ($links as $link) {
@@ -190,6 +202,8 @@ class Bot
     {
         if ($coords = getCoordinates($text)) {
             list($lon, $lat) = $coords;
+            app('sentry')->captureMessage('detectCoords', compact('lon', 'lat', 'text'));
+
             Bot::action()->sendLocation($chatId, $lon, $lat);
         }
     }
