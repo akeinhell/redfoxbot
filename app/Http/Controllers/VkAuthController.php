@@ -30,6 +30,12 @@ class VkAuthController extends Controller
         self::$REDIRECT_URL = route('login');
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
     public function auth(Request $request)
     {
         $code = $request->input('code');
@@ -56,6 +62,12 @@ class VkAuthController extends Controller
         return redirect($url);
     }
 
+    /**
+     * @param $code
+     *
+     * @return array
+     * @throws \Exception
+     */
     private function getToken($code)
     {
         $params = [
@@ -67,12 +79,12 @@ class VkAuthController extends Controller
         ];
         $url    = self::VK_API_OAUTH . self::METHOD_TOKEN . '?' . http_build_query($params);
         $data   = (string) $this->client->get($url, ['query' => $params])->getBody();
-        $data   = json_decode($data);
+        $data   = json_decode($data, true);
         if (!isset($data->access_token)) {
             throw new \Exception('Error Processing Request', __LINE__);
         }
 
-        return [$data->access_token, $data->email];
+        return [array_get($data, 'access_token'), array_get($data, 'email')];
     }
 
     private function getUser($access_token)
@@ -117,6 +129,10 @@ class VkAuthController extends Controller
 
     /**
      * @param string $url
+     *
+     * @param        $params
+     *
+     * @return string
      */
     private function build_url($url, $params)
     {
