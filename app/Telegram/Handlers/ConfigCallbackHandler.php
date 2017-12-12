@@ -51,7 +51,12 @@ class ConfigCallbackHandler implements CallbackInterface
             $text .= '.';
         }
         $messageId = $callbackQuery->getMessage()->getMessageId();
-        return Bot::action()->editMessageText($chatId, $messageId, $text, 'HTML', false, $keyboard);
+
+        try {
+           return Bot::action()->editMessageText($chatId, $messageId, $text, 'HTML', false, $keyboard);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public function select(CallbackQuery $callbackQuery)
