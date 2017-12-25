@@ -171,6 +171,9 @@ class Bot
         $magicRegex = '/(\S+)=["\']?((?:.(?!["\']?\s+(?:\S+)=|[>"\']))+.)["\']?/isu';
         $response = preg_replace($magicRegex, '$1=\'$2\'', $response);
 
+        if (strlen($response) < 4) {
+            return;
+        }
         foreach (str_split($response, 3600) as $string) {
             foreach ($tags as $tag) {
                 $tagPattern = '<' . $tag . '>';

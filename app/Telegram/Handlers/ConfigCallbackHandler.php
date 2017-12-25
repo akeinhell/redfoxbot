@@ -132,13 +132,17 @@ class ConfigCallbackHandler implements CallbackInterface
             File::delete($cookieFile);
         }
         Config::set($chatId, new \stdClass());
-        Bot::action()->editMessageText(
-            $chatId,
-            $callbackQuery->getMessage()->getMessageId(),
-            'Настройки сброшены',
-            null,
-            false,
-            ConfigCommand::getConfigKeyboard($chatId)
-        );
+        try {
+            Bot::action()->editMessageText(
+                $chatId,
+                $callbackQuery->getMessage()->getMessageId(),
+                'Настройки сброшены',
+                null,
+                false,
+                ConfigCommand::getConfigKeyboard($chatId)
+            );
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
