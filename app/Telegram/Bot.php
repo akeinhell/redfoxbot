@@ -107,12 +107,12 @@ class Bot
     {
         if (self::$clientInstance === null) {
             $bot = new Client(env('TELEGRAM_KEY'));
-            $bot->on(function (Update $update) {
-                return in_array($update->getMessage()->getChat()->getId(), [94986676, -1001272366143]);
-            }, function () {
+            $bot->on(function () {
                 \Log::info('Chat banned');
 
                 return false;
+            }, function (Update $update) {
+                return in_array($update->getMessage()->getChat()->getId(), [94986676, -1001272366143]);
             });
             $bot->on(ConfigEvent::handle(), ConfigEvent::validator());
             $bot->on(EmojiEvent::handle(), EmojiEvent::validator());
