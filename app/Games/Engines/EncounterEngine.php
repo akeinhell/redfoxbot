@@ -92,8 +92,9 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
      * @param string $data
      *
      * @return EncounterQuest
+     * @throws TelegramCommandException
      */
-    public function getQuest($data = null)
+    public function getQuest($data = null, $custom = [])
     {
         if (!$data) {
             $data = $this->checkAuth();
@@ -101,7 +102,7 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
                 $this->doAuth();
             }
             $url  = $this->getUrl();
-            $data = $this->sender->sendGet($url, ['json' => 1]);
+            $data = $this->sender->sendGet($url, array_merge(['json' => 1], $custom));
         }
         $quest = new EncounterQuest($data);
 
@@ -138,7 +139,7 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
 
     public function getQuestList()
     {
-        return $this->getQuest()->getMappedLevels();
+        return $this->getQuest(null, ['level' => 9])->getMappedLevels();
     }
 
     /**
@@ -213,7 +214,8 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
         return '/gameengines/encounter/play/' . Config::getValue($this->chatId, 'gameId');
     }
 
-    public function getRawHtml() {
+    public function getRawHtml()
+    {
         $data = $this->checkAuth();
         if (!$data) {
             $this->doAuth();
@@ -222,7 +224,8 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
         return (string) $this->client->get($this->getUrl())->getBody();
     }
 
-    public function sendRawCode(array $data) {
+    public function sendRawCode(array $data)
+    {
         $auth = $this->checkAuth();
         if (!$auth) {
             $this->doAuth();
