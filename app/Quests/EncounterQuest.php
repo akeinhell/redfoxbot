@@ -219,10 +219,8 @@ class EncounterQuest extends BaseQuest
 
     public function getMappedLevels()
     {
-        $level = $this->getLevel();
-
         /** @var array $bonuses */
-        $bonuses = collect(array_get($level, 'Bonuses', []))
+        $bonuses = collect($this->getBonuses())
             ->map(function ($bonus) {
                 return [
                     'id' => array_get($bonus, 'BonusId'),
@@ -233,7 +231,7 @@ class EncounterQuest extends BaseQuest
             ->all()
         ;
 
-        $levels = collect(array_get($level, 'Levels', []))
+        $levels = collect(array_get($this->data, 'Levels', []))
             ->map(function ($level) {
                 return [
                     'id' => array_get($level, 'LevelId'),
@@ -244,14 +242,9 @@ class EncounterQuest extends BaseQuest
             ->all()
         ;
 
-        dump([
-            'l' => $levels,
-            'b' => $bonuses,
-        ]);
-
         $fn = function ($res, $val) {
             $id = array_get($val, 'id');
-            $title = array_get($val, 'id');
+            $title = array_get($val, 'title');
             $res[$id] = $title;
 
             return $res;
