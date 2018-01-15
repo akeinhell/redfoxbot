@@ -138,6 +138,7 @@ class EncounterEngine extends EncounterAbstractEngine implements LoginPassEngine
 
     public function getQuestList()
     {
+        return $this->getQuest()->getMappedLevels();
     }
 
     /**
