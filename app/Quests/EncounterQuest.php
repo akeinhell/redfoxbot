@@ -222,7 +222,7 @@ class EncounterQuest extends BaseQuest
         $level = $this->getLevel();
 
         /** @var array $bonuses */
-        $bonuses = compact(array_get($level, 'Bonuses', []))
+        $bonuses = collect(array_get($level, 'Bonuses', []))
             ->map(function ($bonus) {
                 return [
                     'id' => array_get($bonus, 'BonusId'),
@@ -233,7 +233,7 @@ class EncounterQuest extends BaseQuest
             ->all()
         ;
 
-        $levels = compact(array_get($level, 'Levels', []))
+        $levels = collect(array_get($level, 'Levels', []))
             ->map(function ($level) {
                 return [
                     'id' => array_get($level, 'LevelId'),
