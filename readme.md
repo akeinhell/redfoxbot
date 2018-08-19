@@ -34,6 +34,7 @@ git clone https://github.com/akeinhell/redfoxbot.git
 cd redfoxbot
 composer install
 npm install # или yarn install (но под yarn у меня не хотела выкачиваться часть зависимостей)
+npm run build
 ```
 
 ### Настраиваем Nginx
