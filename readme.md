@@ -1,3 +1,5 @@
+![Maintenance](https://img.shields.io/maintenance/no/2018?style=for-the-badge)
+
 [![codecov](https://codecov.io/gh/akeinhell/redfoxbot/branch/master/graph/badge.svg)](https://codecov.io/gh/akeinhell/redfoxbot)
 
 BuildStatus: [![CircleCI](https://circleci.com/gh/akeinhell/redfoxbot/tree/master.svg?style=svg)](https://circleci.com/gh/akeinhell/redfoxbot/tree/master)
