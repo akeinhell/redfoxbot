@@ -10,7 +10,7 @@
       "babel-preset-react": "^6.16.0",
       "babel-preset-stage-0": "^6.16.0",
       "babel-preset-stage-1": "^6.16.0",
-      "bootstrap-sass": "^3.3.7",
+      "bootstrap-sass": "^3.4.1",
       "bower-webpack-plugin": "^0.1.9",
       "css-loader": "^0.26.0",
       "extract-text-webpack-plugin": "^2.0.0",
